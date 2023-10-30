@@ -276,11 +276,14 @@ func flattenTest(test *Test) map[string]interface{} {
 		"schedule_settings":               flattenScheduleSetting(test.ScheduleSettings),
 		"advanced_settings":               flattenAdvancedSetting(test.AdvancedSettings),
 	}
-	if test.TestRequestData.RequestData != "" {
-		testMap["test_script"] = test.TestRequestData.RequestData
-	}
-	if test.TestRequestData.TransactionScriptType.Name != "" {
-		testMap["test_script_type"] = strings.ToLower(test.TestRequestData.TransactionScriptType.Name)
+
+	if test.TestRequestData != nil {
+		if test.TestRequestData.RequestData != "" {
+			testMap["test_script"] = test.TestRequestData.RequestData
+		}
+		if test.TestRequestData.TransactionScriptType.Name != "" {
+			testMap["test_script_type"] = strings.ToLower(test.TestRequestData.TransactionScriptType.Name)
+		}
 	}
 	return testMap
 }
