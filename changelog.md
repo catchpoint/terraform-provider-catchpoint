@@ -1,3 +1,16 @@
+# v0.2.5
+
+BUG FIXES:
+
+* catchpoint test import issues fixed.
+* plugin crashed issue fixed
+# v0.2.4
+
+BUG FIXES:
+
+* catchpoint test import issues fixed.
+* plugin crashed issue fixed
+
 # v0.2.3
 
 BUG FIXES:
