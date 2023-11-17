@@ -97,7 +97,7 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 	scheduleMap := map[string]interface{}{
 		"run_schedule_id":         scheduleSetting.RunScheduleId,
 		"maintenance_schedule_id": scheduleSetting.MaintenanceScheduleId,
-		"frequency":               getFrequencyId(scheduleSetting.Frequency.Id),
+		"frequency":               getFrequencyName(scheduleSetting.Frequency.Id),
 		"node_distribution":       getNodeDistributionName(scheduleSetting.TestNodeDistribution.Id),
 		"node_ids":                nodes,
 		"node_group_ids":          nodeGroups,
