@@ -108,11 +108,11 @@ func setRequestSettings(testTypeId int, request_setting map[string]interface{}, 
 		if authentication_type_id == -1 {
 			return errors.New("invalid authentication_type provided. valid types are 'basic','ntlm','digest','login'")
 		}
-		username := authentication["username"].(string)
+		userName := authentication["userName"].(string)
 		password := authentication["password"].(string)
 		testConfig.AuthenticationType.Id = authentication_type_id
 		testConfig.AuthenticationType.Name = authentication_type_name
-		testConfig.Username = username
+		testConfig.UserName = userName
 		testConfig.Password = password
 
 		tfpassword_ids := authentication["password_ids"].([]interface{})

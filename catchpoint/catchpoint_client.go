@@ -547,7 +547,7 @@ func setTestRequestSettings(config *TestConfig) RequestSetting {
 		authenticationMethodType := GenericIdNameOmitEmpty{Id: config.AuthenticationType.Id, Name: config.AuthenticationType.Name}
 		passwordStatus := GenericIdNameOmitEmpty{Id: 1, Name: "Set"}
 		passwordIds := config.AuthenticationPasswordIds
-		authentication = AuthenticationStruct{AuthenticationMethodType: authenticationMethodType, PasswordStatus: passwordStatus, Username: config.Username, Password: config.Password, PasswordIds: passwordIds}
+		authentication = AuthenticationStruct{AuthenticationMethodType: authenticationMethodType, PasswordStatus: passwordStatus, UserName: config.UserName, Password: config.Password, PasswordIds: passwordIds}
 	}
 
 	requestSetting := RequestSetting{RequestSettingType: requestSettingType, HttpHeaderRequests: httpHeaderRequests, TokenIds: config.AuthenticationTokenIds, LibraryCertificateIds: config.AuthenticationCertificateIds}
