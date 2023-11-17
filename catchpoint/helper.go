@@ -419,10 +419,10 @@ func getFrequencyName(frequency int) string {
 	}
 	for id, freq := range frequencies {
 		if id == frequency {
-			return id, freq
+			return freq
 		}
 	}
-	return -1, ""
+	return ""
 }
 
 func getNodeDistributionId(nodeDistribution string) (int, string) {
