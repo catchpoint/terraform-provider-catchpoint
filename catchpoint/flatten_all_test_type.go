@@ -57,7 +57,7 @@ func flattenAuthenticationStruct(authentication *AuthenticationStruct) []interfa
 	if authentication != nil {
 		authMap := map[string]interface{}{
 			"authentication_type": strings.ToLower(authentication.AuthenticationMethodType.Name),
-			"username":            authentication.Username,
+			"userName":            authentication.UserName,
 			"password":            authentication.Password,
 			"password_ids":        authentication.PasswordIds,
 		}
@@ -97,7 +97,7 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 	scheduleMap := map[string]interface{}{
 		"run_schedule_id":         scheduleSetting.RunScheduleId,
 		"maintenance_schedule_id": scheduleSetting.MaintenanceScheduleId,
-		"frequency":               getFrequencyName(scheduleSetting.Frequency.Id),
+		"frequency":               getFrequencyId(scheduleSetting.Frequency.Id),
 		"node_distribution":       getNodeDistributionName(scheduleSetting.TestNodeDistribution.Id),
 		"node_ids":                nodes,
 		"node_group_ids":          nodeGroups,

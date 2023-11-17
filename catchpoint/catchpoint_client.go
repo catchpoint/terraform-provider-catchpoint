@@ -35,7 +35,7 @@ type Thresholds struct {
 type AuthenticationStruct struct {
 	AuthenticationMethodType GenericIdNameOmitEmpty `json:"authenticationMethodType,omitempty"`
 	PasswordStatus           GenericIdNameOmitEmpty `json:"passwordStatus,omitempty"`
-	Username                 string                 `json:"userName,omitempty"`
+	UserName                 string                 `json:"userName,omitempty"`
 	Password                 string                 `json:"password,omitempty"`
 	PasswordIds              []int                  `json:"passwordIds,omitempty"`
 	//Id                       int                    `json:"id,omitempty"`

@@ -1,3 +1,11 @@
+# v0.2.6
+
+BUG FIXES:
+
+* Web test request setting issue.
+* frequency issue fioxed.
+
+
 # v0.2.5
 
 BUG FIXES:
