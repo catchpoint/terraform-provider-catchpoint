@@ -430,6 +430,14 @@ func resourceDnsTestType() *schema.Resource {
 							Description: "Optional. The EDNS subnet address",
 							Optional:    true,
 						},
+						"applied_test_flags": {
+							Type:        schema.TypeList,
+							Description: "List of applied test flags",
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 					},
 				},
 			},

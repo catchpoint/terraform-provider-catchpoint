@@ -1,6 +1,7 @@
 package catchpoint
 
 import (
+	"log"
 	"strings"
 )
 
@@ -109,11 +110,71 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 	return []interface{}{scheduleMap}
 }
 
+// func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
+
+// 	advSettingMap := make(map[string]interface{})
+
+// 	if advancedSetting.MaxStepRuntimeSecOverride != 0 {
+// 		advSettingMap["enforce_failure_test_runs_longer_than"] = advancedSetting.MaxStepRuntimeSecOverride
+// 	}
+
+// 	if advancedSetting.WaitForNoActivity != nil {
+// 		advSettingMap["wait_for_no_activity"] = *advancedSetting.WaitForNoActivity
+// 	}
+
+// 	if advancedSetting.ViewportHeight != 0 {
+// 		advSettingMap["viewport_height"] = advancedSetting.ViewportHeight
+// 	}
+
+// 	if advancedSetting.ViewportWidth != 0 {
+// 		advSettingMap["viewport_width"] = advancedSetting.ViewportWidth
+// 	}
+
+// 	if advancedSetting.FailureHopCount != 0 {
+// 		advSettingMap["failure_hop_count"] = advancedSetting.FailureHopCount
+// 	}
+
+// 	if advancedSetting.PingCount != 0 {
+// 		advSettingMap["ping_count"] = advancedSetting.PingCount
+// 	}
+
+// 	if advancedSetting.EdnsSubnet != "" {
+// 		advSettingMap["edns_subnet"] = advancedSetting.EdnsSubnet
+// 	}
+
+// 	additionalMonitor := ""
+// 	if advancedSetting.AdditionalMonitor != nil {
+// 		additionalMonitor = getAdditionalMonitorTypeName(advancedSetting.AdditionalMonitor.Id)
+// 		if additionalMonitor != "" {
+// 			advSettingMap["additional_monitor"] = additionalMonitor
+// 		}
+// 	}
+
+// 	testBandwidthThrottling := ""
+// 	if advancedSetting.TestBandwidthThrottling != nil {
+// 		testBandwidthThrottling = getBandwidthThrottlingTypeName(advancedSetting.TestBandwidthThrottling.Id)
+// 		if testBandwidthThrottling != "" {
+// 			advSettingMap["bandwidth_throttling"] = testBandwidthThrottling
+// 		}
+// 	}
+
+// 	// advancedSettingTypeName := ""
+// 	// advancedSettingTypeName = getAdvancdSettingTypeName(advancedSetting.AdvancedSettingType.Id)
+// 	// advSettingMap["advanced_setting_type"] = advancedSettingTypeName
+
+// 	//
+// 	log.Printf("[DEBUG] advSettingMap : %#v", advSettingMap)
+// 	return []interface{}{advSettingMap}
+// }
+
 func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
+
+	// log.Printf("[DEBUG] advancedSetting : %#v", advancedSetting)
 
 	additionalMonitor := ""
 	if advancedSetting.AdditionalMonitor != nil {
 		additionalMonitor = getAdditionalMonitorTypeName(advancedSetting.AdditionalMonitor.Id)
+
 	}
 
 	testBandwidthThrottling := ""
@@ -122,16 +183,40 @@ func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
 	}
 
 	advSettingMap := map[string]interface{}{
-		"max_step_runtime_sec_override": advancedSetting.MaxStepRuntimeSecOverride,
-		"wait_for_no_activity":          advancedSetting.WaitForNoActivity,
-		"viewport_height":               advancedSetting.ViewportHeight,
-		"viewport_width":                advancedSetting.ViewportWidth,
-		"failure_hop_count":             advancedSetting.FailureHopCount,
-		"ping_count":                    advancedSetting.PingCount,
-		"edns_subnet":                   advancedSetting.EdnsSubnet,
-		"additional_monitor":            additionalMonitor,
-		"test_bandwidth_throttling":     testBandwidthThrottling,
-		"enable_path_mtu_discovery":     true,
+		"additional_monitor":        additionalMonitor,
+		"test_bandwidth_throttling": testBandwidthThrottling,
+	}
+
+	if advancedSetting.EcnValue {
+		advSettingMap["enable_path_mtu_discovery"] = advancedSetting.EcnValue
+	}
+
+	if advancedSetting.MaxStepRuntimeSecOverride != 0 {
+		advSettingMap["max_step_runtime_sec_override"] = advancedSetting.MaxStepRuntimeSecOverride
+	}
+
+	if advancedSetting.WaitForNoActivity != nil {
+		advSettingMap["wait_for_no_activity"] = advancedSetting.WaitForNoActivity
+	}
+
+	if advancedSetting.ViewportHeight != 0 {
+		advSettingMap["viewport_height"] = advancedSetting.ViewportHeight
+	}
+
+	if advancedSetting.ViewportWidth != 0 {
+		advSettingMap["viewport_width"] = advancedSetting.ViewportWidth
+	}
+
+	if advancedSetting.FailureHopCount != 0 {
+		advSettingMap["failure_hop_count"] = advancedSetting.FailureHopCount
+	}
+
+	if advancedSetting.PingCount != 0 {
+		advSettingMap["ping_count"] = advancedSetting.PingCount
+	}
+
+	if advancedSetting.EdnsSubnet != "" {
+		advSettingMap["edns_subnet"] = advancedSetting.EdnsSubnet
 	}
 
 	var flagNames []string
@@ -140,8 +225,11 @@ func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
 		flagNames = append(flagNames, flagName)
 
 	}
-	advSettingMap["applied_test_flags"] = flagNames
+	if len(flagNames) > 0 {
+		advSettingMap["applied_test_flags"] = flagNames
+	}
 
+	log.Printf("[DEBUG] advSettingMap : %#v", advSettingMap)
 	return []interface{}{advSettingMap}
 }
 

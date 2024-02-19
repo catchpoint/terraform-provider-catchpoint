@@ -385,6 +385,14 @@ func resourceSslTestType() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"ping icmp", "ping tcp", "ping udp", "traceroute icmp", "traceroute udp", "traceroute tcp"}, false),
 							Optional:     true,
 						},
+						"applied_test_flags": {
+							Type:        schema.TypeList,
+							Description: "List of applied test flags",
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 					},
 				},
 			},

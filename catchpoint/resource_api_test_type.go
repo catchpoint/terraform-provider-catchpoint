@@ -861,6 +861,14 @@ func resourceApiTestType() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"gprs", "regular 2g", "good 2g", "regular 3g", "good 3g", "regular 4g", "dsl", "wifi"}, false),
 							Optional:     true,
 						},
+						"applied_test_flags": {
+							Type:        schema.TypeList,
+							Description: "List of applied test flags",
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 					},
 				},
 			},

@@ -367,6 +367,26 @@ func resourcePingTestType() *schema.Resource {
 							Optional:    true,
 							Default:     false,
 						},
+						"additional_monitor": {
+							Type:        schema.TypeString,
+							Description: "Optional. Set the additional monitor",
+							Optional:    true,
+							Default:     nil,
+						},
+						"test_bandwidth_throttling": {
+							Type:        schema.TypeString,
+							Description: "Optional. Set the test bandwidth throttling",
+							Optional:    true,
+							Default:     nil,
+						},
+						"applied_test_flags": {
+							Type:        schema.TypeList,
+							Description: "List of applied test flags",
+							Optional:    true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
 					},
 				},
 			},

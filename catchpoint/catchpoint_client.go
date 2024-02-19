@@ -160,6 +160,7 @@ type AdvancedSetting struct {
 	EdnsSubnet                string                   `json:"ednsSubnet,omitempty"`
 	AdditionalMonitor         *GenericIdNameOmitEmpty  `json:"additionalMonitor,omitempty"`
 	TestBandwidthThrottling   *GenericIdNameOmitEmpty  `json:"testBandwidthThrottling,omitempty"`
+	EcnValue                  bool                     `json:"ecnValue,omitempty"`
 	Id                        int                      `json:"id"`
 }
 
