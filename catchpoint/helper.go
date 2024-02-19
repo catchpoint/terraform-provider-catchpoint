@@ -912,6 +912,8 @@ func getTestFlagName(testFlag int) string {
 		42: "certificate_revocation_disabled",
 		48: "enable_dnssec",
 		50: "enable_path_mtu_discovery",
+		53: "Enable ECN",
+		55: "Is Accurate ECN",
 	}
 	for id, testFlagString := range testFlagTypes {
 		if id == testFlag {

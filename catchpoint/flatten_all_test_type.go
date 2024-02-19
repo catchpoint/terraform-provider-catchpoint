@@ -1,6 +1,8 @@
 package catchpoint
 
-import "strings"
+import (
+	"strings"
+)
 
 func flattenLabels(labels []Label) []interface{} {
 	labelMaps := make([]interface{}, len(labels))
@@ -120,21 +122,25 @@ func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
 	}
 
 	advSettingMap := map[string]interface{}{
-		"enforce_test_failure_if_runs_longer_than": advancedSetting.MaxStepRuntimeSecOverride,
-		"wait_for_no_activity":                     advancedSetting.WaitForNoActivity,
-		"viewport_height":                          advancedSetting.ViewportHeight,
-		"viewport_width":                           advancedSetting.ViewportWidth,
-		"failure_hop_count":                        advancedSetting.FailureHopCount,
-		"ping_count":                               advancedSetting.PingCount,
-		"edns_subnet":                              advancedSetting.EdnsSubnet,
-		"additional_monitor":                       additionalMonitor,
-		"bandwidth_throttling":                     testBandwidthThrottling,
+		"max_step_runtime_sec_override": advancedSetting.MaxStepRuntimeSecOverride,
+		"wait_for_no_activity":          advancedSetting.WaitForNoActivity,
+		"viewport_height":               advancedSetting.ViewportHeight,
+		"viewport_width":                advancedSetting.ViewportWidth,
+		"failure_hop_count":             advancedSetting.FailureHopCount,
+		"ping_count":                    advancedSetting.PingCount,
+		"edns_subnet":                   advancedSetting.EdnsSubnet,
+		"additional_monitor":            additionalMonitor,
+		"test_bandwidth_throttling":     testBandwidthThrottling,
+		"enable_path_mtu_discovery":     true,
 	}
 
+	var flagNames []string
 	for _, flag := range advancedSetting.AppliedTestFlags {
-		lowerCasedSpaceReplacedFlagName := getTestFlagName(flag.Id)
-		advSettingMap[lowerCasedSpaceReplacedFlagName] = true
+		flagName := getTestFlagName(flag.Id)
+		flagNames = append(flagNames, flagName)
+
 	}
+	advSettingMap["applied_test_flags"] = flagNames
 
 	return []interface{}{advSettingMap}
 }
