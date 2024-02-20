@@ -430,6 +430,12 @@ func resourceDnsTestType() *schema.Resource {
 							Description: "Optional. The EDNS subnet address",
 							Optional:    true,
 						},
+						"bandwidth_throttling": {
+							Type:         schema.TypeString,
+							Description:  "Optional. Set the bandwidth throttling for chrome: 'gprs','regular 2g','good 2g','regular 3g','good 3g','regular 4g','dsl','wifi'",
+							ValidateFunc: validation.StringInSlice([]string{"gprs", "regular 2g", "good 2g", "regular 3g", "good 3g", "regular 4g", "dsl", "wifi"}, false),
+							Optional:     true,
+						},
 					},
 				},
 			},

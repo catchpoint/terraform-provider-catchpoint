@@ -1,6 +1,9 @@
 package catchpoint
 
-import "strings"
+import (
+	"log"
+	"strings"
+)
 
 func flattenLabels(labels []Label) []interface{} {
 	labelMaps := make([]interface{}, len(labels))
@@ -109,6 +112,8 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 
 func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
 
+	// log.Printf("[DEBUG] advancedSetting : %#v", advancedSetting)
+
 	additionalMonitor := ""
 	if advancedSetting.AdditionalMonitor != nil {
 		additionalMonitor = getAdditionalMonitorTypeName(advancedSetting.AdditionalMonitor.Id)
@@ -120,22 +125,46 @@ func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
 	}
 
 	advSettingMap := map[string]interface{}{
-		"enforce_test_failure_if_runs_longer_than": advancedSetting.MaxStepRuntimeSecOverride,
-		"wait_for_no_activity":                     advancedSetting.WaitForNoActivity,
-		"viewport_height":                          advancedSetting.ViewportHeight,
-		"viewport_width":                           advancedSetting.ViewportWidth,
-		"failure_hop_count":                        advancedSetting.FailureHopCount,
-		"ping_count":                               advancedSetting.PingCount,
-		"edns_subnet":                              advancedSetting.EdnsSubnet,
-		"additional_monitor":                       additionalMonitor,
-		"bandwidth_throttling":                     testBandwidthThrottling,
+		"additional_monitor":   additionalMonitor,
+		"bandwidth_throttling": testBandwidthThrottling,
+	}
+
+	if advancedSetting.MaxStepRuntimeSecOverride != 0 {
+		advSettingMap["enforce_test_failure_if_runs_longer_than"] = advancedSetting.MaxStepRuntimeSecOverride
+	}
+
+	if advancedSetting.WaitForNoActivity != nil {
+		advSettingMap["wait_for_no_activity"] = advancedSetting.WaitForNoActivity
+	}
+
+	if advancedSetting.ViewportHeight != 0 {
+		advSettingMap["viewport_height"] = advancedSetting.ViewportHeight
+	}
+
+	if advancedSetting.ViewportWidth != 0 {
+		advSettingMap["viewport_width"] = advancedSetting.ViewportWidth
+	}
+
+	if advancedSetting.FailureHopCount != 0 {
+		advSettingMap["failure_hop_count"] = advancedSetting.FailureHopCount
+	}
+
+	if advancedSetting.PingCount != 0 {
+		advSettingMap["ping_count"] = advancedSetting.PingCount
+	}
+
+	if advancedSetting.EdnsSubnet != "" {
+		advSettingMap["edns_subnet"] = advancedSetting.EdnsSubnet
 	}
 
 	for _, flag := range advancedSetting.AppliedTestFlags {
 		lowerCasedSpaceReplacedFlagName := getTestFlagName(flag.Id)
-		advSettingMap[lowerCasedSpaceReplacedFlagName] = true
+		if lowerCasedSpaceReplacedFlagName != "" {
+			advSettingMap[lowerCasedSpaceReplacedFlagName] = true
+		}
 	}
 
+	log.Printf("[DEBUG] advSettingMap : %#v", advSettingMap)
 	return []interface{}{advSettingMap}
 }
 
