@@ -367,6 +367,18 @@ func resourcePingTestType() *schema.Resource {
 							Optional:    true,
 							Default:     false,
 						},
+						"additional_monitor": {
+							Type:         schema.TypeString,
+							Description:  "Optional. Set the additional monitor to run along with the test monitor: 'ping icmp', 'ping tcp', 'ping udp','traceroute icmp','traceroute udp','traceroute tcp'",
+							ValidateFunc: validation.StringInSlice([]string{"ping icmp", "ping tcp", "ping udp", "traceroute icmp", "traceroute udp", "traceroute tcp"}, false),
+							Optional:     true,
+						},
+						"bandwidth_throttling": {
+							Type:         schema.TypeString,
+							Description:  "Optional. Set the bandwidth throttling for chrome: 'gprs','regular 2g','good 2g','regular 3g','good 3g','regular 4g','dsl','wifi'",
+							ValidateFunc: validation.StringInSlice([]string{"gprs", "regular 2g", "good 2g", "regular 3g", "good 3g", "regular 4g", "dsl", "wifi"}, false),
+							Optional:     true,
+						},
 					},
 				},
 			},
