@@ -13,7 +13,7 @@ func flattenLabels(labels []Label) []interface{} {
 			"values": label.Values,
 		}
 	}
-	return []interface{}{labelMaps}
+	return labelMaps
 }
 
 func flattenThresholds(thresholds Thresholds) []interface{} {
