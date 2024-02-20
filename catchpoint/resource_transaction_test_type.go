@@ -786,13 +786,13 @@ func resourceTransactionTestType() *schema.Resource {
 							Optional:    true,
 							Default:     false,
 						},
-						"40x_or_50x_http_mark_successful": {
+						"f40x_or_50x_http_mark_successful": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables 40x or 50x error mark successful setting",
 							Optional:    true,
 							Default:     false,
 						},
-						"30x_redirects_do_not_follow": {
+						"t30x_redirects_do_not_follow": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables 30x redirects do not follow setting",
 							Optional:    true,
