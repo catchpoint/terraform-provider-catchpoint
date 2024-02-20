@@ -870,19 +870,9 @@ func getTestFlagId(testFlag string) int {
 		37: "allow_test_download_limit_override",
 		38: "disable_cross_origin_iframe_access",
 		39: "stop_test_on_dom_content_load",
-		40: "initiated_from_api",
-		41: "instant_test_charged",
 		42: "certificate_revocation_disabled",
-		43: "enforce_certificate_pinning",
-		44: "enforce_public_key_pinning",
 		48: "enable_dnssec",
 		50: "enable_path_mtu_discovery",
-		51: "enable_tracing",
-		52: "is_continuous",
-		53: "enable_ecn",
-		54: "enable_dscp",
-		55: "is_accurate_ecn",
-		56: "enable_dns_query_limits",
 	}
 	for id, testFlagString := range testFlagTypes {
 		if testFlagString == testFlag {
@@ -919,19 +909,9 @@ func getTestFlagName(testFlag int) string {
 		37: "allow_test_download_limit_override",
 		38: "disable_cross_origin_iframe_access",
 		39: "stop_test_on_dom_content_load",
-		40: "initiated_from_api",
-		41: "instant_test_charged",
 		42: "certificate_revocation_disabled",
-		43: "enforce_certificate_pinning",
-		44: "enforce_public_key_pinning",
 		48: "enable_dnssec",
 		50: "enable_path_mtu_discovery",
-		51: "enable_tracing",
-		52: "is_continuous",
-		53: "enable_ecn",
-		54: "enable_dscp",
-		55: "is_accurate_ecn",
-		56: "enable_dns_query_limits",
 	}
 	for id, testFlagString := range testFlagTypes {
 		if id == testFlag {
