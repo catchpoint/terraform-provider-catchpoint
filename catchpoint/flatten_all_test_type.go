@@ -1,7 +1,6 @@
 package catchpoint
 
 import (
-	"log"
 	"strings"
 )
 
@@ -80,8 +79,13 @@ func flattenInsightDataStruct(insightData InsightDataStruct) []interface{} {
 }
 
 func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
-	if len(scheduleSetting.Nodes) == 0 || len(scheduleSetting.NodeGroups) == 0 {
-		return nil
+	scheduleMap := map[string]interface{}{
+		"run_schedule_id":         scheduleSetting.RunScheduleId,
+		"maintenance_schedule_id": scheduleSetting.MaintenanceScheduleId,
+		"frequency":               getFrequencyName(scheduleSetting.Frequency.Id),
+		"node_distribution":       getNodeDistributionName(scheduleSetting.TestNodeDistribution.Id),
+		//Backbone network type is currently supported. Remove comment if more types are added
+		//"network_type":            flattenGenericIdName(scheduleSetting.NetworkType),
 	}
 
 	nodes := make([]int, len(scheduleSetting.Nodes))
@@ -89,27 +93,23 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 		nodes[i] = node.Id
 	}
 
+	if len(nodes) > 0 {
+		scheduleMap["node_ids"] = nodes
+	}
+
 	nodeGroups := make([]int, len(scheduleSetting.NodeGroups))
 	for i, group := range scheduleSetting.NodeGroups {
 		nodeGroups[i] = group.Id
 	}
 
-	scheduleMap := map[string]interface{}{
-		"run_schedule_id":         scheduleSetting.RunScheduleId,
-		"maintenance_schedule_id": scheduleSetting.MaintenanceScheduleId,
-		"frequency":               getFrequencyName(scheduleSetting.Frequency.Id),
-		"node_distribution":       getNodeDistributionName(scheduleSetting.TestNodeDistribution.Id),
-		"node_ids":                nodes,
-		"node_group_ids":          nodeGroups,
-		//Backbone network type is currently supported. Remove comment if more types are added
-		//"network_type":            flattenGenericIdName(scheduleSetting.NetworkType),
+	if len(nodeGroups) > 0 {
+		scheduleMap["node_group_ids"] = nodeGroups
 	}
+
 	return []interface{}{scheduleMap}
 }
 
 func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
-
-	// log.Printf("[DEBUG] advancedSetting : %#v", advancedSetting)
 
 	additionalMonitor := ""
 	if advancedSetting.AdditionalMonitor != nil {
@@ -161,7 +161,6 @@ func flattenAdvancedSetting(advancedSetting AdvancedSetting) []interface{} {
 		}
 	}
 
-	log.Printf("[DEBUG] advSettingMap : %#v", advSettingMap)
 	return []interface{}{advSettingMap}
 }
 
