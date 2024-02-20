@@ -724,6 +724,12 @@ func resourceWebTestType() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"enable_path_mtu_discovery": {
+							Type:        schema.TypeBool,
+							Description: "Optional. True enables Path MTU Discovery",
+							Optional:    true,
+							Default:     false,
+						},
 						"verify_test_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables verify on test failure setting",

@@ -874,6 +874,12 @@ func resourceTransactionTestType() *schema.Resource {
 							ValidateFunc: validation.StringInSlice([]string{"gprs", "regular 2g", "good 2g", "regular 3g", "good 3g", "regular 4g", "dsl", "wifi"}, false),
 							Optional:     true,
 						},
+						"enable_path_mtu_discovery": {
+							Type:        schema.TypeBool,
+							Description: "Optional. True enables Path MTU Discovery",
+							Optional:    true,
+							Default:     false,
+						},
 					},
 				},
 			},
