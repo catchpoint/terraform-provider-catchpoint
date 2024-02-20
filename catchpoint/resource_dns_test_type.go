@@ -264,6 +264,11 @@ func resourceDnsTestType() *schema.Resource {
 										Optional:    true,
 										Default:     false,
 									},
+									"consecutive_number_of_runs": {
+										Type:        schema.TypeInt,
+										Description: "Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node",
+										Optional:    true,
+									},
 									"warning_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,

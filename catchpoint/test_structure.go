@@ -86,6 +86,7 @@ type TestRequestData struct {
 type AlertRuleConfig struct {
 	AlertNodeThresholdType          IdName
 	AlertThresholdNumOfRuns         int
+	AlertConsecutiveNumOfRuns       int
 	AlertThresholdPercentOfRuns     float64
 	AlertThresholdNumOfFailingNodes int
 	TriggerType                     IdName
