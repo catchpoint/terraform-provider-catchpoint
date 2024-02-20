@@ -64,6 +64,7 @@ type NodeThresholdStruct struct {
 	NumberOfFailingUnits            int           `json:"numberOfFailingUnits,omitempty"`
 	ConsecutiveRunsEnabled          bool          `json:"consecutiveRunsEnabled"`
 	UtilizePerNodeHistoricalAverage bool          `json:"utilizePerNodeHistoricalAverage"`
+	NumberOfConsecutiveRuns         int           `json:"consecutiveRuns,omitempty"`
 }
 
 type TriggerStruct struct {
@@ -428,7 +429,7 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 
 	for i := range config.AlertRuleConfigs {
 		nodeThresholdType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertNodeThresholdType.Id, Name: config.AlertRuleConfigs[i].AlertNodeThresholdType.Name}
-		nodeThreshold := NodeThresholdStruct{Id: 0, Name: "", NodeThresholdType: nodeThresholdType, NumberOfUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfRuns, PercentageOfUnits: config.AlertRuleConfigs[i].AlertThresholdPercentOfRuns, NumberOfFailingUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfFailingNodes, ConsecutiveRunsEnabled: config.AlertRuleConfigs[i].AlertEnableConsecutive, UtilizePerNodeHistoricalAverage: false}
+		nodeThreshold := NodeThresholdStruct{Id: 0, Name: "", NodeThresholdType: nodeThresholdType, NumberOfUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfRuns, PercentageOfUnits: config.AlertRuleConfigs[i].AlertThresholdPercentOfRuns, NumberOfFailingUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfFailingNodes, ConsecutiveRunsEnabled: config.AlertRuleConfigs[i].AlertEnableConsecutive, UtilizePerNodeHistoricalAverage: false, NumberOfConsecutiveRuns: config.AlertRuleConfigs[i].AlertConsecutiveNumOfRuns}
 		warningTrigger := config.AlertRuleConfigs[i].AlertWarningTrigger
 		criticalTrigger := config.AlertRuleConfigs[i].AlertCriticalTrigger
 		warningReminder := GenericIdName{Id: config.AlertRuleConfigs[i].AlertWarningReminder.Id, Name: config.AlertRuleConfigs[i].AlertWarningReminder.Name}
