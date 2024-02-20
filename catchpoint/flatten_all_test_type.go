@@ -218,6 +218,7 @@ func flattenAlertGroupItem(alertGroupItem AlertGroupItem) map[string]interface{}
 		"omit_scatterplot":             alertGroupItem.OmitScatterplot,
 		"node_threshold_type":          getNodeThresholdTypeName(nodeThreshold.NodeThresholdType.Id),
 		"threshold_number_of_runs":     nodeThreshold.NumberOfUnits,
+		"consecutive_number_of_runs":   nodeThreshold.NumberOfConsecutiveRuns,
 		"threshold_percentage_of_runs": nodeThreshold.PercentageOfUnits,
 		"number_of_failing_nodes":      nodeThreshold.NumberOfFailingUnits,
 		"enable_consecutive":           nodeThreshold.ConsecutiveRunsEnabled,
