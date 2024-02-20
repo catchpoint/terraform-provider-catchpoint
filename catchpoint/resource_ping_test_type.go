@@ -367,6 +367,12 @@ func resourcePingTestType() *schema.Resource {
 							Optional:    true,
 							Default:     false,
 						},
+						"debug_primary_host_on_failure": {
+							Type:        schema.TypeBool,
+							Description: "Optional. True enables verify on debug primary host on failure",
+							Optional:    true,
+							Default:     false,
+						},
 						"additional_monitor": {
 							Type:         schema.TypeString,
 							Description:  "Optional. Set the additional monitor to run along with the test monitor: 'ping icmp', 'ping tcp', 'ping udp','traceroute icmp','traceroute udp','traceroute tcp'",

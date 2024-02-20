@@ -365,6 +365,12 @@ func resourceDnsTestType() *schema.Resource {
 				MaxItems:    1,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"enable_path_mtu_discovery": {
+							Type:        schema.TypeBool,
+							Description: "Optional. True enables Path MTU Discovery",
+							Optional:    true,
+							Default:     false,
+						},
 						"debug_primary_host_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables debug primary host on failure setting",
