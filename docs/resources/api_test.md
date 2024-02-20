@@ -51,8 +51,8 @@ description: |-
 
 Optional:
 
-- `30x_redirects_do_not_follow` (Boolean) Optional. True enables 30x redirects do not follow setting
-- `40x_or_50x_http_mark_successful` (Boolean) Optional. True enables 40x or 50x error mark successful setting
+- `t30x_redirects_do_not_follow` (Boolean) Optional. True enables 30x redirects do not follow setting
+- `f40x_or_50x_http_mark_successful` (Boolean) Optional. True enables 40x or 50x error mark successful setting
 - `additional_monitor` (String) Optional. Set the additional monitor to run along with the test monitor: 'ping icmp', 'ping tcp', 'ping udp','traceroute icmp','traceroute udp','traceroute tcp'
 - `allow_test_download_limit_override` (Boolean) Optional. True enables test download limit override setting
 - `bandwidth_throttling` (String) Optional. Set the bandwidth throttling for chrome: 'gprs','regular 2g','good 2g','regular 3g','good 3g','regular 4g','dsl','wifi'
