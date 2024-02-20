@@ -292,7 +292,7 @@ func flattenTest(test *Test) map[string]interface{} {
 		"status":                          strings.ToLower(test.Status.Name),
 		"monitor":                         getMonitorName(test.Monitor.Id),
 		"dns_server":                      test.DnsServer,
-		"dns_query_type":                  dnsQueryType,
+		"query_type":                      dnsQueryType,
 		"user_agent_type":                 userAgentType,
 		"chrome_version":                  chromeVersion,
 		"request_settings":                flattenRequestSetting(test.RequestSettings),

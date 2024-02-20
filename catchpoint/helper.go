@@ -288,6 +288,7 @@ func getDnsQueryTypeId(queryType string) (int, string) {
 		255:   "any",
 		32768: "ta",
 		32769: "dlv",
+		32770: "AorAAAA",
 	}
 	for id, queryTypeString := range queryTypes {
 		if queryTypeString == queryType {
@@ -360,6 +361,7 @@ func getDnsQueryName(queryType int) string {
 		255:   "any",
 		32768: "ta",
 		32769: "dlv",
+		32770: "AorAAAA",
 	}
 	for id, queryTypeString := range queryTypes {
 		if id == queryType {
