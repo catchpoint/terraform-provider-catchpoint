@@ -44,9 +44,6 @@ func flattenRequestSetting(requestSetting RequestSetting) []interface{} {
 	requestSettingMap := map[string]interface{}{
 		"authentication": flattenAuthenticationStruct(requestSetting.Authentication),
 	}
-	if len(httpHeaderRequests) > 0 {
-		requestSettingMap["http_request_headers"] = []interface{}{httpHeaderRequests}
-	}
 	if len(requestSetting.LibraryCertificateIds) > 0 {
 		requestSettingMap["library_certificate_ids"] = requestSetting.LibraryCertificateIds
 	}
