@@ -252,7 +252,6 @@ func resourceBgpTestType() *schema.Resource {
 							Type:        schema.TypeSet,
 							Required:    true,
 							Description: "Notification group for setting up alert recipients, adding alert webhook ids",
-							MaxItems:    1,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"alert_webhook_ids": {
