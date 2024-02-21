@@ -683,7 +683,7 @@ func resourceApiTestType() *schema.Resource {
 						"notification_group": {
 							Type:        schema.TypeSet,
 							Required:    true,
-							Description: "Multiple Notification group for setting up alert recipients, adding alert webhook ids",
+							Description: "Notification group for setting up alert recipients, adding alert webhook ids",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"alert_webhook_ids": {
