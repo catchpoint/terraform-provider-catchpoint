@@ -313,31 +313,34 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 	}
 
 	notif_group_list := alert_setting["notification_group"].(*schema.Set).List()
-	notification_group := notif_group_list[0].(map[string]interface{})
-	var alert_webhook_ids []int
-	var contact_group_ids []int
-	var email_ids []string
 
-	tfalert_webhooks := notification_group["alert_webhook_ids"].([]interface{})
-	alert_webhook_ids = make([]int, len(tfalert_webhooks))
-	for i, tfalert_webhook := range tfalert_webhooks {
-		alert_webhook_ids[i] = tfalert_webhook.(int)
-	}
-	tfrecipient_ids := notification_group["recipient_contact_group_ids"].([]interface{})
-	contact_group_ids = make([]int, len(tfrecipient_ids))
-	for i, recipient_id := range tfrecipient_ids {
-		contact_group_ids[i] = recipient_id.(int)
-	}
-	tfemail_ids := notification_group["recipient_email_ids"].([]interface{})
-	email_ids = make([]string, len(tfemail_ids))
-	for i, email_id := range tfemail_ids {
-		email_ids[i] = email_id.(string)
+	var all_alert_webhook_ids []int
+	var all_contact_group_ids []int
+	var all_email_ids []string
+
+	for _, notif_group_item := range notif_group_list {
+		notification_group := notif_group_item.(map[string]interface{})
+
+		tfalert_webhooks := notification_group["alert_webhook_ids"].([]interface{})
+		for _, tfalert_webhook := range tfalert_webhooks {
+			all_alert_webhook_ids = append(all_alert_webhook_ids, tfalert_webhook.(int))
+		}
+
+		tfrecipient_ids := notification_group["recipient_contact_group_ids"].([]interface{})
+		for _, recipient_id := range tfrecipient_ids {
+			all_contact_group_ids = append(all_contact_group_ids, recipient_id.(int))
+		}
+
+		tfemail_ids := notification_group["recipient_email_ids"].([]interface{})
+		for _, email_id := range tfemail_ids {
+			all_email_ids = append(all_email_ids, email_id.(string))
+		}
 	}
 
 	testConfig.AlertSettingType = 1
-	testConfig.AlertWebhookIds = alert_webhook_ids
-	testConfig.AlertRecipientIds = contact_group_ids
-	testConfig.AlertRecipientEmails = email_ids
+	testConfig.AlertWebhookIds = all_alert_webhook_ids
+	testConfig.AlertRecipientIds = all_contact_group_ids
+	testConfig.AlertRecipientEmails = all_email_ids
 
 	return nil
 }
