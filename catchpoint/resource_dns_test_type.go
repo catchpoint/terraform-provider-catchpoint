@@ -323,6 +323,47 @@ func resourceDnsTestType() *schema.Resource {
 										Optional:    true,
 										Default:     false,
 									},
+									"notification_group": {
+										Type:        schema.TypeSet,
+										Optional:    true,
+										MaxItems:    1,
+										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"notify_on_warning": {
+													Type:        schema.TypeBool,
+													Description: "Optional. Set to true to include warning alerts in notifications. Default is false.",
+													Optional:    true,
+													Default:     false,
+												},
+												"notify_on_critical": {
+													Type:        schema.TypeBool,
+													Description: "Optional. Set to true to include critical alerts in notifications. Default is false.",
+													Optional:    true,
+													Default:     false,
+												},
+												"notify_on_improved": {
+													Type:        schema.TypeBool,
+													Description: "Optional. Set to true to include improved alerts in notifications. Default is false.",
+													Optional:    true,
+													Default:     false,
+												},
+												"subject": {
+													Type:        schema.TypeString,
+													Description: "Email subject for the alert notifications. Required field.",
+													Required:    true,
+												},
+												"recipient_email_ids": {
+													Type:        schema.TypeList,
+													Required:    true,
+													Description: "List of email addresses to receive alert notifications.",
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -336,14 +377,6 @@ func resourceDnsTestType() *schema.Resource {
 										Type:        schema.TypeList,
 										Optional:    true,
 										Description: "Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.",
-										Elem: &schema.Schema{
-											Type: schema.TypeInt,
-										},
-									},
-									"recipient_contact_group_ids": {
-										Type:        schema.TypeList,
-										Optional:    true,
-										Description: "Optional. List of contact group ids to alert",
 										Elem: &schema.Schema{
 											Type: schema.TypeInt,
 										},
