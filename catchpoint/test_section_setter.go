@@ -308,14 +308,53 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 				return errors.New("must specify the alert sub type. for example 'test' for alert_type 'availability'")
 			}
 		}
+		log.Printf("[DEBUG] alert notification_group: %#v", alert_rule["notification_group"])
+		alert_notif_group_list := alert_rule["notification_group"].(*schema.Set).List()
 
-		testConfig.AlertRuleConfigs = append(testConfig.AlertRuleConfigs, AlertRuleConfig{AlertNodeThresholdType: IdName{Id: node_threshold_type_id, Name: node_threshold_type_name}, AlertThresholdNumOfRuns: threshold_number_of_runs, AlertConsecutiveNumOfRuns: consecutive_number_of_runs, AlertThresholdPercentOfRuns: threshold_percentage_of_runs, AlertThresholdNumOfFailingNodes: number_of_failing_nodes, TriggerType: IdName{Id: trigger_type_id, Name: trigger_type_name}, OperationType: IdName{Id: operation_type_id, Name: operation_type_name}, StatisticalType: IdName{Id: statistical_type_id, Name: statistical_type_name}, TrailingHistoricalInterval: IdName{Id: historical_interval_id, Name: historical_interval_name}, AlertWarningTrigger: warning_trigger, AlertCriticalTrigger: critical_trigger, Expression: expression, AlertEnableConsecutive: enable_consecutive, AlertWarningReminder: IdName{Id: warning_reminder_id, Name: warning_reminder_name}, AlertCriticalReminder: IdName{Id: critical_reminder_id, Name: critical_reminder_name}, AlertThresholdInterval: IdName{Id: threshold_interval_id, Name: threshold_interval_name}, AlertUseRollingWindow: use_rolling_window, AlertNotificationType: notification_type_id, AlertType: IdName{Id: alert_type_id, Name: alert_type_name}, AlertSubType: IdName{Id: alert_sub_type_id, Name: alert_sub_type_name}, AlertEnforceTestFailure: enforce_test_failure, AlertOmitScatterplot: omit_scatterplot})
+		var subject string
+		var notifyOnCritical bool
+		var notifyOnImproved bool
+		var notifyOnWarning bool
+		var all_email_ids []string
+
+		for _, notif_group_item := range alert_notif_group_list {
+			notification_group := notif_group_item.(map[string]interface{})
+			log.Printf("[DEBUG] notification_group: %#v", notification_group)
+			subject = notification_group["subject"].(string)
+			notifyOnCritical = notification_group["notify_on_critical"].(bool)
+			notifyOnWarning = notification_group["notify_on_warning"].(bool)
+			notifyOnImproved = notification_group["notify_on_improved"].(bool)
+			tfemail_ids := notification_group["recipient_email_ids"].([]interface{})
+			for _, email_id := range tfemail_ids {
+				all_email_ids = append(all_email_ids, email_id.(string))
+			}
+		}
+
+		testConfig.AlertRuleConfigs = append(testConfig.AlertRuleConfigs, AlertRuleConfig{AlertNodeThresholdType: IdName{Id: node_threshold_type_id, Name: node_threshold_type_name}, AlertThresholdNumOfRuns: threshold_number_of_runs, AlertConsecutiveNumOfRuns: consecutive_number_of_runs, AlertThresholdPercentOfRuns: threshold_percentage_of_runs,
+			AlertThresholdNumOfFailingNodes: number_of_failing_nodes, TriggerType: IdName{Id: trigger_type_id, Name: trigger_type_name},
+			OperationType:              IdName{Id: operation_type_id, Name: operation_type_name},
+			StatisticalType:            IdName{Id: statistical_type_id, Name: statistical_type_name},
+			TrailingHistoricalInterval: IdName{Id: historical_interval_id, Name: historical_interval_name},
+			AlertWarningTrigger:        warning_trigger, AlertCriticalTrigger: critical_trigger, Expression: expression,
+			AlertEnableConsecutive: enable_consecutive, AlertWarningReminder: IdName{Id: warning_reminder_id, Name: warning_reminder_name},
+			AlertCriticalReminder:  IdName{Id: critical_reminder_id, Name: critical_reminder_name},
+			AlertThresholdInterval: IdName{Id: threshold_interval_id, Name: threshold_interval_name},
+			AlertUseRollingWindow:  use_rolling_window, AlertNotificationType: notification_type_id,
+			AlertType:               IdName{Id: alert_type_id, Name: alert_type_name},
+			AlertSubType:            IdName{Id: alert_sub_type_id, Name: alert_sub_type_name},
+			AlertEnforceTestFailure: enforce_test_failure,
+			AlertOmitScatterplot:    omit_scatterplot,
+			Subject:                 subject,
+			NotifyOnWarning:         notifyOnWarning,
+			NotifyOnCritical:        notifyOnCritical,
+			NotifyOnImproved:        notifyOnImproved,
+			AlertRecipientEmails:    all_email_ids,
+		})
 	}
 
 	notif_group_list := alert_setting["notification_group"].(*schema.Set).List()
 
 	var all_alert_webhook_ids []int
-	var all_contact_group_ids []int
 	var all_email_ids []string
 
 	for _, notif_group_item := range notif_group_list {
@@ -326,11 +365,6 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			all_alert_webhook_ids = append(all_alert_webhook_ids, tfalert_webhook.(int))
 		}
 
-		tfrecipient_ids := notification_group["recipient_contact_group_ids"].([]interface{})
-		for _, recipient_id := range tfrecipient_ids {
-			all_contact_group_ids = append(all_contact_group_ids, recipient_id.(int))
-		}
-
 		tfemail_ids := notification_group["recipient_email_ids"].([]interface{})
 		for _, email_id := range tfemail_ids {
 			all_email_ids = append(all_email_ids, email_id.(string))
@@ -339,7 +373,6 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 	testConfig.AlertSettingType = 1
 	testConfig.AlertWebhookIds = all_alert_webhook_ids
-	testConfig.AlertRecipientIds = all_contact_group_ids
 	testConfig.AlertRecipientEmails = all_email_ids
 
 	return nil
