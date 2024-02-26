@@ -71,7 +71,6 @@ Optional:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `recipient_contact_group_ids` (List of Number) Optional. List of contact group ids to alert
 - `recipient_email_ids` (List of String) Optional. List of emails to alert
 
 
@@ -92,6 +91,7 @@ Optional:
 - `enable_consecutive` (Boolean) Optional. Checks consecutive number of runs or nodes for triggering alerts.
 - `enforce_test_failure` (Boolean) Optional. Sets enforce test failure property for an alert
 - `historical_interval` (String) Optional. Sets the historical interval for 'trailing value' trigger type: '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours', '1 day', '1 week'
+- `notification_group` (Block Set, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 - `notification_type` (String) Optional. Notification group type to alert. Supports only default contacts for now.
 - `number_of_failing_nodes` (Number) Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'
 - `omit_scatterplot` (Boolean) Optional. Omits scatterplot image from alert emails if set to true
@@ -104,6 +104,21 @@ Optional:
 - `use_rolling_window` (Boolean) Optional. Set to true for using rolling window instead of schedule time threshold
 - `warning_reminder` (String) Optional. Sets alert warning reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'
 - `warning_trigger` (Number) Optional. Warning trigger value for 'specific value' and 'trailing value' trigger types.
+
+<a id="nestedblock--alert_settings--alert_rule--notification_group"></a>
+### Nested Schema for `alert_settings.alert_rule.notification_group`
+
+Required:
+
+- `recipient_email_ids` (List of String) List of email addresses to receive alert notifications.
+- `subject` (String) Email subject for the alert notifications. Required field.
+
+Optional:
+
+- `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
+- `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
+- `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
+
 
 
 
