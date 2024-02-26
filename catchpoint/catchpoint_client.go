@@ -486,6 +486,9 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 	}
 
 	notifSubject := "${NotificationLevel}:  test=#${TestId} - ${TestName}, alert=${AlertType}"
+	if config.AlertSubject != "" {
+		notifSubject = config.AlertSubject
+	}
 	notificationGroup := NotificationGroupStruct{Subject: notifSubject, NotifyOnWarning: true, NotifyOnCritical: true, NotifyOnImproved: true, AlertWebhooks: alertWebhooks, Recipients: recipients}
 
 	alertGroup := AlertGroupStruct{AlertSettingType: alertSettingType, NotificationGroup: notificationGroup, AlertGroupItems: alertGroupItems}

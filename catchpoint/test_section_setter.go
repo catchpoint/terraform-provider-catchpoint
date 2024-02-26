@@ -308,7 +308,6 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 				return errors.New("must specify the alert sub type. for example 'test' for alert_type 'availability'")
 			}
 		}
-		log.Printf("[DEBUG] alert notification_group: %#v", alert_rule["notification_group"])
 		alert_notif_group_list := alert_rule["notification_group"].(*schema.Set).List()
 
 		var subject string
@@ -319,7 +318,6 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 		for _, notif_group_item := range alert_notif_group_list {
 			notification_group := notif_group_item.(map[string]interface{})
-			log.Printf("[DEBUG] notification_group: %#v", notification_group)
 			subject = notification_group["subject"].(string)
 			notifyOnCritical = notification_group["notify_on_critical"].(bool)
 			notifyOnWarning = notification_group["notify_on_warning"].(bool)
@@ -356,6 +354,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
+	var subject string
 
 	for _, notif_group_item := range notif_group_list {
 		notification_group := notif_group_item.(map[string]interface{})
@@ -369,11 +368,14 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		for _, email_id := range tfemail_ids {
 			all_email_ids = append(all_email_ids, email_id.(string))
 		}
+
+		subject = subject + notification_group["subject"].(string)
 	}
 
 	testConfig.AlertSettingType = 1
 	testConfig.AlertWebhookIds = all_alert_webhook_ids
 	testConfig.AlertRecipientEmails = all_email_ids
+	testConfig.AlertSubject = subject
 
 	return nil
 }
