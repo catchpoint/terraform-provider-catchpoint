@@ -365,9 +365,15 @@ func resourceTracerouteTestType() *schema.Resource {
 						"notification_group": {
 							Type:        schema.TypeSet,
 							Required:    true,
+							MaxItems:    1,
 							Description: "Notification group for setting up alert recipients, adding alert webhook ids",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
+									"subject": {
+										Type:        schema.TypeString,
+										Description: "Email subject for the alert notifications. Required field.",
+										Required:    true,
+									},
 									"alert_webhook_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
