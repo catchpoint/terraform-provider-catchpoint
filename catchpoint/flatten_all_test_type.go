@@ -190,6 +190,7 @@ func flattenRecipient(recipient Recipient) map[string]interface{} {
 
 func flattenNotificationGroup(notificationGroup NotificationGroupStruct) []interface{} {
 	alertWebhooks := make([]int, len(notificationGroup.AlertWebhooks))
+
 	for i, webhook := range notificationGroup.AlertWebhooks {
 		alertWebhooks[i] = webhook.Id
 	}
@@ -201,8 +202,15 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct) []inter
 	}
 
 	notifGroupMap := map[string]interface{}{
-		"alert_webhook_ids":   alertWebhooks,
 		"recipient_email_ids": recipients,
+		"subject":             notificationGroup.Subject,
+		"notify_on_warning":   notificationGroup.NotifyOnWarning,
+		"notify_on_critical":  notificationGroup.NotifyOnCritical,
+		"notify_on_improved":  notificationGroup.NotifyOnImproved,
+	}
+
+	if len(alertWebhooks) > 0 {
+		notifGroupMap["alert_webhook_ids"] = alertWebhooks
 	}
 	return []interface{}{notifGroupMap}
 }
@@ -231,6 +239,7 @@ func flattenAlertGroupItem(alertGroupItem AlertGroupItem) map[string]interface{}
 		"critical_trigger":             trigger.CriticalTrigger,
 		"use_rolling_window":           trigger.UseIntervalRollingWindow,
 		"expression":                   trigger.Expression,
+		"notification_group":           flattenNotificationGroup(alertGroupItem.NotificationGroup),
 	}
 
 	if alertGroupItem.AlertSubType != nil {
