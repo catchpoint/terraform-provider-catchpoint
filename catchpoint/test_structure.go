@@ -55,7 +55,6 @@ type TestConfig struct {
 	AlertSettingType               int
 	AlertRuleConfigs               []AlertRuleConfig
 	AlertWebhookIds                []int
-	AlertRecipientIds              []int
 	AlertRecipientEmails           []string
 	AdvancedSettingType            int
 	AppliedTestFlags               []int
@@ -106,6 +105,12 @@ type AlertRuleConfig struct {
 	AlertSubType                    IdName
 	AlertEnforceTestFailure         bool
 	AlertOmitScatterplot            bool
+	Subject                         string
+	NotifyOnWarning                 bool
+	NotifyOnCritical                bool
+	NotifyOnImproved                bool
+	AlertWebhookIds                 []int
+	AlertRecipientEmails            []string
 }
 
 type TestLabel struct {
