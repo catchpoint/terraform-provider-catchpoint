@@ -66,6 +66,7 @@ type TestConfig struct {
 	ViewportWidth                  int
 	TracerouteFailureHopCount      int
 	TraceroutePingCount            int
+	AlertSubject                   string
 }
 
 type TestHttpHeaderRequest struct {

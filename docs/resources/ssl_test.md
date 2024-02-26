@@ -61,7 +61,7 @@ Optional:
 
 Required:
 
-- `notification_group` (Block Set, Min: 1) Notification group for setting up alert recipients, adding alert webhook ids (see [below for nested schema](#nestedblock--alert_settings--notification_group))
+- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for setting up alert recipients, adding alert webhook ids (see [below for nested schema](#nestedblock--alert_settings--notification_group))
 
 Optional:
 
@@ -69,6 +69,10 @@ Optional:
 
 <a id="nestedblock--alert_settings--notification_group"></a>
 ### Nested Schema for `alert_settings.notification_group`
+
+Required:
+
+- `subject` (String) Email subject for the alert notifications. Required field.
 
 Optional:
 
