@@ -11,4 +11,5 @@ const (
 	Ping        TestType = 6
 	Bgp         TestType = 20
 	Ssl         TestType = 18
+	Playwright  TestType = 26
 )
