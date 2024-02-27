@@ -146,6 +146,7 @@ Required:
 Optional:
 
 - `maintenance_schedule_id` (Number) The maintenance schedule id to utilize for the test
+- `no_of_subset_nodes` (Number) Number of subset nodes
 - `node_group_ids` (List of Number) Optional if node_ids is used. Node group ids in a list
 - `node_ids` (List of Number) Optional if node_group_ids is used. Node ids in a list
 - `run_schedule_id` (Number) The run schedule id to utilize for the test
