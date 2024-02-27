@@ -37,6 +37,7 @@ func Provider() *schema.Provider {
 			"bgp_test":         resourceBgpTestType(),
 			"dns_test":         resourceDnsTestType(),
 			"ssl_test":         resourceSslTestType(),
+			"playwright_test":  resourcePlaywrightTestType(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
