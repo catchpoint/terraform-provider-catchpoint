@@ -189,6 +189,7 @@ func setScheduleSettings(testTypeId int, schedule_setting map[string]interface{}
 	if node_distribution_id == -1 {
 		return errors.New("invalid node distribution string provided. acceptable values are random and concurrent")
 	}
+	no_of_subset_nodes := schedule_setting["no_of_subset_nodes"].(int)
 	tfnode_ids := schedule_setting["node_ids"].([]interface{})
 	node_ids := make([]int, len(tfnode_ids))
 	for i, tfnode := range tfnode_ids {
@@ -215,6 +216,10 @@ func setScheduleSettings(testTypeId int, schedule_setting map[string]interface{}
 	testConfig.NodeDistribution.Name = node_distribution_name
 	testConfig.NodeIds = node_ids
 	testConfig.NodeGroupIds = node_group_ids
+
+	if no_of_subset_nodes > 0 {
+		testConfig.NoOfSubsetNodes = no_of_subset_nodes
+	}
 
 	return nil
 }

@@ -147,6 +147,7 @@ type ScheduleSetting struct {
 	NetworkType           GenericIdName `json:"networkType"`
 	Nodes                 []Node        `json:"nodes"`
 	NodeGroups            []NodeGroup   `json:"nodeGroups"`
+	NoOfSubsetNodes       int           `json:"roundRobinAmount,omitempty"`
 	Id                    int           `json:"id"`
 }
 
@@ -537,6 +538,9 @@ func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 	}
 	scheduleSettingId := 0
 	scheduleSettings := ScheduleSetting{ScheduleSettingType: scheduleSettingType, RunScheduleId: config.ScheduleRunScheduleId, MaintenanceScheduleId: config.ScheduleMaintenanceScheduleId, Frequency: frequency, TestNodeDistribution: testNodeDistribution, NetworkType: networkType, Nodes: nodes, NodeGroups: nodeGroups, Id: scheduleSettingId}
+	if config.NoOfSubsetNodes > 0 {
+		scheduleSettings.NoOfSubsetNodes = config.NoOfSubsetNodes
+	}
 
 	return scheduleSettings
 }

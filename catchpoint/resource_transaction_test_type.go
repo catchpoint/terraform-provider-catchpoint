@@ -549,6 +549,11 @@ func resourceTransactionTestType() *schema.Resource {
 								Type: schema.TypeInt,
 							},
 						},
+						"no_of_subset_nodes": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "Number of subset nodes",
+						},
 					},
 				},
 			},
