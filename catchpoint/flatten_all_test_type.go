@@ -84,6 +84,7 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 		"maintenance_schedule_id": scheduleSetting.MaintenanceScheduleId,
 		"frequency":               getFrequencyName(scheduleSetting.Frequency.Id),
 		"node_distribution":       getNodeDistributionName(scheduleSetting.TestNodeDistribution.Id),
+		"no_of_subset_nodes":      scheduleSetting.NoOfSubsetNodes,
 		//Backbone network type is currently supported. Remove comment if more types are added
 		//"network_type":            flattenGenericIdName(scheduleSetting.NetworkType),
 	}
