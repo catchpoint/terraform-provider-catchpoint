@@ -1062,7 +1062,6 @@ func resourceTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	jsonStr := createJson(testConfig)
-
 	if m.(*Config).LogJson {
 		log.Printf("[TEST JSON] \n" + jsonStr)
 	}
