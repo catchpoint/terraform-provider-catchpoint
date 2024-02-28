@@ -72,7 +72,6 @@ Optional:
 - `ignore_ssl_failures` (Boolean) Optional. True enables ignore SSL failures setting
 - `stop_test_on_document_complete` (Boolean) Optional. True enables stop test on document complete setting
 - `stop_test_on_dom_content_load` (Boolean) Optional. True enables stop test on DOM content load setting
-- `t30x_redirects_do_not_follow` (Boolean) Optional. True enables 30x redirects do not follow setting
 - `verify_test_on_failure` (Boolean) Optional. True enables verify on test failure setting
 - `viewport_height` (Number) Optional. Set the viewport height. Use with viewport_width attribute
 - `viewport_width` (Number) Optional. Set the viewport width. Use with viewport_height attribute
