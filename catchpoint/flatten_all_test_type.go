@@ -189,7 +189,7 @@ func flattenRecipient(recipient Recipient) map[string]interface{} {
 	}
 }
 
-func flattenNotificationGroup(notificationGroup NotificationGroupStruct) []interface{} {
+func flattenNotificationGroup(notificationGroup NotificationGroupStruct, includeNotify bool) []interface{} {
 	alertWebhooks := make([]int, len(notificationGroup.AlertWebhooks))
 
 	for i, webhook := range notificationGroup.AlertWebhooks {
@@ -205,9 +205,12 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct) []inter
 	notifGroupMap := map[string]interface{}{
 		"recipient_email_ids": recipients,
 		"subject":             notificationGroup.Subject,
-		"notify_on_warning":   notificationGroup.NotifyOnWarning,
-		"notify_on_critical":  notificationGroup.NotifyOnCritical,
-		"notify_on_improved":  notificationGroup.NotifyOnImproved,
+	}
+
+	if includeNotify {
+		notifGroupMap["notify_on_warning"] = notificationGroup.NotifyOnWarning
+		notifGroupMap["notify_on_critical"] = notificationGroup.NotifyOnCritical
+		notifGroupMap["notify_on_improved"] = notificationGroup.NotifyOnImproved
 	}
 
 	if len(alertWebhooks) > 0 {
@@ -240,7 +243,7 @@ func flattenAlertGroupItem(alertGroupItem AlertGroupItem) map[string]interface{}
 		"critical_trigger":             trigger.CriticalTrigger,
 		"use_rolling_window":           trigger.UseIntervalRollingWindow,
 		"expression":                   trigger.Expression,
-		"notification_group":           flattenNotificationGroup(alertGroupItem.NotificationGroup),
+		"notification_group":           flattenNotificationGroup(alertGroupItem.NotificationGroups[0], true),
 	}
 
 	if alertGroupItem.AlertSubType != nil {
@@ -263,7 +266,7 @@ func flattenAlertGroupStruct(alertGroup AlertGroupStruct) []interface{} {
 	}
 
 	alertGroupMap := map[string]interface{}{
-		"notification_group": flattenNotificationGroup(alertGroup.NotificationGroup),
+		"notification_group": flattenNotificationGroup(alertGroup.NotificationGroup, false),
 		"alert_rule":         alertGroupItems,
 	}
 	return []interface{}{alertGroupMap}

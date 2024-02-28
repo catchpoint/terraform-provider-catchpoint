@@ -107,12 +107,7 @@ type AlertRuleConfig struct {
 	AlertSubType                    IdName
 	AlertEnforceTestFailure         bool
 	AlertOmitScatterplot            bool
-	Subject                         string
-	NotifyOnWarning                 bool
-	NotifyOnCritical                bool
-	NotifyOnImproved                bool
-	AlertWebhookIds                 []int
-	AlertRecipientEmails            []string
+	NotificationGroups              []NotificationGroupStruct
 }
 
 type TestLabel struct {
