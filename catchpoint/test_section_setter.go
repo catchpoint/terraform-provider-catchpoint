@@ -319,7 +319,8 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		var notifyOnCritical bool
 		var notifyOnImproved bool
 		var notifyOnWarning bool
-		var all_email_ids []string
+		var all_email_ids []Recipient
+		recipientType := GenericIdName{Id: 2, Name: "Email"}
 
 		for _, notif_group_item := range alert_notif_group_list {
 			notification_group := notif_group_item.(map[string]interface{})
@@ -328,9 +329,29 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			notifyOnWarning = notification_group["notify_on_warning"].(bool)
 			notifyOnImproved = notification_group["notify_on_improved"].(bool)
 			tfemail_ids := notification_group["recipient_email_ids"].([]interface{})
-			for _, email_id := range tfemail_ids {
-				all_email_ids = append(all_email_ids, email_id.(string))
+
+			// Iterating through tfemailIDs and appending Recipient instances to allEmailIDs.
+			for _, emailID := range tfemail_ids {
+				// Convert emailID to string assuming it's stored as string in tfemailIDs.
+				email, ok := emailID.(string)
+				if !ok {
+					// Handle error or skip this emailID if it's not a string.
+					continue
+				}
+				all_email_ids = append(all_email_ids, Recipient{Email: email, RecipientType: recipientType})
 			}
+
+		}
+
+		notificationGroups := []NotificationGroupStruct{
+			{
+				Subject:          subject,
+				NotifyOnWarning:  notifyOnWarning,
+				NotifyOnCritical: notifyOnCritical,
+				NotifyOnImproved: notifyOnImproved,
+				AlertWebhooks:    []AlertWebhook{},
+				Recipients:       all_email_ids,
+			},
 		}
 
 		testConfig.AlertRuleConfigs = append(testConfig.AlertRuleConfigs, AlertRuleConfig{AlertNodeThresholdType: IdName{Id: node_threshold_type_id, Name: node_threshold_type_name}, AlertThresholdNumOfRuns: threshold_number_of_runs, AlertConsecutiveNumOfRuns: consecutive_number_of_runs, AlertThresholdPercentOfRuns: threshold_percentage_of_runs,
@@ -347,11 +368,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			AlertSubType:            IdName{Id: alert_sub_type_id, Name: alert_sub_type_name},
 			AlertEnforceTestFailure: enforce_test_failure,
 			AlertOmitScatterplot:    omit_scatterplot,
-			Subject:                 subject,
-			NotifyOnWarning:         notifyOnWarning,
-			NotifyOnCritical:        notifyOnCritical,
-			NotifyOnImproved:        notifyOnImproved,
-			AlertRecipientEmails:    all_email_ids,
+			NotificationGroups:      notificationGroups,
 		})
 	}
 
