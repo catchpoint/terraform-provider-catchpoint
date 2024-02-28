@@ -196,9 +196,18 @@ func setScheduleSettings(testTypeId int, schedule_setting map[string]interface{}
 		node_ids[i] = tfnode.(int)
 	}
 	tfnode_group_ids := schedule_setting["node_group_ids"].([]interface{})
-	node_group_ids := make([]int, len(tfnode_group_ids))
-	for i, tfnode_group := range tfnode_group_ids {
-		node_group_ids[i] = tfnode_group.(int)
+
+	var nodeGroupIds []NodeGroup
+	networkType := GenericIdName{Id: 0, Name: "Backbone"}
+	for _, id := range tfnode_group_ids {
+		nodeGroup := NodeGroup{
+			Id:                   id.(int),
+			Name:                 "DefaultNodeGroupName",
+			Description:          "",
+			SyntheticNetworkType: networkType,
+			Nodes:                []Node{{Id: 123, Name: "DefaultNodeName", NetworkType: networkType}},
+		}
+		nodeGroupIds = append(nodeGroupIds, nodeGroup)
 	}
 
 	if len(tfnode_ids) == 0 && len(tfnode_group_ids) == 0 {
@@ -215,7 +224,7 @@ func setScheduleSettings(testTypeId int, schedule_setting map[string]interface{}
 	testConfig.NodeDistribution.Id = node_distribution_id
 	testConfig.NodeDistribution.Name = node_distribution_name
 	testConfig.NodeIds = node_ids
-	testConfig.NodeGroupIds = node_group_ids
+	testConfig.NodeGroupIds = nodeGroupIds
 
 	if no_of_subset_nodes > 0 {
 		testConfig.NoOfSubsetNodes = no_of_subset_nodes

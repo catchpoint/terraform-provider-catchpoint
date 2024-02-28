@@ -132,10 +132,11 @@ type Node struct {
 }
 
 type NodeGroup struct {
-	Id          int           `json:"id,omitempty"`
-	Name        string        `json:"name"`
-	Description string        `json:"description"`
-	NetworkType GenericIdName `json:"networkType"`
+	Id                   int           `json:"id,omitempty"`
+	Name                 string        `json:"name"`
+	Description          string        `json:"description"`
+	SyntheticNetworkType GenericIdName `json:"syntheticNetworkType"`
+	Nodes                []Node        `json:"nodes"`
 }
 
 type ScheduleSetting struct {
@@ -517,7 +518,6 @@ func setTestInsightSettings(config *TestConfig) InsightDataStruct {
 
 func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 	nodes := []Node{}
-	nodeGroups := []NodeGroup{}
 	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
 	frequency := GenericIdName{Id: config.TestFrequency.Id, Name: config.TestFrequency.Name}
 	testNodeDistribution := GenericIdName{Id: config.NodeDistribution.Id, Name: config.NodeDistribution.Name}
@@ -527,9 +527,18 @@ func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 			nodes = append(nodes, Node{Id: config.NodeIds[i], Name: "node", NetworkType: networkType})
 		}
 	}
+	// Initialize an empty slice of NodeGroup
+	var nodeGroups []NodeGroup
 	if len(config.NodeGroupIds) > 0 {
 		for i := range config.NodeGroupIds {
-			nodeGroups = append(nodeGroups, NodeGroup{Id: config.NodeGroupIds[i], Name: "nodeGroup", Description: "", NetworkType: networkType})
+			nodeGroup := NodeGroup{
+				Id:                   config.NodeGroupIds[i].Id,
+				Name:                 "DefaultNodeGroupName",
+				Description:          "",
+				SyntheticNetworkType: networkType,
+				Nodes:                []Node{{Id: 123, Name: "DefaultNodeName", NetworkType: networkType}},
+			}
+			nodeGroups = append(nodeGroups, nodeGroup)
 		}
 	}
 	scheduleSettingId := 0
