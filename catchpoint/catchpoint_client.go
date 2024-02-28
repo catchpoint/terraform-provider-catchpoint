@@ -83,15 +83,15 @@ type TriggerStruct struct {
 }
 
 type AlertGroupItem struct {
-	NodeThreshold      NodeThresholdStruct     `json:"nodeThreshold"`
-	Trigger            TriggerStruct           `json:"trigger"`
-	NotificationType   GenericIdName           `json:"notificationType"`
-	AlertType          GenericIdName           `json:"alertType"`
-	AlertSubType       *GenericIdNameOmitEmpty `json:"alertSubType,omitempty"`
-	EnforceTestFailure bool                    `json:"enforceTestFailure"`
-	OmitScatterplot    bool                    `json:"omitScatterplot"`
-	MatchAllRecords    bool                    `json:"matchAllRecords"`
-	NotificationGroup  NotificationGroupStruct `json:"notificationGroup"`
+	NodeThreshold      NodeThresholdStruct       `json:"nodeThreshold"`
+	Trigger            TriggerStruct             `json:"trigger"`
+	NotificationType   GenericIdName             `json:"notificationType"`
+	AlertType          GenericIdName             `json:"alertType"`
+	AlertSubType       *GenericIdNameOmitEmpty   `json:"alertSubType,omitempty"`
+	EnforceTestFailure bool                      `json:"enforceTestFailure"`
+	OmitScatterplot    bool                      `json:"omitScatterplot"`
+	MatchAllRecords    bool                      `json:"matchAllRecords"`
+	NotificationGroups []NotificationGroupStruct `json:"notificationGroups"`
 }
 
 type AlertWebhook struct {
@@ -452,13 +452,9 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 		notificationType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertNotificationType, Name: "DefaultContacts"}
 		alertType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertType.Id, Name: config.AlertRuleConfigs[i].AlertType.Name}
 		alertSubType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].AlertSubType.Id, Name: config.AlertRuleConfigs[i].AlertSubType.Name}
-		subject := config.AlertRuleConfigs[i].Subject
-		notifyOnWarning := config.AlertRuleConfigs[i].NotifyOnWarning
-		NotifyOnCritical := config.AlertRuleConfigs[i].NotifyOnCritical
-		NotifyOnImproved := config.AlertRuleConfigs[i].NotifyOnImproved
-		notificationGroup := NotificationGroupStruct{Subject: subject, NotifyOnWarning: notifyOnWarning, NotifyOnCritical: NotifyOnCritical, NotifyOnImproved: NotifyOnImproved, AlertWebhooks: alertWebhooks, Recipients: recipients}
+		notificationGroups := config.AlertRuleConfigs[i].NotificationGroups
 		if alertSubType != (GenericIdNameOmitEmpty{}) {
-			alertGroupItems = append(alertGroupItems, AlertGroupItem{NodeThreshold: nodeThreshold, Trigger: trigger, NotificationType: notificationType, AlertType: alertType, AlertSubType: &alertSubType, EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure, OmitScatterplot: config.AlertRuleConfigs[i].AlertOmitScatterplot, MatchAllRecords: false, NotificationGroup: notificationGroup})
+			alertGroupItems = append(alertGroupItems, AlertGroupItem{NodeThreshold: nodeThreshold, Trigger: trigger, NotificationType: notificationType, AlertType: alertType, AlertSubType: &alertSubType, EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure, OmitScatterplot: config.AlertRuleConfigs[i].AlertOmitScatterplot, MatchAllRecords: false, NotificationGroups: notificationGroups})
 		} else {
 			alertGroupItems = append(alertGroupItems,
 				AlertGroupItem{NodeThreshold: nodeThreshold,
@@ -468,7 +464,7 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 					EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure,
 					OmitScatterplot:    config.AlertRuleConfigs[i].AlertOmitScatterplot,
 					MatchAllRecords:    false,
-					NotificationGroup:  notificationGroup,
+					NotificationGroups: notificationGroups,
 				})
 		}
 	}
