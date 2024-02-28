@@ -10,36 +10,17 @@ import (
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceTransactionTestType() *schema.Resource {
+func resourcePuppeteerTestType() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceTransactionTestCreate,
-		Read:   resourceTransactionTestRead,
-		Update: resourceTransactionTestUpdate,
-		Delete: resourceTransactionTestDelete,
+		Create: resourcePuppeteerTestCreate,
+		Read:   resourcePuppeteerTestRead,
+		Update: resourcePuppeteerTestUpdate,
+		Delete: resourcePuppeteerTestDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
-			"monitor": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "The monitor to use for the Transaction Test. Supported: 'chrome','mobile','emulated'",
-				Default:      "chrome",
-				ValidateFunc: validation.StringInSlice([]string{"chrome", "mobile", "emulated"}, false),
-			},
-			"simulate": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "The device to simulate for mobile monitor",
-				ValidateFunc: validation.StringInSlice([]string{"android", "iphone", "ipad 2", "kindle fire", "galaxy tab", "iphone 5", "ipad mini", "galaxy note", "nexus 7", "nexus 4", "nokia lumia920", "iphone 6", "blackberry z30", "galaxy s4", "htc onex", "lg optimusg", "droid razr hd", "nexus 6", "iphone 6s", "galaxy s6", "iphone 7", "google pixel", "galaxy s8"}, false),
-			},
-			"chrome_version": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Description:  "Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
-				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "108", "89", "87", "85", "75", "71", "66", "63", "59", "53"}, false),
-			},
 			"division_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
@@ -110,26 +91,6 @@ func resourceTransactionTestType() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Optional. Test status: active or inactive",
-			},
-			"label": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Description: "Optional. Label with key, values pair",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"key": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"values": {
-							Type:     schema.TypeList,
-							Required: true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
-					},
-				},
 			},
 			"thresholds": {
 				Type:        schema.TypeSet,
@@ -929,7 +890,7 @@ func resourceTransactionTestType() *schema.Resource {
 	}
 }
 
-func resourceTransactionTestCreate(d *schema.ResourceData, m interface{}) error {
+func resourcePuppeteerTestCreate(d *schema.ResourceData, m interface{}) error {
 	api_token := m.(*Config).ApiToken
 	monitor := d.Get("monitor").(string)
 	monitor_id := getMonitorId(monitor)
@@ -968,7 +929,7 @@ func resourceTransactionTestCreate(d *schema.ResourceData, m interface{}) error 
 	end_time := d.Get("end_time").(string)
 	status := d.Get("status").(string)
 	status_id := getTestStatusTypeId(status)
-	test_type := TestType(Transaction)
+	test_type := TestType(Puppeteer)
 
 	var testConfig = TestConfig{}
 
@@ -1078,10 +1039,10 @@ func resourceTransactionTestCreate(d *schema.ResourceData, m interface{}) error 
 	log.Print(respBody)
 
 	d.SetId(testId)
-	return resourceTransactionTestRead(d, m)
+	return resourcePuppeteerTestRead(d, m)
 }
 
-func resourceTransactionTestRead(d *schema.ResourceData, m interface{}) error {
+func resourcePuppeteerTestRead(d *schema.ResourceData, m interface{}) error {
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
 
@@ -1131,10 +1092,10 @@ func resourceTransactionTestRead(d *schema.ResourceData, m interface{}) error {
 	return nil
 }
 
-func resourceTransactionTestUpdate(d *schema.ResourceData, m interface{}) error {
+func resourcePuppeteerTestUpdate(d *schema.ResourceData, m interface{}) error {
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
-	test_type := TestType(Transaction)
+	test_type := TestType(Puppeteer)
 	var testConfig = TestConfig{}
 	var jsonPatchDocs = []string{}
 
@@ -1366,10 +1327,10 @@ func resourceTransactionTestUpdate(d *schema.ResourceData, m interface{}) error 
 		log.Print(respBody)
 	}
 
-	return resourceTransactionTestRead(d, m)
+	return resourcePuppeteerTestRead(d, m)
 }
 
-func resourceTransactionTestDelete(d *schema.ResourceData, m interface{}) error {
+func resourcePuppeteerTestDelete(d *schema.ResourceData, m interface{}) error {
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
 

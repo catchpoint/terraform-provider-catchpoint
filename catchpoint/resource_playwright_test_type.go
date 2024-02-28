@@ -826,12 +826,6 @@ func resourcePlaywrightTestType() *schema.Resource {
 							Optional:    true,
 							Default:     false,
 						},
-						"t30x_redirects_do_not_follow": {
-							Type:        schema.TypeBool,
-							Description: "Optional. True enables 30x redirects do not follow setting",
-							Optional:    true,
-							Default:     false,
-						},
 						"enable_self_versus_third_party_zones": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables self versus third party zones setting and matches self zone by test URL",
