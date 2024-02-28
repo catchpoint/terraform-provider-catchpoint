@@ -51,7 +51,7 @@ type TestConfig struct {
 	TestFrequency                  IdName
 	NodeDistribution               IdName
 	NodeIds                        []int
-	NodeGroupIds                   []int
+	NodeGroupIds                   []NodeGroup
 	NoOfSubsetNodes                int
 	AlertSettingType               int
 	AlertRuleConfigs               []AlertRuleConfig
