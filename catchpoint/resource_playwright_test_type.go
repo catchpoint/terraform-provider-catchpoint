@@ -983,7 +983,6 @@ func resourcePlaywrightTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	setRequestData(int(test_type), test_script, monitor_id, test_script_type_id, &testConfig)
-	log.Printf("[DEBUG] testConfig : %#v", testConfig)
 	label, labelOk := d.GetOk("label")
 	if labelOk {
 		label_lists := label.(*schema.Set).List()
@@ -1049,7 +1048,6 @@ func resourcePlaywrightTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	jsonStr := createJson(testConfig)
-	log.Printf("[DEBUG] jsonStr : %#v", jsonStr)
 
 	if m.(*Config).LogJson {
 		log.Printf("[TEST JSON] \n" + jsonStr)
