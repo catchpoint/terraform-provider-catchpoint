@@ -262,7 +262,10 @@ func createJson(config TestConfig) string {
 
 	requestData := setTestRequestData(&config)
 
-	if testType.Id == int(TestType(Api)) || testType.Id == int(TestType(Transaction)) {
+	if testType.Id == int(TestType(Api)) ||
+		testType.Id == int(TestType(Transaction)) ||
+		testType.Id == int(TestType(Playwright)) ||
+		testType.Id == int(TestType(Puppeteer)) {
 		t.TestRequestData = &requestData
 	}
 

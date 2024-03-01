@@ -21,6 +21,13 @@ func resourcePuppeteerTestType() *schema.Resource {
 		},
 
 		Schema: map[string]*schema.Schema{
+			"monitor": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "The monitor to use for the puppeteer Test. Supported: 'chrome'",
+				Default:      "chrome",
+				ValidateFunc: validation.StringInSlice([]string{"chrome"}, false),
+			},
 			"division_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
