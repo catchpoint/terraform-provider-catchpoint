@@ -54,7 +54,11 @@ func setAdvancedSettings(testTypeId int, advanced_setting map[string]interface{}
 		}
 	}
 
-	if testTypeId == int(TestType(Web)) || testTypeId == int(TestType(Api)) || testTypeId == int(TestType(Transaction)) {
+	if testTypeId == int(TestType(Web)) ||
+		testTypeId == int(TestType(Api)) ||
+		testTypeId == int(TestType(Transaction)) ||
+		testTypeId == int(TestType(Playwright)) ||
+		testTypeId == int(TestType(Puppeteer)) {
 		enforce_test_failure_if_runs_longer_than := advanced_setting["enforce_test_failure_if_runs_longer_than"].(int)
 		viewport_height := advanced_setting["viewport_height"].(int)
 		viewport_width := advanced_setting["viewport_width"].(int)
@@ -78,7 +82,13 @@ func setAdvancedSettings(testTypeId int, advanced_setting map[string]interface{}
 		testConfig.EdnsSubnet = edns_subnet
 	}
 
-	if testTypeId == int(TestType(Ssl)) || testTypeId == int(TestType(Dns)) || testTypeId == int(TestType(Web)) || testTypeId == int(TestType(Api)) || testTypeId == int(TestType(Transaction)) {
+	if testTypeId == int(TestType(Ssl)) ||
+		testTypeId == int(TestType(Dns)) ||
+		testTypeId == int(TestType(Web)) ||
+		testTypeId == int(TestType(Api)) ||
+		testTypeId == int(TestType(Transaction)) ||
+		testTypeId == int(TestType(Playwright)) ||
+		testTypeId == int(TestType(Puppeteer)) {
 		additional_monitor := advanced_setting["additional_monitor"].(string)
 		if additional_monitor != "" {
 			additional_monitor_id, additional_monitor_name := getAdditionalMonitorTypeId(additional_monitor)
