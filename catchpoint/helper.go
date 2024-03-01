@@ -67,6 +67,7 @@ func getMonitorId(monitor string) int {
 		29: "traceroute tcp",
 		31: "ssl",
 		34: "bgp",
+		39: "playwright",
 		41: "bgp basic",
 	}
 	for id, monitorType := range monitorTypes {
@@ -96,6 +97,7 @@ func getMonitorName(monitor int) string {
 		29: "traceroute tcp",
 		31: "ssl",
 		34: "bgp",
+		39: "playwright",
 		41: "bgp basic",
 	}
 	for id, monitorType := range monitorTypes {
@@ -110,6 +112,8 @@ func getApiScriptTypeId(scriptType string) int {
 	apiScriptTypes := map[int]string{
 		1: "selenium",
 		2: "javascript",
+		3: "playwright",
+		4: "puppeteer",
 	}
 	for id, apiScriptType := range apiScriptTypes {
 		if apiScriptType == scriptType {

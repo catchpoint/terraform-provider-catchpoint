@@ -24,9 +24,9 @@ func resourcePlaywrightTestType() *schema.Resource {
 			"monitor": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Description:  "The monitor to use for the Playwright Test. Supported: 'edge', 'chrome'",
-				Default:      "edge",
-				ValidateFunc: validation.StringInSlice([]string{"edge", "chrome"}, false),
+				Description:  "The monitor to use for the Playwright Test. Supported: 'playwright', 'chrome'",
+				Default:      "playwright",
+				ValidateFunc: validation.StringInSlice([]string{"playwright", "chrome"}, false),
 			},
 			"simulate": {
 				Type:         schema.TypeString,
@@ -74,9 +74,9 @@ func resourcePlaywrightTestType() *schema.Resource {
 			"test_script_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Description:  "The type of script. Supported: 'selenium'",
-				ValidateFunc: validation.StringInSlice([]string{"selenium"}, false),
-				Default:      "selenium",
+				Description:  "The type of script. Supported: 'playwright'",
+				ValidateFunc: validation.StringInSlice([]string{"playwright"}, false),
+				Default:      "playwright",
 			},
 			"gateway_address_or_host": {
 				Type:        schema.TypeString,
@@ -540,6 +540,11 @@ func resourcePlaywrightTestType() *schema.Resource {
 								Type: schema.TypeInt,
 							},
 						},
+						"no_of_subset_nodes": {
+							Type:        schema.TypeInt,
+							Optional:    true,
+							Description: "Number of subset nodes",
+						},
 					},
 				},
 			},
@@ -978,7 +983,7 @@ func resourcePlaywrightTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	setRequestData(int(test_type), test_script, monitor_id, test_script_type_id, &testConfig)
-
+	log.Printf("[DEBUG] testConfig : %#v", testConfig)
 	label, labelOk := d.GetOk("label")
 	if labelOk {
 		label_lists := label.(*schema.Set).List()
@@ -1044,6 +1049,7 @@ func resourcePlaywrightTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	jsonStr := createJson(testConfig)
+	log.Printf("[DEBUG] jsonStr : %#v", jsonStr)
 
 	if m.(*Config).LogJson {
 		log.Printf("[TEST JSON] \n" + jsonStr)
