@@ -186,6 +186,7 @@ func flattenRecipient(recipient Recipient) map[string]interface{} {
 		"id":            recipient.Id,
 		"email":         recipient.Email,
 		"recipientType": recipient.RecipientType.Name,
+		"name":          recipient.Name,
 	}
 }
 
@@ -196,15 +197,22 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct, include
 		alertWebhooks[i] = webhook.Id
 	}
 
-	recipients := make([]string, len(notificationGroup.Recipients))
-	for i, recipient := range notificationGroup.Recipients {
+	var recipients []string
+	var contactGroups []string
+	for _, recipient := range notificationGroup.Recipients {
 		recipientFlattened := flattenRecipient(recipient)
-		recipients[i] = recipientFlattened["email"].(string)
+		var value = recipientFlattened["email"].(string)
+		if isValidEmail(value) {
+			recipients = append(recipients, value)
+		} else {
+			contactGroups = append(contactGroups, value)
+		}
 	}
 
 	notifGroupMap := map[string]interface{}{
 		"recipient_email_ids": recipients,
 		"subject":             notificationGroup.Subject,
+		"contact_groups":      contactGroups,
 	}
 
 	if includeNotify {

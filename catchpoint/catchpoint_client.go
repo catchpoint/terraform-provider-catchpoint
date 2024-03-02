@@ -102,6 +102,7 @@ type Recipient struct {
 	Id            int           `json:"id,omitempty"`
 	Email         string        `json:"email"`
 	RecipientType GenericIdName `json:"recipientType"`
+	Name          string        `json:"name"`
 }
 
 type NotificationGroupStruct struct {
@@ -477,6 +478,13 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 		recipientType := GenericIdName{Id: 2, Name: "Email"}
 		for i := range config.AlertRecipientEmails {
 			recipients = append(recipients, Recipient{Email: config.AlertRecipientEmails[i], RecipientType: recipientType})
+		}
+	}
+
+	if len(config.AlertContactGroups) > 0 {
+		recipientType := GenericIdName{Id: 1, Name: "ContactGroup"}
+		for i := range config.AlertContactGroups {
+			recipients = append(recipients, Recipient{Id: i + 1, RecipientType: recipientType, Name: config.AlertContactGroups[i]})
 		}
 	}
 
