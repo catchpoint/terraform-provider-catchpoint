@@ -32,6 +32,7 @@ description: |-
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `gateway_address_or_host` (String) Host/IP to use for network troubleshooting and monitoring
 - `insights` (Block Set, Max: 1) Optional. Used for overriding the insights section (see [below for nested schema](#nestedblock--insights))
+- `monitor` (String) The monitor to use for the puppeteer Test. Supported: 'chrome'
 - `request_settings` (Block Set, Max: 1) Optional. Used for overriding authentication and HTTP request headers (see [below for nested schema](#nestedblock--request_settings))
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
 - `start_time` (String) Optional. Start time for the Test in ISO format
@@ -96,6 +97,7 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
+- `contact_groups` (List of String) List of contact groups to receive alert notifications.
 - `recipient_email_ids` (List of String) Optional. List of emails to alert
 
 
@@ -141,6 +143,7 @@ Required:
 
 Optional:
 
+- `contact_groups` (List of String) List of contact groups to receive alert notifications.
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.

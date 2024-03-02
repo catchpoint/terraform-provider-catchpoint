@@ -340,6 +340,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		var notifyOnWarning bool
 		var all_email_ids []Recipient
 		recipientType := GenericIdName{Id: 2, Name: "Email"}
+		contactGroupType := GenericIdName{Id: 1, Name: "ContactGroup"}
 
 		for _, notif_group_item := range alert_notif_group_list {
 			notification_group := notif_group_item.(map[string]interface{})
@@ -348,6 +349,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			notifyOnWarning = notification_group["notify_on_warning"].(bool)
 			notifyOnImproved = notification_group["notify_on_improved"].(bool)
 			tfemail_ids := notification_group["recipient_email_ids"].([]interface{})
+			contactGroups := notification_group["contact_groups"].([]interface{})
 
 			// Iterating through tfemailIDs and appending Recipient instances to allEmailIDs.
 			for _, emailID := range tfemail_ids {
@@ -358,6 +360,17 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 					continue
 				}
 				all_email_ids = append(all_email_ids, Recipient{Email: email, RecipientType: recipientType})
+			}
+
+			// Iterating through tfemailIDs and appending Recipient instances to allEmailIDs.
+			for i, contactGroup := range contactGroups {
+				// Convert emailID to string assuming it's stored as string in tfemailIDs.
+				contact, ok := contactGroup.(string)
+				if !ok {
+					// Handle error or skip this emailID if it's not a string.
+					continue
+				}
+				all_email_ids = append(all_email_ids, Recipient{Id: i + 1, RecipientType: contactGroupType, Name: contact})
 			}
 
 		}
@@ -395,6 +408,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
+	var all_contact_groups []string
 	var subject string
 
 	for _, notif_group_item := range notif_group_list {
@@ -410,12 +424,18 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			all_email_ids = append(all_email_ids, email_id.(string))
 		}
 
+		ContactGroups := notification_group["contact_groups"].([]interface{})
+		for _, contactGroup := range ContactGroups {
+			all_contact_groups = append(all_contact_groups, contactGroup.(string))
+		}
+
 		subject = subject + notification_group["subject"].(string)
 	}
 
 	testConfig.AlertSettingType = 1
 	testConfig.AlertWebhookIds = all_alert_webhook_ids
 	testConfig.AlertRecipientEmails = all_email_ids
+	testConfig.AlertContactGroups = all_contact_groups
 	testConfig.AlertSubject = subject
 
 	return nil

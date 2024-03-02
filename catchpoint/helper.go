@@ -2,6 +2,7 @@ package catchpoint
 
 import (
 	"math/rand"
+	"regexp"
 	"time"
 )
 
@@ -1062,4 +1063,15 @@ func getAuthenticationTypeId(authenticationType string) (int, string) {
 		}
 	}
 	return -1, ""
+}
+
+func isValidEmail(email string) bool {
+	// Regular expression pattern for validating email addresses
+	pattern := `^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`
+
+	// Compile the pattern
+	regex := regexp.MustCompile(pattern)
+
+	// Use the MatchString method to check if the email matches the pattern
+	return regex.MatchString(email)
 }
