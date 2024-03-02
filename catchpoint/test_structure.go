@@ -57,6 +57,7 @@ type TestConfig struct {
 	AlertRuleConfigs               []AlertRuleConfig
 	AlertWebhookIds                []int
 	AlertRecipientEmails           []string
+	AlertContactGroups             []string
 	AdvancedSettingType            int
 	AppliedTestFlags               []int
 	MaxStepRuntimeSecOverride      int

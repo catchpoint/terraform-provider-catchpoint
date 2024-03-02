@@ -77,6 +77,7 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
+- `contact_groups` (List of String) List of contact groups to receive alert notifications.
 - `recipient_email_ids` (List of String) Optional. List of emails to alert
 
 
@@ -121,6 +122,7 @@ Required:
 
 Optional:
 
+- `contact_groups` (List of String) List of contact groups to receive alert notifications.
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.

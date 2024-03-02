@@ -724,6 +724,14 @@ func resourcePlaywrightTestType() *schema.Resource {
 														Type: schema.TypeString,
 													},
 												},
+												"contact_groups": {
+													Type:        schema.TypeList,
+													Optional:    true,
+													Description: "List of contact groups to receive alert notifications.",
+													Elem: &schema.Schema{
+														Type: schema.TypeString,
+													},
+												},
 											},
 										},
 									},
@@ -754,6 +762,14 @@ func resourcePlaywrightTestType() *schema.Resource {
 										Type:        schema.TypeList,
 										Optional:    true,
 										Description: "Optional. List of emails to alert",
+										Elem: &schema.Schema{
+											Type: schema.TypeString,
+										},
+									},
+									"contact_groups": {
+										Type:        schema.TypeList,
+										Optional:    true,
+										Description: "List of contact groups to receive alert notifications.",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
