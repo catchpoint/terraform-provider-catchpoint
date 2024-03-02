@@ -34,14 +34,14 @@ description: |-
 - `gateway_address_or_host` (String) Host/IP to use for network troubleshooting and monitoring
 - `insights` (Block Set, Max: 1) Optional. Used for overriding the insights section (see [below for nested schema](#nestedblock--insights))
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
-- `monitor` (String) The monitor to use for the Playwright Test. Supported: 'edge', 'chrome'
+- `monitor` (String) The monitor to use for the Playwright Test. Supported: 'playwright', 'chrome'
 - `request_settings` (Block Set, Max: 1) Optional. Used for overriding authentication and HTTP request headers (see [below for nested schema](#nestedblock--request_settings))
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
 - `simulate` (String) The device to simulate for mobile monitor
 - `start_time` (String) Optional. Start time for the Test in ISO format
 - `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
-- `test_script_type` (String) The type of script. Supported: 'selenium'
+- `test_script_type` (String) The type of script. Supported: 'playwright'
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
 
 ### Read-Only
@@ -100,6 +100,7 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
+- `contact_groups` (List of String) List of contact groups to receive alert notifications.
 - `recipient_email_ids` (List of String) Optional. List of emails to alert
 
 
@@ -145,6 +146,7 @@ Required:
 
 Optional:
 
+- `contact_groups` (List of String) List of contact groups to receive alert notifications.
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
@@ -388,6 +390,7 @@ Required:
 Optional:
 
 - `maintenance_schedule_id` (Number) The maintenance schedule id to utilize for the test
+- `no_of_subset_nodes` (Number) Number of subset nodes
 - `node_group_ids` (List of Number) Optional if node_ids is used. Node group ids in a list
 - `node_ids` (List of Number) Optional if node_group_ids is used. Node ids in a list
 - `run_schedule_id` (Number) The run schedule id to utilize for the test
