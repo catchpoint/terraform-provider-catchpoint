@@ -28,6 +28,18 @@ func resourcePuppeteerTestType() *schema.Resource {
 				Default:      "chrome",
 				ValidateFunc: validation.StringInSlice([]string{"chrome"}, false),
 			},
+			"simulate": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "The device to simulate for mobile monitor",
+				ValidateFunc: validation.StringInSlice([]string{"android", "iphone", "ipad 2", "kindle fire", "galaxy tab", "iphone 5", "ipad mini", "galaxy note", "nexus 7", "nexus 4", "nokia lumia920", "iphone 6", "blackberry z30", "galaxy s4", "htc onex", "lg optimusg", "droid razr hd", "nexus 6", "iphone 6s", "galaxy s6", "iphone 7", "google pixel", "galaxy s8"}, false),
+			},
+			"chrome_version": {
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
+				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "108", "89", "87", "85", "75", "71", "66", "63", "59", "53"}, false),
+			},
 			"division_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
@@ -62,9 +74,9 @@ func resourcePuppeteerTestType() *schema.Resource {
 			"test_script_type": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Description:  "The type of script. Supported: 'selenium'",
-				ValidateFunc: validation.StringInSlice([]string{"selenium"}, false),
-				Default:      "selenium",
+				Description:  "The type of script. Supported: 'puppeteer'",
+				ValidateFunc: validation.StringInSlice([]string{"puppeteer"}, false),
+				Default:      "puppeteer",
 			},
 			"gateway_address_or_host": {
 				Type:        schema.TypeString,
@@ -667,7 +679,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										Optional:    true,
 										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings.",
+										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
@@ -695,8 +707,8 @@ func resourcePuppeteerTestType() *schema.Resource {
 												},
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
-													Required:    true,
-													Description: "List of email addresses to receive alert notifications.",
+													Optional:    true,
+													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -704,7 +716,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of contact groups to receive alert notifications.",
+													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -719,7 +731,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 							Type:        schema.TypeSet,
 							Required:    true,
 							MaxItems:    1,
-							Description: "Notification group for setting up alert recipients, adding alert webhook ids",
+							Description: "Notification group for setting up alert recipients, adding alert webhook ids. To ensure either recipient_email_ids or contact_groups is provided",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"subject": {
@@ -738,7 +750,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 									"recipient_email_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Optional. List of emails to alert",
+										Description: "Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -746,7 +758,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "List of contact groups to receive alert notifications.",
+										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
