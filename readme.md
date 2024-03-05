@@ -1,3 +1,7 @@
+# Only for Catchpoint Internal Testing
+
+This build is intended solely for testing purposes. We will be releasing a major version, v3.0.0, on March 12, 2024. Please refrain from using this build. 
+
 # Catchpoint Provider
 
 With the Catchpoint Terraform provider, users can manage Web, API, Transaction, DNS, SSL, BGP, Traceroute, and Ping tests with minimum configurations. To inherit sections such as Scheduling, Advanced Settings, Insights, and Alerts, simply omit the corresponding blocks.
