@@ -348,26 +348,32 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			notifyOnCritical = notification_group["notify_on_critical"].(bool)
 			notifyOnWarning = notification_group["notify_on_warning"].(bool)
 			notifyOnImproved = notification_group["notify_on_improved"].(bool)
-			tfemail_ids := notification_group["recipient_email_ids"].([]interface{})
-			contactGroups := notification_group["contact_groups"].([]interface{})
+			var emailIds []interface{}
 
-			// Iterating through tfemailIDs and appending Recipient instances to allEmailIDs.
-			for _, emailID := range tfemail_ids {
-				// Convert emailID to string assuming it's stored as string in tfemailIDs.
+			if notificationGroup, ok := notification_group["recipient_email_ids"]; ok {
+				if email_ids, ok := notificationGroup.([]interface{}); ok {
+					emailIds = email_ids
+				}
+			}
+			var contactGroups []interface{}
+
+			if notificationGroup, ok := notification_group["contact_groups"]; ok {
+				if groups, ok := notificationGroup.([]interface{}); ok {
+					contactGroups = groups
+				}
+			}
+
+			for _, emailID := range emailIds {
 				email, ok := emailID.(string)
 				if !ok {
-					// Handle error or skip this emailID if it's not a string.
 					continue
 				}
 				all_email_ids = append(all_email_ids, Recipient{Email: email, RecipientType: recipientType})
 			}
 
-			// Iterating through tfemailIDs and appending Recipient instances to allEmailIDs.
 			for i, contactGroup := range contactGroups {
-				// Convert emailID to string assuming it's stored as string in tfemailIDs.
 				contact, ok := contactGroup.(string)
 				if !ok {
-					// Handle error or skip this emailID if it's not a string.
 					continue
 				}
 				all_email_ids = append(all_email_ids, Recipient{Id: i + 1, RecipientType: contactGroupType, Name: contact})
