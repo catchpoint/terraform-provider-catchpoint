@@ -27,6 +27,7 @@ description: |-
 - `advanced_settings` (Block Set, Max: 1) Optional. Used for overriding the advanced settings (see [below for nested schema](#nestedblock--advanced_settings))
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
 - `alerts_paused` (Boolean) Optional. Switch for pausing Test alerts
+- `chrome_version` (String) Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'
 - `enable_test_data_webhook` (Boolean) Optional. Switch for enabling test data webhook feature
 - `end_time` (String) Optional. End time for the Test in ISO format
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
@@ -35,10 +36,11 @@ description: |-
 - `monitor` (String) The monitor to use for the puppeteer Test. Supported: 'chrome'
 - `request_settings` (Block Set, Max: 1) Optional. Used for overriding authentication and HTTP request headers (see [below for nested schema](#nestedblock--request_settings))
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
+- `simulate` (String) The device to simulate for mobile monitor
 - `start_time` (String) Optional. Start time for the Test in ISO format
 - `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
-- `test_script_type` (String) The type of script. Supported: 'selenium'
+- `test_script_type` (String) The type of script. Supported: 'puppeteer'
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
 
 ### Read-Only
@@ -81,7 +83,7 @@ Optional:
 
 Required:
 
-- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for setting up alert recipients, adding alert webhook ids (see [below for nested schema](#nestedblock--alert_settings--notification_group))
+- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for setting up alert recipients, adding alert webhook ids. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--notification_group))
 
 Optional:
 
@@ -97,8 +99,8 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) List of contact groups to receive alert notifications.
-- `recipient_email_ids` (List of String) Optional. List of emails to alert
+- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
 
 <a id="nestedblock--alert_settings--alert_rule"></a>
@@ -119,7 +121,7 @@ Optional:
 - `enforce_test_failure` (Boolean) Optional. Sets enforce test failure property for an alert
 - `expression` (String) Optional. Sets trigger expression for content match alert type
 - `historical_interval` (String) Optional. Sets the historical interval for 'trailing value' trigger type: '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours', '1 day', '1 week'
-- `notification_group` (Block Set, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
+- `notification_group` (Block Set, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 - `notification_type` (String) Optional. Notification group type to alert. Supports only default contacts for now.
 - `number_of_failing_nodes` (Number) Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'
 - `omit_scatterplot` (Boolean) Optional. Omits scatterplot image from alert emails if set to true
@@ -138,15 +140,15 @@ Optional:
 
 Required:
 
-- `recipient_email_ids` (List of String) List of email addresses to receive alert notifications.
 - `subject` (String) Email subject for the alert notifications. Required field.
 
 Optional:
 
-- `contact_groups` (List of String) List of contact groups to receive alert notifications.
+- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
+- `recipient_email_ids` (List of String) List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 
 
 

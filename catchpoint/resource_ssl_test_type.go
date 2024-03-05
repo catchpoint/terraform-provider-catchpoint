@@ -334,7 +334,7 @@ func resourceSslTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										Optional:    true,
 										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings.",
+										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
@@ -362,8 +362,8 @@ func resourceSslTestType() *schema.Resource {
 												},
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
-													Required:    true,
-													Description: "List of email addresses to receive alert notifications.",
+													Optional:    true,
+													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -371,7 +371,7 @@ func resourceSslTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of contact groups to receive alert notifications.",
+													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -386,7 +386,7 @@ func resourceSslTestType() *schema.Resource {
 							Type:        schema.TypeSet,
 							Required:    true,
 							MaxItems:    1,
-							Description: "Notification group for setting up alert recipients, adding alert webhook ids",
+							Description: "Notification group for setting up alert recipients, adding alert webhook ids. To ensure either recipient_email_ids or contact_groups is provided",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"subject": {
@@ -405,7 +405,7 @@ func resourceSslTestType() *schema.Resource {
 									"recipient_email_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "Optional. List of emails to alert",
+										Description: "Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -413,7 +413,7 @@ func resourceSslTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "List of contact groups to receive alert notifications.",
+										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
