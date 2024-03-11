@@ -190,9 +190,7 @@ Required:
 
 Optional:
 
-- `password` (String, Sensitive)
 - `password_ids` (List of Number, Sensitive) Optional. Password ids in a list
-- `username` (String)
 
 
 <a id="nestedblock--request_settings--http_request_headers"></a>
