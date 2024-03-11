@@ -175,15 +175,6 @@ func resourcePlaywrightTestType() *schema.Resource {
 										Description:  "Type of authentication to use 'basic', 'ntlm', 'digest', 'login'",
 										ValidateFunc: validation.StringInSlice([]string{"basic", "ntlm", "digest", "login"}, false),
 									},
-									"username": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"password": {
-										Type:      schema.TypeString,
-										Optional:  true,
-										Sensitive: true,
-									},
 									"password_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
@@ -1070,6 +1061,7 @@ func resourcePlaywrightTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Creating test: " + test_name)
+	log.Printf("[DEBUG] jsonStr : %#v", jsonStr)
 	respBody, respStatus, testId, err := createTest(api_token, jsonStr)
 	if err != nil {
 		log.Fatal(err)
