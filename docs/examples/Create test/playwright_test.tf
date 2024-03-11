@@ -1,5 +1,5 @@
 resource "playwright_test" "test" {
-  test_name  = "playwright_TF"
+  test_name  = "playwright_TF_12"
     provider=catchpoint
     monitor="chrome"
     test_script="await page.goto('https://www.amazon.in/');"
@@ -7,7 +7,7 @@ resource "playwright_test" "test" {
     product_id=25232
     test_description="An object test for catchpoint.com"
     test_script_type = "playwright"
-    alerts_paused=false
+    alerts_paused=true
     enable_test_data_webhook=true
     end_time="2024-12-30T04:59:00Z"
 
@@ -21,6 +21,26 @@ resource "playwright_test" "test" {
         additional_monitor="ping icmp"
     }
 
+    thresholds {
+      test_time_warning = 47
+      test_time_critical = 56
+      availability_critical = 30
+      availability_warning = 67
+    }
+
+    request_settings {
+      authentication {
+        authentication_type = "basic"
+        password_ids = [2332]
+      }
+      token_ids = [1096]
+      http_request_headers {
+        user_agent {
+          value = "vikash"
+        }
+      }
+    }
+
     alert_settings {
         alert_rule {
             alert_type="timing"
@@ -29,7 +49,7 @@ resource "playwright_test" "test" {
             threshold_number_of_runs=5
             threshold_interval="30 minutes"
             trigger_type="specific value"
-            warning_trigger=50
+            warning_trigger=51
             critical_trigger=70.0
             operation_type = "less than or equals"
             use_rolling_window=true
