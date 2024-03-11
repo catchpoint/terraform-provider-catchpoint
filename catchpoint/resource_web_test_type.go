@@ -167,15 +167,6 @@ func resourceWebTestType() *schema.Resource {
 										Description:  "Type of authentication to use 'basic', 'ntlm', 'digest', 'login'",
 										ValidateFunc: validation.StringInSlice([]string{"basic", "ntlm", "digest", "login"}, false),
 									},
-									"username": {
-										Type:     schema.TypeString,
-										Optional: true,
-									},
-									"password": {
-										Type:      schema.TypeString,
-										Optional:  true,
-										Sensitive: true,
-									},
 									"password_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,

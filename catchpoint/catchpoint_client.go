@@ -34,11 +34,8 @@ type Thresholds struct {
 
 type AuthenticationStruct struct {
 	AuthenticationMethodType GenericIdNameOmitEmpty `json:"authenticationMethodType,omitempty"`
-	PasswordStatus           GenericIdNameOmitEmpty `json:"passwordStatus,omitempty"`
-	Username                 string                 `json:"userName,omitempty"`
-	Password                 string                 `json:"password,omitempty"`
 	PasswordIds              []int                  `json:"passwordIds,omitempty"`
-	//Id                       int                    `json:"id,omitempty"`
+	Id                       int                    `json:"id,omitempty"`
 }
 
 type HttpHeaderRequest struct {
@@ -576,9 +573,8 @@ func setTestRequestSettings(config *TestConfig) RequestSetting {
 	// config.AuthenticationType == 0 indicates no authentication type(id) has been set.
 	if config.AuthenticationType.Id != 0 {
 		authenticationMethodType := GenericIdNameOmitEmpty{Id: config.AuthenticationType.Id, Name: config.AuthenticationType.Name}
-		passwordStatus := GenericIdNameOmitEmpty{Id: 1, Name: "Set"}
 		passwordIds := config.AuthenticationPasswordIds
-		authentication = AuthenticationStruct{AuthenticationMethodType: authenticationMethodType, PasswordStatus: passwordStatus, Username: config.Username, Password: config.Password, PasswordIds: passwordIds}
+		authentication = AuthenticationStruct{AuthenticationMethodType: authenticationMethodType, PasswordIds: passwordIds, Id: 0}
 	}
 
 	requestSetting := RequestSetting{RequestSettingType: requestSettingType, HttpHeaderRequests: httpHeaderRequests, TokenIds: config.AuthenticationTokenIds, LibraryCertificateIds: config.AuthenticationCertificateIds}
