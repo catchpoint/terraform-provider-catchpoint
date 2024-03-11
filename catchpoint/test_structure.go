@@ -36,7 +36,7 @@ type TestConfig struct {
 	TestStatus                     int
 	RequestSettingType             int
 	AuthenticationType             IdName
-	Username                       string
+	UserName                       string
 	Password                       string
 	AuthenticationPasswordIds      []int
 	AuthenticationTokenIds         []int

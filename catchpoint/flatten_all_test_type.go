@@ -56,7 +56,7 @@ func flattenAuthenticationStruct(authentication *AuthenticationStruct) []interfa
 	if authentication != nil {
 		authMap := map[string]interface{}{
 			"authentication_type": strings.ToLower(authentication.AuthenticationMethodType.Name),
-			"username":            authentication.Username,
+			"username":            authentication.UserName,
 			"password":            authentication.Password,
 			"password_ids":        authentication.PasswordIds,
 		}
