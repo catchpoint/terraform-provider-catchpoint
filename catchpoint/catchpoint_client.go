@@ -294,6 +294,7 @@ func getTest(apiToken string, testId string) (*Test, string, error) {
 	req, _ := http.NewRequest("", getURL, nil)
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -339,6 +340,7 @@ func createTest(apiToken string, jsonPayload string) (string, string, string, er
 	req, _ := http.NewRequest("POST", catchpointTestURI, bytes.NewBuffer(postBody))
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -380,6 +382,7 @@ func deleteTest(apiToken string, testId string) (string, string, bool, error) {
 	req, _ := http.NewRequest("DELETE", deleteURL, nil)
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
@@ -763,6 +766,7 @@ func updateTest(apiToken string, testId string, jsonPayload string) (string, str
 	req, _ := http.NewRequest("PATCH", updateURL, bytes.NewBuffer(jsonPatchDocument))
 	req.Header.Set("Authorization", "Bearer "+apiToken)
 	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
 
 	client := &http.Client{}
 	resp, err := client.Do(req)
