@@ -1227,7 +1227,7 @@ func resourceTransactionTestUpdate(d *schema.ResourceData, m interface{}) error 
 		testConfigUpdate := TestConfigUpdate{
 			UpdatedFieldValue: strconv.Itoa(updated_status_id),
 		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/status/id", true))
+		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/status", true))
 	}
 
 	if d.HasChange("test_script") {
