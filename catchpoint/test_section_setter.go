@@ -122,7 +122,7 @@ func setRequestSettings(testTypeId int, request_setting map[string]interface{}, 
 		password := authentication["password"].(string)
 		testConfig.AuthenticationType.Id = authentication_type_id
 		testConfig.AuthenticationType.Name = authentication_type_name
-		testConfig.Username = username
+		testConfig.UserName = username
 		testConfig.Password = password
 
 		tfpassword_ids := authentication["password_ids"].([]interface{})
@@ -140,12 +140,14 @@ func setRequestSettings(testTypeId int, request_setting map[string]interface{}, 
 	}
 	testConfig.AuthenticationTokenIds = token_ids
 
-	tfcertificate_ids := request_setting["library_certificate_ids"].([]interface{})
-	certificate_ids := make([]int, len(tfcertificate_ids))
-	for i, certificate_id := range tfcertificate_ids {
-		certificate_ids[i] = certificate_id.(int)
+	if request_setting["library_certificate_ids"] != nil {
+		tfcertificate_ids := request_setting["library_certificate_ids"].([]interface{})
+		certificate_ids := make([]int, len(tfcertificate_ids))
+		for i, certificate_id := range tfcertificate_ids {
+			certificate_ids[i] = certificate_id.(int)
+		}
+		testConfig.AuthenticationCertificateIds = certificate_ids
 	}
-	testConfig.AuthenticationCertificateIds = certificate_ids
 
 	http_request_headers_list := request_setting["http_request_headers"].(*schema.Set).List()
 	for i := range http_request_headers_list {
