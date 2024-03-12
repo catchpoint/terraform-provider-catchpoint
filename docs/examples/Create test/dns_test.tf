@@ -20,4 +20,12 @@ resource "dns_test" "testDNS" {
     query_type="a"
     test_domain ="https:www.google.com"
     end_time="2023-11-30T04:59:00Z"
+
+    schedule_settings{
+      frequency="6 hours"
+      node_distribution ="random"
+      no_of_subset_nodes = 5
+      node_ids =[6388]
+      node_group_ids =[9922,9848]
+    }
 }

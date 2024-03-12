@@ -34,6 +34,14 @@ resource "puppeteer_test" "test" {
       }
     }
 
+    schedule_settings{
+      frequency="6 hours"
+      node_distribution ="random"
+      no_of_subset_nodes = 5
+      node_ids =[6388]
+      node_group_ids =[9922,9848]
+    }
+
     alert_settings {
         alert_rule {
             alert_type="timing"
