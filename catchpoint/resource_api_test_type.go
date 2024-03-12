@@ -675,7 +675,7 @@ func resourceApiTestType() *schema.Resource {
 									},
 									"notification_group": {
 										Type:        schema.TypeSet,
-										Optional:    true,
+										Required:    true,
 										MaxItems:    1,
 										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
