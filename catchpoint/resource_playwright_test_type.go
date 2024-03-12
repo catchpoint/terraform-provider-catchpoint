@@ -1061,7 +1061,6 @@ func resourcePlaywrightTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	log.Printf("[DEBUG] Creating test: " + test_name)
-	log.Printf("[DEBUG] jsonStr : %#v", jsonStr)
 	respBody, respStatus, testId, err := createTest(api_token, jsonStr)
 	if err != nil {
 		log.Fatal(err)

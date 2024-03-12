@@ -33,6 +33,7 @@ description: |-
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `gateway_address_or_host` (String) Host/IP to use for network troubleshooting and monitoring
 - `insights` (Block Set, Max: 1) Optional. Used for overriding the insights section (see [below for nested schema](#nestedblock--insights))
+- `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the puppeteer Test. Supported: 'chrome'
 - `request_settings` (Block Set, Max: 1) Optional. Used for overriding authentication and HTTP request headers (see [below for nested schema](#nestedblock--request_settings))
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
@@ -160,6 +161,15 @@ Optional:
 
 - `indicator_ids` (List of Number) Optional. Indicator ids in a list
 - `tracepoint_ids` (List of Number) Optional. Tracepoint ids in a list
+
+
+<a id="nestedblock--label"></a>
+### Nested Schema for `label`
+
+Required:
+
+- `key` (String)
+- `values` (List of String)
 
 
 <a id="nestedblock--request_settings"></a>
