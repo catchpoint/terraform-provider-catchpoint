@@ -680,8 +680,8 @@ func resourceWebTestType() *schema.Resource {
 									},
 									"notification_group": {
 										Type:        schema.TypeSet,
-										Optional:    true,
 										MaxItems:    1,
+										Required:    true,
 										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
