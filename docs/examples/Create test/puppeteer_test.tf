@@ -16,6 +16,19 @@ resource "puppeteer_test" "test" {
         additional_monitor="ping icmp"
     }
 
+    request_settings {
+      authentication {
+        authentication_type = "basic"
+        password_ids = [2332]
+      }
+      token_ids = [1096]
+      http_request_headers {
+        user_agent {
+          value = "vikash"
+        }
+      }
+    }
+
     alert_settings {
         alert_rule {
             alert_type="timing"
