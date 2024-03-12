@@ -111,6 +111,7 @@ Required:
 
 - `alert_type` (String) Sets the alert type: 'test failure', 'timing', 'availability'
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
+- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
@@ -122,7 +123,6 @@ Optional:
 - `enforce_test_failure` (Boolean) Optional. Sets enforce test failure property for an alert
 - `expression` (String) Optional. Sets trigger expression for content match alert type
 - `historical_interval` (String) Optional. Sets the historical interval for 'trailing value' trigger type: '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours', '1 day', '1 week'
-- `notification_group` (Block Set, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 - `notification_type` (String) Optional. Notification group type to alert. Supports only default contacts for now.
 - `number_of_failing_nodes` (Number) Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'
 - `omit_scatterplot` (Boolean) Optional. Omits scatterplot image from alert emails if set to true
