@@ -28,6 +28,14 @@ resource "playwright_test" "test" {
       availability_warning = 67
     }
 
+    schedule_settings{
+      frequency="6 hours"
+      node_distribution ="random"
+      no_of_subset_nodes = 5
+      node_ids =[6388]
+      node_group_ids =[9922,9848]
+    }
+
     request_settings {
       authentication {
         authentication_type = "basic"
