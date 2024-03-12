@@ -34,6 +34,27 @@ resource "web_test" "test" {
         additional_monitor="ping icmp"
     }
 
+    request_settings {
+      authentication {
+        authentication_type = "basic"
+        password_ids = [2332]
+      }
+      token_ids = [1096]
+      http_request_headers {
+        user_agent {
+          value = "vikash"
+        }
+      }
+    }
+
+    schedule_settings{
+      frequency="6 hours"
+      node_distribution ="random"
+      no_of_subset_nodes = 5
+      node_ids =[6388]
+      node_group_ids =[9922,9848]
+    }
+
     alert_settings {
         alert_rule {
             alert_type="timing"
@@ -46,6 +67,12 @@ resource "web_test" "test" {
             critical_trigger=70.0
             operation_type = "less than or equals"
             use_rolling_window=true
+            notification_group {
+              notify_on_critical = true
+              subject = "contact group testing"
+              recipient_email_ids = ["vkumar@catchpoint.com"]
+              contact_groups = ["Agent deployment"]
+            }
         }
         alert_rule {
             alert_type="availability"
@@ -57,29 +84,18 @@ resource "web_test" "test" {
             critical_trigger=80
             historical_interval="15 minutes"
             operation_type = "greater than"
-        }
-        alert_rule {
-            alert_type="test failure"
-            node_threshold_type="runs"
-            threshold_number_of_runs=2
-            threshold_percentage_of_runs=60
-        }
-        alert_rule {
-            alert_type="host failure"
-            node_threshold_type="runs"
-            threshold_number_of_runs=5
-            threshold_percentage_of_runs=90
-        }
-        alert_rule {
-            alert_type="content match"
-            alert_sub_type="response headers"
-            node_threshold_type="runs"
-            operation_type = "not equals"
-            expression="something"
-            threshold_number_of_runs=5
+            notification_group {
+              notify_on_critical = true
+              subject = "contact group testing"
+              recipient_email_ids = ["vkumar@catchpoint.com"]
+              contact_groups = ["Agent deployment"]
+            }
         }
         notification_group {
-            recipient_email_ids=["vikash@catchpoint.com"]
-        }
+              notify_on_critical = true
+              subject = "contact group testing"
+              recipient_email_ids = ["vkumar@catchpoint.com"]
+              contact_groups = ["Agent deployment"]
+            }
     }
 }
