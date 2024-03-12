@@ -111,6 +111,26 @@ func resourcePuppeteerTestType() *schema.Resource {
 				Optional:    true,
 				Description: "Optional. Test status: active or inactive",
 			},
+			"label": {
+				Type:        schema.TypeSet,
+				Optional:    true,
+				Description: "Optional. Label with key, values pair",
+				Elem: &schema.Resource{
+					Schema: map[string]*schema.Schema{
+						"key": {
+							Type:     schema.TypeString,
+							Required: true,
+						},
+						"values": {
+							Type:     schema.TypeList,
+							Required: true,
+							Elem: &schema.Schema{
+								Type: schema.TypeString,
+							},
+						},
+					},
+				},
+			},
 			"thresholds": {
 				Type:        schema.TypeSet,
 				Optional:    true,
