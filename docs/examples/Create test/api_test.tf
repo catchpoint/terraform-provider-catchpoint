@@ -37,4 +37,12 @@ resource "api_test" "test55" {
           }
         }
       }
+
+      schedule_settings{
+      frequency="6 hours"
+      node_distribution ="random"
+      no_of_subset_nodes = 5
+      node_ids =[6388]
+      node_group_ids =[9922,9848]
+    }
 }
