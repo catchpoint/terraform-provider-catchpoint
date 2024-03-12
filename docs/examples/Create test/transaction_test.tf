@@ -19,4 +19,17 @@ resource "transaction_test" "testTransaction" {
     monitor="chrome"
     test_script="//Step-1\r\nopen(\"https:www.google.com)"
     end_time="2023-10-30T04:59:00Z"
+
+    request_settings {
+      authentication {
+        authentication_type = "basic"
+        password_ids = [2332]
+      }
+      token_ids = [1096]
+      http_request_headers {
+        user_agent {
+          value = "vikash"
+        }
+      }
+    }
 }
