@@ -16,6 +16,11 @@ resource "puppeteer_test" "test" {
         additional_monitor="ping icmp"
     }
 
+    label {
+        key="label1"
+        values=["v1","v2"]
+    }
+
     request_settings {
       authentication {
         authentication_type = "basic"
