@@ -89,19 +89,19 @@ func resourceWebTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "",
-				Description: "Optional. Start time for the Test in ISO format",
+				Required:    true,
+				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. End time for the Test in ISO format",
+				Required:    true,
+				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. Test status: active or inactive",
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "Test status: active or inactive",
+				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,
@@ -1111,6 +1111,7 @@ func resourceTestRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 	log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
+	log.Printf("[DEBUG] testXXXXXXXXXXXXXXXXXXX : %#v", test)
 
 	testNew := flattenTest(test)
 
@@ -1366,9 +1367,10 @@ func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
+		return resourceTestRead(d, m)
+	} else {
+		return errors.New("no changes. Your infrastructure matches the configuration")
 	}
-
-	return resourceTestRead(d, m)
 }
 
 func resourceTestDelete(d *schema.ResourceData, m interface{}) error {
