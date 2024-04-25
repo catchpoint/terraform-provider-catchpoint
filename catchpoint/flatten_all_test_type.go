@@ -249,7 +249,10 @@ func flattenAlertGroupItem(alertGroupItem AlertGroupItem) map[string]interface{}
 		"critical_trigger":             trigger.CriticalTrigger,
 		"use_rolling_window":           trigger.UseIntervalRollingWindow,
 		"expression":                   trigger.Expression,
-		"notification_group":           flattenNotificationGroup(alertGroupItem.NotificationGroups[0], true),
+	}
+
+	if len(alertGroupItem.NotificationGroups) > 0 {
+		alertGroupItemMap["notification_group"] = flattenNotificationGroup(alertGroupItem.NotificationGroups[0], true)
 	}
 
 	if alertGroupItem.AlertSubType != nil {
