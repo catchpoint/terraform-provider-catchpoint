@@ -225,6 +225,50 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct, include
 	return []interface{}{notifGroupMap}
 }
 
+func flattenAlertRuleNotificationGroup(notificationGroups []NotificationGroupStruct, includeNotify bool) []interface{} {
+	var flattenedGroups []interface{}
+
+	for _, notificationGroup := range notificationGroups {
+		alertWebhooks := make([]int, len(notificationGroup.AlertWebhooks))
+
+		for i, webhook := range notificationGroup.AlertWebhooks {
+			alertWebhooks[i] = webhook.Id
+		}
+
+		var recipients []string
+		var contactGroups []string
+		for _, recipient := range notificationGroup.Recipients {
+			recipientFlattened := flattenRecipient(recipient)
+			var value = recipientFlattened["email"].(string)
+			if isValidEmail(value) {
+				recipients = append(recipients, value)
+			} else {
+				contactGroups = append(contactGroups, value)
+			}
+		}
+
+		notifGroupMap := map[string]interface{}{
+			"recipient_email_ids": recipients,
+			"subject":             notificationGroup.Subject,
+			"contact_groups":      contactGroups,
+		}
+
+		if includeNotify {
+			notifGroupMap["notify_on_warning"] = notificationGroup.NotifyOnWarning
+			notifGroupMap["notify_on_critical"] = notificationGroup.NotifyOnCritical
+			notifGroupMap["notify_on_improved"] = notificationGroup.NotifyOnImproved
+		}
+
+		if len(alertWebhooks) > 0 {
+			notifGroupMap["alert_webhook_ids"] = alertWebhooks
+		}
+
+		flattenedGroups = append(flattenedGroups, notifGroupMap)
+	}
+
+	return flattenedGroups
+}
+
 func flattenAlertGroupItem(alertGroupItem AlertGroupItem) map[string]interface{} {
 	nodeThreshold := alertGroupItem.NodeThreshold
 	trigger := alertGroupItem.Trigger
@@ -252,7 +296,7 @@ func flattenAlertGroupItem(alertGroupItem AlertGroupItem) map[string]interface{}
 	}
 
 	if len(alertGroupItem.NotificationGroups) > 0 {
-		alertGroupItemMap["notification_group"] = flattenNotificationGroup(alertGroupItem.NotificationGroups[0], true)
+		alertGroupItemMap["notification_group"] = flattenAlertRuleNotificationGroup(alertGroupItem.NotificationGroups, true)
 	}
 
 	if alertGroupItem.AlertSubType != nil {
