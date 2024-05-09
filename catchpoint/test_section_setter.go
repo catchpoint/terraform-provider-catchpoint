@@ -332,15 +332,16 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		}
 		alert_notif_group_list := alert_rule["notification_group"].(*schema.Set).List()
 
-		var subject string
-		var notifyOnCritical bool
-		var notifyOnImproved bool
-		var notifyOnWarning bool
-		var all_email_ids []Recipient
+		var notificationGroups []NotificationGroupStruct
 		recipientType := GenericIdName{Id: 2, Name: "Email"}
 		contactGroupType := GenericIdName{Id: 1, Name: "ContactGroup"}
 
 		for _, notif_group_item := range alert_notif_group_list {
+			var subject string
+			var notifyOnCritical bool
+			var notifyOnImproved bool
+			var notifyOnWarning bool
+			var all_email_ids []Recipient
 			notification_group := notif_group_item.(map[string]interface{})
 			subject = notification_group["subject"].(string)
 			notifyOnCritical = notification_group["notify_on_critical"].(bool)
@@ -377,17 +378,12 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 				all_email_ids = append(all_email_ids, Recipient{Id: i + 1, RecipientType: contactGroupType, Name: contact})
 			}
 
-		}
-
-		notificationGroups := []NotificationGroupStruct{
-			{
-				Subject:          subject,
+			notificationGroups = append(notificationGroups, NotificationGroupStruct{Subject: subject,
 				NotifyOnWarning:  notifyOnWarning,
 				NotifyOnCritical: notifyOnCritical,
 				NotifyOnImproved: notifyOnImproved,
 				AlertWebhooks:    []AlertWebhook{},
-				Recipients:       all_email_ids,
-			},
+				Recipients:       all_email_ids})
 		}
 
 		testConfig.AlertRuleConfigs = append(testConfig.AlertRuleConfigs, AlertRuleConfig{AlertNodeThresholdType: IdName{Id: node_threshold_type_id, Name: node_threshold_type_name}, AlertThresholdNumOfRuns: threshold_number_of_runs, AlertConsecutiveNumOfRuns: consecutive_number_of_runs, AlertThresholdPercentOfRuns: threshold_percentage_of_runs,
