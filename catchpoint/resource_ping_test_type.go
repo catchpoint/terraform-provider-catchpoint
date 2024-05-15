@@ -776,9 +776,11 @@ func resourcePingTestUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
-	}
 
-	return resourcePingTestRead(d, m)
+		return resourcePingTestRead(d, m)
+	} else {
+		return errors.New("no changes. Your infrastructure matches the configuration")
+	}
 }
 
 func resourcePingTestDelete(d *schema.ResourceData, m interface{}) error {
