@@ -97,14 +97,13 @@ func resourceTransactionTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "",
-				Description: "Optional. Start time for the Test in ISO format",
+				Required:    true,
+				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. End time for the Test in ISO format",
+				Required:    true,
+				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
 				Type:        schema.TypeString,

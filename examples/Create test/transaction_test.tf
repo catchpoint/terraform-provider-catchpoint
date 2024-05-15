@@ -18,7 +18,8 @@ resource "transaction_test" "testTransaction" {
     product_id=23791
     monitor="chrome"
     test_script="//Step-1\r\nopen(\"https:www.google.com)"
-    end_time="2023-10-30T04:59:00Z"
+    start_time = "2024-04-30T04:59:00Z"
+    end_time="2024-10-30T04:59:00Z"
 
     request_settings {
       authentication {

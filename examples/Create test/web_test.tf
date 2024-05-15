@@ -22,7 +22,8 @@ resource "web_test" "test" {
     test_url="https://www.catchpoint.com"
     alerts_paused=false
     enable_test_data_webhook=true
-    end_time="2023-12-30T04:59:00Z"
+    start_time = "2024-04-30T04:59:00Z"
+    end_time="2024-10-30T04:59:00Z"
 
     label {
         key="label1"
