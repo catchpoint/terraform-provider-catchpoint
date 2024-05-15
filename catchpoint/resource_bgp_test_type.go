@@ -582,9 +582,11 @@ func resourceBgpTestUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
-	}
 
-	return resourceBgpTestRead(d, m)
+		return resourceBgpTestRead(d, m)
+	} else {
+		return errors.New("no changes. Your infrastructure matches the configuration")
+	}
 }
 
 func resourceBgpTestDelete(d *schema.ResourceData, m interface{}) error {

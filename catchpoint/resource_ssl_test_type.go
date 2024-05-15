@@ -800,9 +800,11 @@ func resourceSslTestUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
-	}
+		return resourceSslTestRead(d, m)
 
-	return resourceSslTestRead(d, m)
+	} else {
+		return errors.New("no changes. Your infrastructure matches the configuration")
+	}
 }
 
 func resourceSslTestDelete(d *schema.ResourceData, m interface{}) error {
