@@ -21,5 +21,6 @@ resource "bgp_test" "test" {
     division_id=2633
     product_id=23791
     prefix="101.188.67.134/8"
-    end_time="2023-09-30T04:59:00Z"
+    start_time = "2024-04-30T04:59:00Z"
+    end_time="2024-10-30T04:59:00Z"
 }

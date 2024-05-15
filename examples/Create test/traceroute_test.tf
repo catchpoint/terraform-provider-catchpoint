@@ -24,7 +24,8 @@ resource "traceroute_test" "testTraceroute" {
     product_id=23791
     monitor="traceroute icmp"
     test_location="https://www.google.com"
-    end_time="2023-10-30T04:59:00Z"
+    start_time = "2024-04-30T04:59:00Z"
+    end_time="2024-10-30T04:59:00Z"
 
     schedule_settings{
       frequency="6 hours"

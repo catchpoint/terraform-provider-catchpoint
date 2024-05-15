@@ -9,7 +9,8 @@ resource "puppeteer_test" "test" {
     test_script_type = "puppeteer"
     alerts_paused=false
     enable_test_data_webhook=true
-    end_time="2024-12-30T04:59:00Z"
+    start_time = "2024-04-30T04:59:00Z"
+    end_time="2024-10-30T04:59:00Z"
 
     advanced_settings {
         verify_test_on_failure = false

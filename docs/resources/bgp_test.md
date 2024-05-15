@@ -18,8 +18,10 @@ description: |-
 ### Required
 
 - `division_id` (Number) The Division where the Test will be created
+- `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `prefix` (String) IPV4 address with a netmask range from 8 to 24 or IPV6 address with a netmask range from 28 to 128
 - `product_id` (Number) The parent Product under which the Test will be created
+- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `test_name` (String) The name of the Test
 
 ### Optional
@@ -27,11 +29,9 @@ description: |-
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
 - `alerts_paused` (Boolean) Optional. Switch for pausing Test alerts
 - `enable_test_data_webhook` (Boolean) Optional. Switch for enabling test data webhook feature
-- `end_time` (String) Optional. End time for the Test in ISO format
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the BGP Test. Supported: 'bgp','bgp basic'
-- `start_time` (String) Optional. Start time for the Test in ISO format
 - `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 
