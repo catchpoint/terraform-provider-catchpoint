@@ -1,3 +1,10 @@
+# v1.0.1
+
+Catchpoint internal testing:
+
+* Bug 187721: [Terraform] Import command fails when the alert settings are set to Override
+* Bug 188869: [Terraform] Update operation in terraform without any changes, displays 1 change applied message
+
 # v1.0.0
 
 BUG FIXES:
