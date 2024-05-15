@@ -854,9 +854,11 @@ func resourceDnsTestUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
-	}
 
-	return resourceDnsTestRead(d, m)
+		return resourceDnsTestRead(d, m)
+	} else {
+		return errors.New("no changes. Your infrastructure matches the configuration")
+	}
 }
 
 func resourceDnsTestDelete(d *schema.ResourceData, m interface{}) error {
