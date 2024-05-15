@@ -18,7 +18,9 @@ description: |-
 ### Required
 
 - `division_id` (Number) The Division where the Test will be created
+- `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `product_id` (Number) The parent Product under which the Test will be created
+- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `test_location` (String) The domain or IP to be tested. Example: www.catchpoint.com
 - `test_name` (String) The name of the Test
 
@@ -28,12 +30,10 @@ description: |-
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
 - `alerts_paused` (Boolean) Optional. Switch for pausing Test alerts
 - `enable_test_data_webhook` (Boolean) Optional. Switch for enabling test data webhook feature
-- `end_time` (String) Optional. End time for the Test in ISO format
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the Traceroute Test. Supported: 'traceroute icmp','traceroute tcp','traceroute udp'
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
-- `start_time` (String) Optional. Start time for the Test in ISO format
 - `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
