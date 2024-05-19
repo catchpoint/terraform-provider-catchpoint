@@ -93,9 +93,10 @@ func resourceApiTestType() *schema.Resource {
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. Test status: active or inactive",
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "Test status: active or inactive",
+				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,

@@ -39,6 +39,7 @@ func resourcePlaywrightTestType() *schema.Resource {
 				Optional:     true,
 				Description:  "Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
 				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "108", "89", "87", "85", "75", "71", "66", "63", "59", "53"}, false),
+				Default:      "stable",
 			},
 			"division_id": {
 				Type:        schema.TypeInt,
@@ -106,9 +107,10 @@ func resourcePlaywrightTestType() *schema.Resource {
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. Test status: active or inactive",
+				Type:         schema.TypeString,
+				Required:     true,
+				Description:  "Test status: active or inactive",
+				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,

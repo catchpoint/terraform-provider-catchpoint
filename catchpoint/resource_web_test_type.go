@@ -23,9 +23,10 @@ func resourceWebTestType() *schema.Resource {
 		Schema: map[string]*schema.Schema{
 			"monitor": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				Description:  "The monitor to use for the Web Test. Supported: 'object', 'chrome', 'emulated', 'playback', 'mobile playback', 'mobile'",
 				ValidateFunc: validation.StringInSlice([]string{"object", "chrome", "emulated", "playback", "mobile playback", "mobile"}, false),
+				Default:      "chrome",
 			},
 			"simulate": {
 				Type:         schema.TypeString,
@@ -38,6 +39,7 @@ func resourceWebTestType() *schema.Resource {
 				Optional:     true,
 				Description:  "Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
 				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "108", "89", "87", "85", "75", "71", "66", "63", "59", "53"}, false),
+				Default:      "stable",
 			},
 			"division_id": {
 				Type:        schema.TypeInt,
@@ -89,7 +91,7 @@ func resourceWebTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
@@ -783,115 +785,96 @@ func resourceWebTestType() *schema.Resource {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables Path MTU Discovery",
 							Optional:    true,
-							Default:     false,
 						},
 						"verify_test_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables verify on test failure setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"debug_primary_host_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables debug primary host on failure setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"enable_http2": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables enable http/2 setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"debug_referenced_hosts_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables debug referenced hosts on failure setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"capture_http_headers": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture http headers setting for all runs",
 							Optional:    true,
-							Default:     false,
 						},
 						"capture_response_content": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture response content setting for all runs",
 							Optional:    true,
-							Default:     false,
 						},
 						"ignore_ssl_failures": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables ignore SSL failures setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"host_data_collection_enabled": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables host data collection setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"zone_data_collection_enabled": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables zone data collection setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"f40x_or_50x_http_mark_successful": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables 40x or 50x error mark successful setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"t30x_redirects_do_not_follow": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables 30x redirects do not follow setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"enable_self_versus_third_party_zones": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables self versus third party zones setting and matches self zone by test URL",
 							Optional:    true,
-							Default:     false,
 						},
 						"allow_test_download_limit_override": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables test download limit override setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"capture_filmstrip": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture filmstrip setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"capture_screenshot": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture screenshot setting for all runs",
 							Optional:    true,
-							Default:     false,
 						},
 						"stop_test_on_document_complete": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables stop test on document complete setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"disable_cross_origin_iframe_access": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables disable cross origin iframe access setting for chrome monitor",
 							Optional:    true,
-							Default:     false,
 						},
 						"stop_test_on_dom_content_load": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables stop test on DOM content load setting",
 							Optional:    true,
-							Default:     false,
 						},
 						"enforce_test_failure_if_runs_longer_than": {
 							Type:         schema.TypeInt,
@@ -909,6 +892,7 @@ func resourceWebTestType() *schema.Resource {
 							Type:        schema.TypeInt,
 							Description: "Optional. Set the viewport height. Use with viewport_width attribute",
 							Optional:    true,
+							Computed:    true,
 						},
 						"viewport_width": {
 							Type:        schema.TypeInt,
@@ -1114,6 +1098,8 @@ func resourceTestRead(d *schema.ResourceData, m interface{}) error {
 	log.Printf("[DEBUG] testXXXXXXXXXXXXXXXXXXX : %#v", test)
 
 	testNew := flattenTest(test)
+
+	log.Printf("[DEBUG] testNewYYYYYYYYY : %#v", testNew)
 
 	d.Set("monitor", testNew["monitor"])
 	d.Set("simulate", testNew["simulate"])
@@ -1350,7 +1336,7 @@ func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	jsonPatchDoc := "[" + strings.Join(jsonPatchDocs, ",") + "]"
-
+	log.Printf("[DEBUG] jsonPatchDoc XXXXXXXXXXXXX: %v", jsonPatchDoc)
 	if jsonPatchDoc != "[]" {
 		log.Printf("[DEBUG] Updating test: %v", testId)
 		if m.(*Config).LogJson {

@@ -209,11 +209,11 @@ func setScheduleSettings(testTypeId int, schedule_setting map[string]interface{}
 	networkType := GenericIdName{Id: 0, Name: "Backbone"}
 	for _, id := range tfnode_group_ids {
 		nodeGroup := NodeGroup{
-			Id:                   id.(int),
-			Name:                 "DefaultNodeGroupName",
-			Description:          "",
-			SyntheticNetworkType: networkType,
-			Nodes:                []Node{{Id: 123, Name: "DefaultNodeName", NetworkType: networkType}},
+			Id:          id.(int),
+			Name:        "DefaultNodeGroupName",
+			Description: "",
+			// SyntheticNetworkType: networkType,
+			Nodes: []Node{{Id: 123, Name: "DefaultNodeName", NetworkType: networkType}},
 		}
 		nodeGroupIds = append(nodeGroupIds, nodeGroup)
 	}
