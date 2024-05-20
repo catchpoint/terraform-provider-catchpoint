@@ -94,13 +94,13 @@ Optional:
 
 Required:
 
-- `alert_type` (String) Sets the alert type: 'test failure', 'timing', 'availability'
+- `alert_type` (String) Sets the alert type
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
 - `notification_group` (Block Set, Min: 1, Max: 5) List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
-- `alert_sub_type` (String) Optional. Sets the sub alert type: 'dns', 'connect', 'send', 'wait', 'load', 'ttfb', 'content load', 'response', 'test time', 'dom load', 'test time with suspect', 'server response', 'document complete', 'redirect', 'test', 'content', '% downtime'
+- `alert_sub_type` (String) Optional. Sets the sub alert type: 'ping rtt','ping packet loss','test time', '% downtime', 'test'
 - `consecutive_number_of_runs` (Number) Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node
 - `critical_reminder` (String) Optional. Sets alert critical reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'
 - `critical_trigger` (Number) Optional. Critical trigger value for 'specific value' and 'trailing value' trigger types.
@@ -111,7 +111,7 @@ Optional:
 - `notification_type` (String) Optional. Notification group type to alert. Supports only default contacts for now.
 - `number_of_failing_nodes` (Number) Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'
 - `omit_scatterplot` (Boolean) Optional. Omits scatterplot image from alert emails if set to true
-- `operation_type` (String) Optional. Sets the operation type: 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'
+- `operation_type` (String) Optional. Sets the operation type:'equals', 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'
 - `statistical_type` (String) Optional. Sets the statistical type for 'trailing value' trigger type. Supports only 'average' for now
 - `threshold_interval` (String) Optional. Sets the alert time threshold: 'default', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours'
 - `threshold_number_of_runs` (Number) Optional. Sets the threshold for the number of runs or nodes the alert should trigger
