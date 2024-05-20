@@ -83,18 +83,19 @@ func resourceDnsTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. Test status: active or inactive",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Description:  "Test status: active or inactive",
+				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,
@@ -273,6 +274,11 @@ func resourceDnsTestType() *schema.Resource {
 										Description: "Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node",
 										Optional:    true,
 									},
+									"expression": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Optional. Sets trigger expression for content match alert type ",
+									},
 									"warning_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,
@@ -330,8 +336,8 @@ func resourceDnsTestType() *schema.Resource {
 									"notification_group": {
 										Type:        schema.TypeSet,
 										Required:    true,
-										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										MaxItems:    5,
+										Description: "List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
