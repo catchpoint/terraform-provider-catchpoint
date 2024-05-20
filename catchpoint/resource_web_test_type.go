@@ -1336,7 +1336,6 @@ func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	jsonPatchDoc := "[" + strings.Join(jsonPatchDocs, ",") + "]"
-	log.Printf("[DEBUG] jsonPatchDoc XXXXXXXXXXXXX: %v", jsonPatchDoc)
 	if jsonPatchDoc != "[]" {
 		log.Printf("[DEBUG] Updating test: %v", testId)
 		if m.(*Config).LogJson {
