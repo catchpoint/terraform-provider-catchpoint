@@ -70,7 +70,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"test_script": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The Script that will simulate user workflow",
+				Description: "The Script that will simulate user workflow e.g '// Step - 1\r\nopen(\"\\\"https:www.google.com)\")'",
 			},
 			"test_script_type": {
 				Type:         schema.TypeString,
@@ -100,6 +100,7 @@ func resourceTransactionTestType() *schema.Resource {
 				Type:        schema.TypeString,
 				Optional:    true,
 				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
+				Computed:    true,
 			},
 			"end_time": {
 				Type:        schema.TypeString,
@@ -108,14 +109,16 @@ func resourceTransactionTestType() *schema.Resource {
 			},
 			"status": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				Description:  "Test status: active or inactive",
 				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
+				Default:      "active",
 			},
 			"label": {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				Description: "Optional. Label with key, values pair",
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"key": {
@@ -135,6 +138,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"thresholds": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Test thresholds for test time and availability percentage",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -162,12 +166,14 @@ func resourceTransactionTestType() *schema.Resource {
 				Optional:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding authentication and HTTP request headers",
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"authentication": {
 							Type:     schema.TypeSet,
 							MaxItems: 1,
 							Optional: true,
+							Computed: true,
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
 									"authentication_type": {
@@ -216,6 +222,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the user agent header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -234,6 +241,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the accept header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -252,6 +260,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the user accept encoding header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -270,6 +279,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the accept language header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -288,6 +298,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the accept charset header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -306,6 +317,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the cookie header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -324,6 +336,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the cache control header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -342,6 +355,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the pragma header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -360,6 +374,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the referer header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -378,6 +393,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the host header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -396,6 +412,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the dns override header for the given child_host_pattern",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -414,6 +431,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the request override header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -432,6 +450,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the request block header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -450,6 +469,7 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets the request delay header for test url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
@@ -473,6 +493,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"insights": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the insights section",
 				Elem: &schema.Resource{
@@ -500,17 +521,20 @@ func resourceTransactionTestType() *schema.Resource {
 				Type:        schema.TypeSet,
 				Optional:    true,
 				MaxItems:    1,
+				Computed:    true,
 				Description: "Optional. Used for overriding the schedule section",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"run_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Computed:    true,
 							Description: "The run schedule id to utilize for the test",
 						},
 						"maintenance_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Computed:    true,
 							Description: "The maintenance schedule id to utilize for the test",
 						},
 						"frequency": {
@@ -528,6 +552,7 @@ func resourceTransactionTestType() *schema.Resource {
 						"node_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
+							Computed:    true,
 							Description: "Optional if node_group_ids is used. Node ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
@@ -536,6 +561,7 @@ func resourceTransactionTestType() *schema.Resource {
 						"node_group_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
+							Computed:    true,
 							Description: "Optional if node_ids is used. Node group ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
@@ -544,6 +570,7 @@ func resourceTransactionTestType() *schema.Resource {
 						"no_of_subset_nodes": {
 							Type:        schema.TypeInt,
 							Optional:    true,
+							Computed:    true,
 							Description: "Number of subset nodes",
 						},
 					},
@@ -552,6 +579,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"alert_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
@@ -559,6 +587,7 @@ func resourceTransactionTestType() *schema.Resource {
 						"alert_rule": {
 							Type:        schema.TypeSet,
 							Optional:    true,
+							Computed:    true,
 							Description: "Optional. Sets the alert rule with attributes such as threshold, trigger type, warning, critical trigger and more",
 							Elem: &schema.Resource{
 								Schema: map[string]*schema.Schema{
@@ -572,38 +601,45 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeInt,
 										Description: "Optional. Sets the threshold for the number of runs or nodes the alert should trigger",
 										Optional:    true,
+										Computed:    true,
 									},
 									"threshold_percentage_of_runs": {
 										Type:        schema.TypeFloat,
 										Description: "Optional. Sets the threshold for the percentage of runs the alert should trigger",
 										Optional:    true,
+										Computed:    true,
 									},
 									"number_of_failing_nodes": {
 										Type:        schema.TypeInt,
 										Description: "Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'",
 										Optional:    true,
+										Computed:    true,
 									},
 									"trigger_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets the trigger type: 'specific value', 'trailing value', 'trendshift'",
 										ValidateFunc: validation.StringInSlice([]string{"specific value", "trailing value", "trendshift"}, false),
 									},
 									"operation_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets the operation type: 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'",
 										ValidateFunc: validation.StringInSlice([]string{"equals", "not equals", "greater than", "greater than or equals", "less than", "less than or equals"}, false),
 									},
 									"statistical_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets the statistical type for 'trailing value' trigger type. Supports only 'average' for now",
 										ValidateFunc: validation.StringInSlice([]string{"average"}, false),
 									},
 									"historical_interval": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets the historical interval for 'trailing value' trigger type: '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours', '1 day', '1 week'",
 										ValidateFunc: validation.StringInSlice([]string{"5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "2 hours", "6 hours", "12 hours", "1 day", "1 week"}, false),
 									},
@@ -611,43 +647,50 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeFloat,
 										Description: "Optional. Warning trigger value for 'specific value' and 'trailing value' trigger types.",
 										Optional:    true,
+										Computed:    true,
 									},
 									"critical_trigger": {
 										Type:        schema.TypeFloat,
 										Description: "Optional. Critical trigger value for 'specific value' and 'trailing value' trigger types.",
 										Optional:    true,
+										Computed:    true,
 									},
 									"enable_consecutive": {
 										Type:        schema.TypeBool,
 										Description: "Optional. Checks consecutive number of runs or nodes for triggering alerts.",
 										Optional:    true,
-										Default:     false,
+										Computed:    true,
 									},
 									"consecutive_number_of_runs": {
 										Type:        schema.TypeInt,
 										Description: "Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node",
 										Optional:    true,
+										Computed:    true,
 									},
 									"expression": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Sets trigger expression for content match alert type ",
 									},
 									"warning_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets alert warning reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'",
 										ValidateFunc: validation.StringInSlice([]string{"none", "1 minute", "5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "daily"}, false),
 									},
 									"critical_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets alert critical reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'",
 										ValidateFunc: validation.StringInSlice([]string{"none", "1 minute", "5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "daily"}, false),
 									},
 									"threshold_interval": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets the alert time threshold: 'default', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours'",
 										ValidateFunc: validation.StringInSlice([]string{"default", "5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "2 hours", "6 hours", "12 hours"}, false),
 									},
@@ -655,12 +698,13 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeBool,
 										Description: "Optional. Set to true for using rolling window instead of schedule time threshold",
 										Optional:    true,
-										Default:     false,
+										Computed:    true,
 									},
 									"notification_type": {
 										Type:         schema.TypeString,
 										Description:  "Optional. Notification group type to alert. Supports only default contacts for now.",
 										Optional:     true,
+										Computed:     true,
 										ValidateFunc: validation.StringInSlice([]string{"default contacts"}, false),
 									},
 									"alert_type": {
@@ -672,6 +716,7 @@ func resourceTransactionTestType() *schema.Resource {
 									"alert_sub_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     true,
 										Description:  "Optional. Sets the sub alert type: 'dns', 'connect', 'send', 'wait', 'load', 'ttfb', 'content load', 'response', 'test time', 'dom load', 'test time with suspect', 'server response', 'document complete', 'redirect', 'test', 'content', '% downtime'",
 										ValidateFunc: validation.StringInSlice([]string{"dns", "connect", "send", "wait", "load", "ttfb", "content load", "response", "test time", "dom load", "test time with suspect", "server response", "document complete", "redirect", "test", "content", "% downtime", "# requests", "# hosts", "# connections", "# redirects", "# other", "# images", "# scripts", "# html", "# css", "# xml", "# flash", "# media", "regular expression", "response code", "response headers", "byte length", "page", "file size"}, false),
 									},
@@ -679,38 +724,38 @@ func resourceTransactionTestType() *schema.Resource {
 										Type:        schema.TypeBool,
 										Description: "Optional. Sets enforce test failure property for an alert",
 										Optional:    true,
-										Default:     false,
+										Computed:    true,
 									},
 									"omit_scatterplot": {
 										Type:        schema.TypeBool,
 										Description: "Optional. Omits scatterplot image from alert emails if set to true",
 										Optional:    true,
-										Default:     false,
+										Computed:    true,
 									},
 									"notification_group": {
 										Type:        schema.TypeSet,
 										Required:    true,
-										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										MaxItems:    5,
+										Description: "List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
 													Type:        schema.TypeBool,
 													Description: "Optional. Set to true to include warning alerts in notifications. Default is false.",
 													Optional:    true,
-													Default:     false,
+													Computed:    true,
 												},
 												"notify_on_critical": {
 													Type:        schema.TypeBool,
 													Description: "Optional. Set to true to include critical alerts in notifications. Default is false.",
 													Optional:    true,
-													Default:     false,
+													Computed:    true,
 												},
 												"notify_on_improved": {
 													Type:        schema.TypeBool,
 													Description: "Optional. Set to true to include improved alerts in notifications. Default is false.",
 													Optional:    true,
-													Default:     false,
+													Computed:    true,
 												},
 												"subject": {
 													Type:        schema.TypeString,
@@ -720,6 +765,7 @@ func resourceTransactionTestType() *schema.Resource {
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -728,6 +774,7 @@ func resourceTransactionTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    true,
 													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -754,6 +801,7 @@ func resourceTransactionTestType() *schema.Resource {
 									"alert_webhook_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.",
 										Elem: &schema.Schema{
 											Type: schema.TypeInt,
@@ -762,6 +810,7 @@ func resourceTransactionTestType() *schema.Resource {
 									"recipient_email_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Description: "Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -770,6 +819,7 @@ func resourceTransactionTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    true,
 										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -786,149 +836,156 @@ func resourceTransactionTestType() *schema.Resource {
 				Optional:    true,
 				Description: "Optional. Used for overriding the advanced settings",
 				MaxItems:    1,
+				Computed:    true,
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
 						"verify_test_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables verify on test failure setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"debug_primary_host_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables debug primary host on failure setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"enable_http2": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables enable http/2 setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"debug_referenced_hosts_on_failure": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables debug referenced hosts on failure setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"capture_http_headers": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture http headers setting for all runs",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"capture_response_content": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture response content setting for all runs",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"ignore_ssl_failures": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables ignore SSL failures setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"host_data_collection_enabled": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables host data collection setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"zone_data_collection_enabled": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables zone data collection setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"f40x_or_50x_http_mark_successful": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables 40x or 50x error mark successful setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"enable_self_versus_third_party_zones": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables self versus third party zones setting and matches self zone by test URL",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"allow_test_download_limit_override": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables test download limit override setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"capture_filmstrip": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture filmstrip setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"capture_screenshot": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables capture screenshot setting for all runs",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"stop_test_on_document_complete": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables stop test on document complete setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"disable_cross_origin_iframe_access": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables disable cross origin iframe access setting for chrome monitor",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"stop_test_on_dom_content_load": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables stop test on DOM content load setting",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 						"enforce_test_failure_if_runs_longer_than": {
 							Type:         schema.TypeInt,
 							Description:  "Optional. Set the time value in seconds post which the test will be marked as failure.",
 							ValidateFunc: validation.IntInSlice([]int{5, 10, 15, 20, 30, 60, 90, 120}),
 							Optional:     true,
+							Computed:     true,
 						},
 						"wait_for_no_activity": {
 							Type:         schema.TypeInt,
 							Description:  "Optional. Set the time value in ms to stop the test after no network activity on document complete. Use with stop_test_on_document_complete flag",
 							ValidateFunc: validation.IntInSlice([]int{0, 500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000}),
 							Optional:     true,
+							Computed:     true,
 						},
 						"viewport_height": {
 							Type:        schema.TypeInt,
 							Description: "Optional. Set the viewport height. Use with viewport_width attribute",
 							Optional:    true,
+							Computed:    true,
 						},
 						"viewport_width": {
 							Type:        schema.TypeInt,
 							Description: "Optional. Set the viewport width. Use with viewport_height attribute",
 							Optional:    true,
+							Computed:    true,
 						},
 						"additional_monitor": {
 							Type:         schema.TypeString,
 							Description:  "Optional. Set the additional monitor to run along with the test monitor: 'ping icmp', 'ping tcp', 'ping udp','traceroute icmp','traceroute udp','traceroute tcp'",
 							ValidateFunc: validation.StringInSlice([]string{"ping icmp", "ping tcp", "ping udp", "traceroute icmp", "traceroute udp", "traceroute tcp"}, false),
 							Optional:     true,
+							Computed:     true,
 						},
 						"bandwidth_throttling": {
 							Type:         schema.TypeString,
 							Description:  "Optional. Set the bandwidth throttling for chrome: 'gprs','regular 2g','good 2g','regular 3g','good 3g','regular 4g','dsl','wifi'",
 							ValidateFunc: validation.StringInSlice([]string{"gprs", "regular 2g", "good 2g", "regular 3g", "good 3g", "regular 4g", "dsl", "wifi"}, false),
 							Optional:     true,
+							Computed:     true,
 						},
 						"enable_path_mtu_discovery": {
 							Type:        schema.TypeBool,
 							Description: "Optional. True enables Path MTU Discovery",
 							Optional:    true,
-							Default:     false,
+							Computed:    true,
 						},
 					},
 				},

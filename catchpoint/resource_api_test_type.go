@@ -651,7 +651,7 @@ func resourceApiTestType() *schema.Resource {
 									},
 									"alert_type": {
 										Type:         schema.TypeString,
-										Description:  "Sets the alert type: 'test failure', 'timing', 'availability', 'host failure'",
+										Description:  "Sets the alert type: 'test failure', 'timing', 'availability'",
 										Required:     true,
 										ValidateFunc: validation.StringInSlice([]string{"test failure", "timing", "availability", "host failure", "requests", "content match", "byte length"}, false),
 									},
@@ -676,8 +676,8 @@ func resourceApiTestType() *schema.Resource {
 									"notification_group": {
 										Type:        schema.TypeSet,
 										Required:    true,
-										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										MaxItems:    5,
+										Description: "List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {

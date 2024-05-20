@@ -21,6 +21,7 @@ description: |-
 - `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `product_id` (Number) The parent Product under which the Test will be created
 - `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
+- `status` (String) Test status: active or inactive
 - `test_location` (String) The domain or IP to be tested. Example: www.catchpoint.com
 - `test_name` (String) The name of the Test
 
@@ -34,7 +35,6 @@ description: |-
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the Traceroute Test. Supported: 'traceroute icmp','traceroute tcp','traceroute udp'
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
-- `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
 
@@ -84,24 +84,24 @@ Optional:
 
 Required:
 
-- `alert_type` (String) Sets the alert type
+- `alert_type` (String) Sets the alert type: 'test failure', 'timing', 'availability'
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
-- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
+- `notification_group` (Block Set, Min: 1, Max: 5) List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
-- `alert_sub_type` (String) Optional. Sets the sub alert type: '# cities','# asns','# countries','# hops','origin as','path as','origin neighbor','prefix mismatch','ping rtt','ping packet loss'
+- `alert_sub_type` (String) Optional. Sets the sub alert type: 'dns', 'connect', 'send', 'wait', 'load', 'ttfb', 'content load', 'response', 'test time', 'dom load', 'test time with suspect', 'server response', 'document complete', 'redirect', 'test', 'content', '% downtime'
 - `consecutive_number_of_runs` (Number) Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node
 - `critical_reminder` (String) Optional. Sets alert critical reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'
 - `critical_trigger` (Number) Optional. Critical trigger value for 'specific value' and 'trailing value' trigger types.
 - `enable_consecutive` (Boolean) Optional. Checks consecutive number of runs or nodes for triggering alerts.
 - `enforce_test_failure` (Boolean) Optional. Sets enforce test failure property for an alert
-- `expression` (String) Optional. Sets trigger expression for ASN alert type
+- `expression` (String) Optional. Sets trigger expression for content match alert type
 - `historical_interval` (String) Optional. Sets the historical interval for 'trailing value' trigger type: '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours', '1 day', '1 week'
 - `notification_type` (String) Optional. Notification group type to alert. Supports only default contacts for now.
 - `number_of_failing_nodes` (Number) Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'
 - `omit_scatterplot` (Boolean) Optional. Omits scatterplot image from alert emails if set to true
-- `operation_type` (String) Optional. Sets the operation type:'equals', 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'
+- `operation_type` (String) Optional. Sets the operation type: 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'
 - `statistical_type` (String) Optional. Sets the statistical type for 'trailing value' trigger type. Supports only 'average' for now
 - `threshold_interval` (String) Optional. Sets the alert time threshold: 'default', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours'
 - `threshold_number_of_runs` (Number) Optional. Sets the threshold for the number of runs or nodes the alert should trigger

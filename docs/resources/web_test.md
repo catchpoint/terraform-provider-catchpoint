@@ -19,9 +19,7 @@ description: |-
 
 - `division_id` (Number) The Division where the Test will be created
 - `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
-- `monitor` (String) The monitor to use for the Web Test. Supported: 'object', 'chrome', 'emulated', 'playback', 'mobile playback', 'mobile'
 - `product_id` (Number) The parent Product under which the Test will be created
-- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `status` (String) Test status: active or inactive
 - `test_name` (String) The name of the Test
 - `test_url` (String) The URL to be tested. Example: https://www.catchpoint.com
@@ -37,9 +35,11 @@ description: |-
 - `gateway_address_or_host` (String) Host/IP to use for network troubleshooting and monitoring
 - `insights` (Block Set, Max: 1) Optional. Used for overriding the insights section (see [below for nested schema](#nestedblock--insights))
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
+- `monitor` (String) The monitor to use for the Web Test. Supported: 'object', 'chrome', 'emulated', 'playback', 'mobile playback', 'mobile'
 - `request_settings` (Block Set, Max: 1) Optional. Used for overriding authentication and HTTP request headers (see [below for nested schema](#nestedblock--request_settings))
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
 - `simulate` (String) The device to simulate for mobile, mobile playback(playback source) monitors
+- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `test_description` (String) Optional. The Test description
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
 

@@ -228,7 +228,7 @@ func resourcePingTestType() *schema.Resource {
 									"operation_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										Description:  "Optional. Sets the operation type:'equals', 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'",
+										Description:  "Optional. Sets the operation type: 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'",
 										ValidateFunc: validation.StringInSlice([]string{"equals", "not equals", "greater than", "greater than or equals", "less than", "less than or equals"}, false),
 									},
 									"statistical_type": {
@@ -264,6 +264,11 @@ func resourcePingTestType() *schema.Resource {
 										Description: "Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node",
 										Optional:    true,
 									},
+									"expression": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Optional. Sets trigger expression for content match alert type ",
+									},
 									"warning_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,
@@ -296,15 +301,15 @@ func resourcePingTestType() *schema.Resource {
 									},
 									"alert_type": {
 										Type:         schema.TypeString,
-										Description:  "Sets the alert type",
+										Description:  "Sets the alert type: 'test failure', 'timing', 'availability'",
 										Required:     true,
-										ValidateFunc: validation.StringInSlice([]string{"test failure", "ping"}, false),
+										ValidateFunc: validation.StringInSlice([]string{"test failure", "timing", "availability", "host failure", "requests", "content match", "byte length"}, false),
 									},
 									"alert_sub_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										Description:  "Optional. Sets the sub alert type: 'ping rtt','ping packet loss'",
-										ValidateFunc: validation.StringInSlice([]string{"ping rtt", "ping packet loss"}, false),
+										Description:  "Optional. Sets the sub alert type: 'dns', 'connect', 'send', 'wait', 'load', 'ttfb', 'content load', 'response', 'test time', 'dom load', 'test time with suspect', 'server response', 'document complete', 'redirect', 'test', 'content', '% downtime'",
+										ValidateFunc: validation.StringInSlice([]string{"dns", "connect", "send", "wait", "load", "ttfb", "content load", "response", "test time", "dom load", "test time with suspect", "server response", "document complete", "redirect", "test", "content", "% downtime", "# requests", "# hosts", "# connections", "# redirects", "# other", "# images", "# scripts", "# html", "# css", "# xml", "# flash", "# media", "regular expression", "response code", "response headers", "byte length", "page", "file size"}, false),
 									},
 									"enforce_test_failure": {
 										Type:        schema.TypeBool,
@@ -321,8 +326,8 @@ func resourcePingTestType() *schema.Resource {
 									"notification_group": {
 										Type:        schema.TypeSet,
 										Required:    true,
-										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										MaxItems:    5,
+										Description: "List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {

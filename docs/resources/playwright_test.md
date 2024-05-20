@@ -21,6 +21,7 @@ description: |-
 - `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `product_id` (Number) The parent Product under which the Test will be created
 - `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
+- `status` (String) Test status: active or inactive
 - `test_name` (String) The name of the Test
 - `test_script` (String) The Script that will simulate user workflow
 
@@ -39,7 +40,6 @@ description: |-
 - `request_settings` (Block Set, Max: 1) Optional. Used for overriding authentication and HTTP request headers (see [below for nested schema](#nestedblock--request_settings))
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
 - `simulate` (String) The device to simulate for mobile monitor
-- `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 - `test_script_type` (String) The type of script. Supported: 'playwright'
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
@@ -111,7 +111,7 @@ Required:
 
 - `alert_type` (String) Sets the alert type: 'test failure', 'timing', 'availability'
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
-- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
+- `notification_group` (Block Set, Min: 1, Max: 5) List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
