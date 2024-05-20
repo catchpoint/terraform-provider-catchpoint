@@ -89,17 +89,17 @@ func resourceWebTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Required:    true,
-				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
+				Optional:    true,
+				Description: "Optional. Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
 				Type:         schema.TypeString,
-				Required:     true,
+				Optional:     true,
 				Description:  "Test status: active or inactive",
 				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
