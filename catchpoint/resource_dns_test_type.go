@@ -238,7 +238,7 @@ func resourceDnsTestType() *schema.Resource {
 									"operation_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										Description:  "Optional. Sets the operation type: 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'",
+										Description:  "Optional. Sets the operation type:'equals', 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'",
 										ValidateFunc: validation.StringInSlice([]string{"equals", "not equals", "greater than", "greater than or equals", "less than", "less than or equals"}, false),
 									},
 									"statistical_type": {
@@ -311,15 +311,15 @@ func resourceDnsTestType() *schema.Resource {
 									},
 									"alert_type": {
 										Type:         schema.TypeString,
-										Description:  "Sets the alert type: 'test failure', 'timing', 'availability'",
+										Description:  "Sets the alert type",
 										Required:     true,
-										ValidateFunc: validation.StringInSlice([]string{"test failure", "timing", "availability", "host failure", "requests", "content match", "byte length"}, false),
+										ValidateFunc: validation.StringInSlice([]string{"test failure", "ping", "timing", "availability"}, false),
 									},
 									"alert_sub_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
-										Description:  "Optional. Sets the sub alert type: 'dns', 'connect', 'send', 'wait', 'load', 'ttfb', 'content load', 'response', 'test time', 'dom load', 'test time with suspect', 'server response', 'document complete', 'redirect', 'test', 'content', '% downtime'",
-										ValidateFunc: validation.StringInSlice([]string{"dns", "connect", "send", "wait", "load", "ttfb", "content load", "response", "test time", "dom load", "test time with suspect", "server response", "document complete", "redirect", "test", "content", "% downtime", "# requests", "# hosts", "# connections", "# redirects", "# other", "# images", "# scripts", "# html", "# css", "# xml", "# flash", "# media", "regular expression", "response code", "response headers", "byte length", "page", "file size"}, false),
+										Description:  "Optional. Sets the sub alert type: 'ping rtt','ping packet loss','test time', '% downtime', 'test'",
+										ValidateFunc: validation.StringInSlice([]string{"ping rtt", "ping packet loss", "test time", "% downtime", "test"}, false),
 									},
 									"enforce_test_failure": {
 										Type:        schema.TypeBool,
