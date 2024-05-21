@@ -30,12 +30,14 @@ func resourceWebTestType() *schema.Resource {
 			"simulate": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				Computed:     true,
 				Description:  "The device to simulate for mobile, mobile playback(playback source) monitors",
 				ValidateFunc: validation.StringInSlice([]string{"android", "iphone", "ipad 2", "kindle fire", "galaxy tab", "iphone 5", "ipad mini", "galaxy note", "nexus 7", "nexus 4", "nokia lumia920", "iphone 6", "blackberry z30", "galaxy s4", "htc onex", "lg optimusg", "droid razr hd", "nexus 6", "iphone 6s", "galaxy s6", "iphone 7", "google pixel", "galaxy s8"}, false),
 			},
 			"chrome_version": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				Computed:     true,
 				Description:  "Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
 				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "108", "89", "87", "85", "75", "71", "66", "63", "59", "53"}, false),
 			},
@@ -52,6 +54,7 @@ func resourceWebTestType() *schema.Resource {
 			"folder_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. The Folder under which the Test will be created",
 			},
 			"test_name": {
@@ -73,6 +76,7 @@ func resourceWebTestType() *schema.Resource {
 			"gateway_address_or_host": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "Host/IP to use for network troubleshooting and monitoring",
 			},
 			"enable_test_data_webhook": {
@@ -90,22 +94,26 @@ func resourceWebTestType() *schema.Resource {
 			"start_time": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				Computed:     true,
 				Description:  "Test status: active or inactive",
 				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Label with key, values pair",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -126,6 +134,7 @@ func resourceWebTestType() *schema.Resource {
 			"thresholds": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Test thresholds for test time and availability percentage",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -151,6 +160,7 @@ func resourceWebTestType() *schema.Resource {
 			"request_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding authentication and HTTP request headers",
 				Elem: &schema.Resource{
@@ -464,6 +474,7 @@ func resourceWebTestType() *schema.Resource {
 			"insights": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the insights section",
 				Elem: &schema.Resource{
@@ -490,6 +501,7 @@ func resourceWebTestType() *schema.Resource {
 			"schedule_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the schedule section",
 				Elem: &schema.Resource{
@@ -543,6 +555,7 @@ func resourceWebTestType() *schema.Resource {
 			"alert_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
@@ -775,6 +788,7 @@ func resourceWebTestType() *schema.Resource {
 			"advanced_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Used for overriding the advanced settings",
 				MaxItems:    1,
 				Elem: &schema.Resource{
