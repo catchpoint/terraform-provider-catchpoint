@@ -41,6 +41,7 @@ func resourceDnsTestType() *schema.Resource {
 			"folder_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. The Folder under which the Test will be created",
 			},
 			"test_name": {
@@ -61,6 +62,7 @@ func resourceDnsTestType() *schema.Resource {
 			"dns_server": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "IP address or host name. If empty uses node's resolver. For DNS Direct monitor.",
 			},
 			"test_description": {
@@ -84,22 +86,26 @@ func resourceDnsTestType() *schema.Resource {
 			"start_time": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
 				Type:        schema.TypeString,
 				Optional:    true,
+				Computed:    true,
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
 				Type:         schema.TypeString,
 				Optional:     true,
+				Computed:     true,
 				Description:  "Test status: active or inactive",
 				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Label with key, values pair",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -120,6 +126,7 @@ func resourceDnsTestType() *schema.Resource {
 			"thresholds": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Test thresholds for test time and availability percentage",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -145,6 +152,7 @@ func resourceDnsTestType() *schema.Resource {
 			"schedule_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the schedule section",
 				Elem: &schema.Resource{
@@ -198,6 +206,7 @@ func resourceDnsTestType() *schema.Resource {
 			"alert_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
@@ -430,6 +439,7 @@ func resourceDnsTestType() *schema.Resource {
 			"advanced_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Used for overriding the advanced settings",
 				MaxItems:    1,
 				Elem: &schema.Resource{
