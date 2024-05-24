@@ -529,7 +529,7 @@ func resourcePlaywrightTestType() *schema.Resource {
 						"node_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "Optional.  if node_group_ids is used. Node ids in a list",
+							Description: "Optional. if node_group_ids is used. Node ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
