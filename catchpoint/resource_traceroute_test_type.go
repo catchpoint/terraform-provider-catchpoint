@@ -80,15 +80,14 @@ func resourceTracerouteTestType() *schema.Resource {
 			},
 			"end_time": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
+				Required:    true,
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				Description:  "Test status: active or inactive",
+				Description:  "Optional. Test status: active or inactive",
 				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
@@ -149,12 +148,12 @@ func resourceTracerouteTestType() *schema.Resource {
 						"run_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The run schedule id to utilize for the test",
+							Description: "Optional. The run schedule id to utilize for the test",
 						},
 						"maintenance_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The maintenance schedule id to utilize for the test",
+							Description: "Optional. The maintenance schedule id to utilize for the test",
 						},
 						"frequency": {
 							Type:         schema.TypeString,
@@ -171,7 +170,7 @@ func resourceTracerouteTestType() *schema.Resource {
 						"node_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "Optional if node_group_ids is used. Node ids in a list",
+							Description: "Optional.  if node_group_ids is used. Node ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
@@ -187,7 +186,7 @@ func resourceTracerouteTestType() *schema.Resource {
 						"no_of_subset_nodes": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "Number of subset nodes",
+							Description: "Optional. Number of subset nodes",
 						},
 					},
 				},
@@ -364,7 +363,7 @@ func resourceTracerouteTestType() *schema.Resource {
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -372,7 +371,7 @@ func resourceTracerouteTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -414,7 +413,7 @@ func resourceTracerouteTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
