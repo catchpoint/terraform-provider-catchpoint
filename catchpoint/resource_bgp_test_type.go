@@ -41,6 +41,7 @@ func resourceBgpTestType() *schema.Resource {
 			"folder_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. The Folder under which the Test will be created",
 			},
 			"test_name": {
@@ -73,7 +74,8 @@ func resourceBgpTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
@@ -82,13 +84,16 @@ func resourceBgpTestType() *schema.Resource {
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. Test status: active or inactive",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				Description:  "Optional. Test status: active or inactive",
+				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Label with key, values pair",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -109,6 +114,7 @@ func resourceBgpTestType() *schema.Resource {
 			"alert_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
@@ -247,8 +253,8 @@ func resourceBgpTestType() *schema.Resource {
 									"notification_group": {
 										Type:        schema.TypeSet,
 										Required:    true,
-										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										MaxItems:    5,
+										Description: "List of Notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
@@ -277,7 +283,7 @@ func resourceBgpTestType() *schema.Resource {
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -285,7 +291,7 @@ func resourceBgpTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -327,7 +333,7 @@ func resourceBgpTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
