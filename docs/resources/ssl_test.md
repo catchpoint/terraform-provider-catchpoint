@@ -88,7 +88,7 @@ Required:
 
 - `alert_type` (String) Sets the alert type
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
-- `notification_group` (Block Set, Min: 1, Max: 5) List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
+- `notification_group` (Block Set, Min: 1, Max: 5) List of Notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
