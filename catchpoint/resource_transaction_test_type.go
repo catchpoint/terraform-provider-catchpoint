@@ -31,13 +31,15 @@ func resourceTransactionTestType() *schema.Resource {
 			"simulate": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Description:  "The device to simulate for mobile monitor",
+				Computed:     true,
+				Description:  "Optional. The device to simulate for mobile monitor",
 				ValidateFunc: validation.StringInSlice([]string{"android", "iphone", "ipad 2", "kindle fire", "galaxy tab", "iphone 5", "ipad mini", "galaxy note", "nexus 7", "nexus 4", "nokia lumia920", "iphone 6", "blackberry z30", "galaxy s4", "htc onex", "lg optimusg", "droid razr hd", "nexus 6", "iphone 6s", "galaxy s6", "iphone 7", "google pixel", "galaxy s8"}, false),
 			},
 			"chrome_version": {
 				Type:         schema.TypeString,
 				Optional:     true,
-				Description:  "Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
+				Computed:     true,
+				Description:  "Optional. Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
 				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "108", "89", "87", "85", "75", "71", "66", "63", "59", "53"}, false),
 			},
 			"division_id": {
@@ -81,7 +83,8 @@ func resourceTransactionTestType() *schema.Resource {
 			"gateway_address_or_host": {
 				Type:        schema.TypeString,
 				Optional:    true,
-				Description: "Host/IP to use for network troubleshooting and monitoring",
+				Computed:    true,
+				Description: "Optional. Host/IP to use for network troubleshooting and monitoring",
 			},
 			"enable_test_data_webhook": {
 				Type:        schema.TypeBool,
@@ -97,7 +100,8 @@ func resourceTransactionTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
@@ -106,13 +110,16 @@ func resourceTransactionTestType() *schema.Resource {
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. Test status: active or inactive",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				Description:  "Optional. Test status: active or inactive",
+				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Label with key, values pair",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -133,6 +140,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"thresholds": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Test thresholds for test time and availability percentage",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -158,6 +166,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"request_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding authentication and HTTP request headers",
 				Elem: &schema.Resource{
@@ -471,6 +480,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"insights": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the insights section",
 				Elem: &schema.Resource{
@@ -497,6 +507,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"schedule_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the schedule section",
 				Elem: &schema.Resource{
@@ -504,12 +515,12 @@ func resourceTransactionTestType() *schema.Resource {
 						"run_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The run schedule id to utilize for the test",
+							Description: "Optional. The run schedule id to utilize for the test",
 						},
 						"maintenance_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The maintenance schedule id to utilize for the test",
+							Description: "Optional. The maintenance schedule id to utilize for the test",
 						},
 						"frequency": {
 							Type:         schema.TypeString,
@@ -526,7 +537,7 @@ func resourceTransactionTestType() *schema.Resource {
 						"node_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "Optional if node_group_ids is used. Node ids in a list",
+							Description: "Optional. if node_group_ids is used. Node ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
@@ -542,7 +553,7 @@ func resourceTransactionTestType() *schema.Resource {
 						"no_of_subset_nodes": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "Number of subset nodes",
+							Description: "Optional. Number of subset nodes",
 						},
 					},
 				},
@@ -550,6 +561,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"alert_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
@@ -688,8 +700,8 @@ func resourceTransactionTestType() *schema.Resource {
 									"notification_group": {
 										Type:        schema.TypeSet,
 										Required:    true,
-										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										MaxItems:    5,
+										Description: "List of notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
@@ -718,7 +730,7 @@ func resourceTransactionTestType() *schema.Resource {
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -726,7 +738,7 @@ func resourceTransactionTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -768,7 +780,7 @@ func resourceTransactionTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -782,6 +794,7 @@ func resourceTransactionTestType() *schema.Resource {
 			"advanced_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Used for overriding the advanced settings",
 				MaxItems:    1,
 				Elem: &schema.Resource{

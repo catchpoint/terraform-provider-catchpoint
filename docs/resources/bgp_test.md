@@ -21,7 +21,6 @@ description: |-
 - `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `prefix` (String) IPV4 address with a netmask range from 8 to 24 or IPV6 address with a netmask range from 28 to 128
 - `product_id` (Number) The parent Product under which the Test will be created
-- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `test_name` (String) The name of the Test
 
 ### Optional
@@ -32,6 +31,7 @@ description: |-
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the BGP Test. Supported: 'bgp','bgp basic'
+- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 
@@ -60,7 +60,7 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
 
@@ -71,7 +71,7 @@ Required:
 
 - `alert_type` (String) Sets the alert type
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
-- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
+- `notification_group` (Block Set, Min: 1, Max: 5) List of Notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
@@ -105,11 +105,11 @@ Required:
 
 Optional:
 
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
-- `recipient_email_ids` (List of String) List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `recipient_email_ids` (List of String) Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 
 
 

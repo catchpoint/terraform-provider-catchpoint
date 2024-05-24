@@ -21,7 +21,6 @@ description: |-
 - `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `product_id` (Number) The parent Product under which the Test will be created
 - `query_type` (String) The type of DNS query
-- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `test_domain` (String) The domain to be tested. Example: www.catchpoint.com
 - `test_name` (String) The name of the Test
 
@@ -36,6 +35,7 @@ description: |-
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the Dns Test. Supported: 'dns experience','dns direct'
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
+- `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
@@ -85,7 +85,7 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
 
@@ -96,7 +96,7 @@ Required:
 
 - `alert_type` (String) Sets the alert type
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
-- `notification_group` (Block Set, Min: 1, Max: 1) Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
+- `notification_group` (Block Set, Min: 1, Max: 5) List of Notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
@@ -106,6 +106,7 @@ Optional:
 - `critical_trigger` (Number) Optional. Critical trigger value for 'specific value' and 'trailing value' trigger types.
 - `enable_consecutive` (Boolean) Optional. Checks consecutive number of runs or nodes for triggering alerts.
 - `enforce_test_failure` (Boolean) Optional. Sets enforce test failure property for an alert
+- `expression` (String) Optional. Sets trigger expression for content match alert type
 - `historical_interval` (String) Optional. Sets the historical interval for 'trailing value' trigger type: '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours', '1 day', '1 week'
 - `notification_type` (String) Optional. Notification group type to alert. Supports only default contacts for now.
 - `number_of_failing_nodes` (Number) Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'
@@ -129,11 +130,11 @@ Required:
 
 Optional:
 
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
-- `recipient_email_ids` (List of String) List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `recipient_email_ids` (List of String) Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 
 
 
@@ -157,11 +158,11 @@ Required:
 
 Optional:
 
-- `maintenance_schedule_id` (Number) The maintenance schedule id to utilize for the test
-- `no_of_subset_nodes` (Number) Number of subset nodes
+- `maintenance_schedule_id` (Number) Optional. The maintenance schedule id to utilize for the test
+- `no_of_subset_nodes` (Number) Optional. Number of subset nodes
 - `node_group_ids` (List of Number) Optional if node_ids is used. Node group ids in a list
-- `node_ids` (List of Number) Optional if node_group_ids is used. Node ids in a list
-- `run_schedule_id` (Number) The run schedule id to utilize for the test
+- `node_ids` (List of Number) Optional. if node_group_ids is used. Node ids in a list
+- `run_schedule_id` (Number) Optional. The run schedule id to utilize for the test
 
 
 <a id="nestedblock--thresholds"></a>
