@@ -18,6 +18,7 @@ description: |-
 ### Required
 
 - `division_id` (Number) The Division where the Test will be created
+- `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `product_id` (Number) The parent Product under which the Test will be created
 - `test_location` (String) The domain or IP to be tested. Example: www.catchpoint.com
 - `test_name` (String) The name of the Test
@@ -28,13 +29,12 @@ description: |-
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
 - `alerts_paused` (Boolean) Optional. Switch for pausing Test alerts
 - `enable_test_data_webhook` (Boolean) Optional. Switch for enabling test data webhook feature
-- `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the Traceroute Test. Supported: 'traceroute icmp','traceroute tcp','traceroute udp'
 - `schedule_settings` (Block Set, Max: 1) Optional. Used for overriding the schedule section (see [below for nested schema](#nestedblock--schedule_settings))
 - `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
-- `status` (String) Test status: active or inactive
+- `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 - `thresholds` (Block Set) Optional. Test thresholds for test time and availability percentage (see [below for nested schema](#nestedblock--thresholds))
 
@@ -75,7 +75,7 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
 
@@ -120,11 +120,11 @@ Required:
 
 Optional:
 
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
-- `recipient_email_ids` (List of String) List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `recipient_email_ids` (List of String) Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 
 
 
@@ -148,11 +148,11 @@ Required:
 
 Optional:
 
-- `maintenance_schedule_id` (Number) The maintenance schedule id to utilize for the test
-- `no_of_subset_nodes` (Number) Number of subset nodes
+- `maintenance_schedule_id` (Number) Optional. The maintenance schedule id to utilize for the test
+- `no_of_subset_nodes` (Number) Optional. Number of subset nodes
 - `node_group_ids` (List of Number) Optional if node_ids is used. Node group ids in a list
-- `node_ids` (List of Number) Optional if node_group_ids is used. Node ids in a list
-- `run_schedule_id` (Number) The run schedule id to utilize for the test
+- `node_ids` (List of Number) Optional. if node_group_ids is used. Node ids in a list
+- `run_schedule_id` (Number) Optional. The run schedule id to utilize for the test
 
 
 <a id="nestedblock--thresholds"></a>

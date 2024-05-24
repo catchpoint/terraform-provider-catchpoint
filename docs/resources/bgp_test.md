@@ -18,6 +18,7 @@ description: |-
 ### Required
 
 - `division_id` (Number) The Division where the Test will be created
+- `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `prefix` (String) IPV4 address with a netmask range from 8 to 24 or IPV6 address with a netmask range from 28 to 128
 - `product_id` (Number) The parent Product under which the Test will be created
 - `test_name` (String) The name of the Test
@@ -27,12 +28,11 @@ description: |-
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
 - `alerts_paused` (Boolean) Optional. Switch for pausing Test alerts
 - `enable_test_data_webhook` (Boolean) Optional. Switch for enabling test data webhook feature
-- `end_time` (String) End time for the Test in ISO format like 2024-12-30T04:59:00Z
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the BGP Test. Supported: 'bgp','bgp basic'
 - `start_time` (String) Start time for the Test in ISO format like 2024-12-30T04:59:00Z
-- `status` (String) Test status: active or inactive
+- `status` (String) Optional. Test status: active or inactive
 - `test_description` (String) Optional. The Test description
 
 ### Read-Only
@@ -60,7 +60,7 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
 
@@ -105,11 +105,11 @@ Required:
 
 Optional:
 
-- `contact_groups` (List of String) List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 - `notify_on_critical` (Boolean) Optional. Set to true to include critical alerts in notifications. Default is false.
 - `notify_on_improved` (Boolean) Optional. Set to true to include improved alerts in notifications. Default is false.
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
-- `recipient_email_ids` (List of String) List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `recipient_email_ids` (List of String) Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 
 
 
