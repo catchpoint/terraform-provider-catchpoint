@@ -80,15 +80,14 @@ func resourceBgpTestType() *schema.Resource {
 			},
 			"end_time": {
 				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
+				Required:    true,
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				Description:  "Test status: active or inactive",
+				Description:  "Optional. Test status: active or inactive",
 				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
@@ -284,7 +283,7 @@ func resourceBgpTestType() *schema.Resource {
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -292,7 +291,7 @@ func resourceBgpTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -334,7 +333,7 @@ func resourceBgpTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
