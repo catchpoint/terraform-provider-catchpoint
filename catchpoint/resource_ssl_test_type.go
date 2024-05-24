@@ -41,6 +41,7 @@ func resourceSslTestType() *schema.Resource {
 			"folder_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. The Folder under which the Test will be created",
 			},
 			"test_name": {
@@ -85,7 +86,8 @@ func resourceSslTestType() *schema.Resource {
 			},
 			"start_time": {
 				Type:        schema.TypeString,
-				Required:    true,
+				Optional:    true,
+				Computed:    true,
 				Description: "Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"end_time": {
@@ -94,13 +96,16 @@ func resourceSslTestType() *schema.Resource {
 				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
 			},
 			"status": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Description: "Optional. Test status: active or inactive",
+				Type:         schema.TypeString,
+				Optional:     true,
+				Computed:     true,
+				Description:  "Optional. Test status: active or inactive",
+				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
 			},
 			"label": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Label with key, values pair",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -121,6 +126,7 @@ func resourceSslTestType() *schema.Resource {
 			"thresholds": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Test thresholds for test time and availability percentage",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
@@ -146,6 +152,7 @@ func resourceSslTestType() *schema.Resource {
 			"schedule_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the schedule section",
 				Elem: &schema.Resource{
@@ -153,12 +160,12 @@ func resourceSslTestType() *schema.Resource {
 						"run_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The run schedule id to utilize for the test",
+							Description: "Optional. The run schedule id to utilize for the test",
 						},
 						"maintenance_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "The maintenance schedule id to utilize for the test",
+							Description: "Optional. The maintenance schedule id to utilize for the test",
 						},
 						"frequency": {
 							Type:         schema.TypeString,
@@ -175,7 +182,7 @@ func resourceSslTestType() *schema.Resource {
 						"node_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "Optional if node_group_ids is used. Node ids in a list",
+							Description: "Optional. if node_group_ids is used. Node ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
@@ -191,7 +198,7 @@ func resourceSslTestType() *schema.Resource {
 						"no_of_subset_nodes": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "Number of subset nodes",
+							Description: "Optional. Number of subset nodes",
 						},
 					},
 				},
@@ -199,6 +206,7 @@ func resourceSslTestType() *schema.Resource {
 			"alert_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				MaxItems:    1,
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
@@ -332,8 +340,8 @@ func resourceSslTestType() *schema.Resource {
 									"notification_group": {
 										Type:        schema.TypeSet,
 										Required:    true,
-										MaxItems:    1,
-										Description: "Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										MaxItems:    5,
+										Description: "List of Notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
@@ -362,7 +370,7 @@ func resourceSslTestType() *schema.Resource {
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -370,7 +378,7 @@ func resourceSslTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
-													Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+													Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
 													},
@@ -412,7 +420,7 @@ func resourceSslTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
-										Description: "List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
+										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
 										},
@@ -426,6 +434,7 @@ func resourceSslTestType() *schema.Resource {
 			"advanced_settings": {
 				Type:        schema.TypeSet,
 				Optional:    true,
+				Computed:    true,
 				Description: "Optional. Used for overriding the advanced settings",
 				MaxItems:    1,
 				Elem: &schema.Resource{
