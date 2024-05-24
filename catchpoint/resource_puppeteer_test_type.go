@@ -703,7 +703,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										Required:    true,
 										MaxItems:    5,
-										Description: "List of Notification group for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
+										Description: "List of Notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"notify_on_warning": {
