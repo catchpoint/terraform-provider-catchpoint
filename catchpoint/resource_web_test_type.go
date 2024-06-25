@@ -575,38 +575,45 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeInt,
 										Description: "Optional. Sets the threshold for the number of runs or nodes the alert should trigger",
 										Optional:    true,
+										Computed:    false,
 									},
 									"threshold_percentage_of_runs": {
 										Type:        schema.TypeFloat,
 										Description: "Optional. Sets the threshold for the percentage of runs the alert should trigger",
 										Optional:    true,
+										Computed:    false,
 									},
 									"number_of_failing_nodes": {
 										Type:        schema.TypeInt,
 										Description: "Optional. Sets the number of failed nodes the alert should trigger if node_threshold_type is 'average across nodes'",
 										Optional:    true,
+										Computed:    false,
 									},
 									"trigger_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets the trigger type: 'specific value', 'trailing value', 'trendshift'",
 										ValidateFunc: validation.StringInSlice([]string{"specific value", "trailing value", "trendshift"}, false),
 									},
 									"operation_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets the operation type: 'not equals', 'greater than', 'greater than or equals', 'less than', 'less than or equals'",
 										ValidateFunc: validation.StringInSlice([]string{"equals", "not equals", "greater than", "greater than or equals", "less than", "less than or equals"}, false),
 									},
 									"statistical_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets the statistical type for 'trailing value' trigger type. Supports only 'average' for now",
 										ValidateFunc: validation.StringInSlice([]string{"average"}, false),
 									},
 									"historical_interval": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets the historical interval for 'trailing value' trigger type: '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours', '1 day', '1 week'",
 										ValidateFunc: validation.StringInSlice([]string{"5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "2 hours", "6 hours", "12 hours", "1 day", "1 week"}, false),
 									},
@@ -614,43 +621,50 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeFloat,
 										Description: "Optional. Warning trigger value for 'specific value' and 'trailing value' trigger types.",
 										Optional:    true,
+										Computed:    false,
 									},
 									"critical_trigger": {
 										Type:        schema.TypeFloat,
 										Description: "Optional. Critical trigger value for 'specific value' and 'trailing value' trigger types.",
 										Optional:    true,
+										Computed:    false,
 									},
 									"enable_consecutive": {
 										Type:        schema.TypeBool,
 										Description: "Optional. Checks consecutive number of runs or nodes for triggering alerts.",
 										Optional:    true,
-										Default:     false,
+										Computed:    false,
 									},
 									"consecutive_number_of_runs": {
 										Type:        schema.TypeInt,
 										Description: "Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node",
 										Optional:    true,
+										Computed:    false,
 									},
 									"expression": {
 										Type:        schema.TypeString,
 										Optional:    true,
+										Computed:    false,
 										Description: "Optional. Sets trigger expression for content match alert type ",
 									},
 									"warning_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets alert warning reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'",
 										ValidateFunc: validation.StringInSlice([]string{"none", "1 minute", "5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "daily"}, false),
 									},
 									"critical_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets alert critical reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'",
 										ValidateFunc: validation.StringInSlice([]string{"none", "1 minute", "5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "daily"}, false),
 									},
 									"threshold_interval": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets the alert time threshold: 'default', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', '2 hours', '6 hours', '12 hours'",
 										ValidateFunc: validation.StringInSlice([]string{"default", "5 minutes", "10 minutes", "15 minutes", "30 minutes", "1 hour", "2 hours", "6 hours", "12 hours"}, false),
 									},
@@ -658,12 +672,13 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeBool,
 										Description: "Optional. Set to true for using rolling window instead of schedule time threshold",
 										Optional:    true,
-										Default:     false,
+										Computed:    false,
 									},
 									"notification_type": {
 										Type:         schema.TypeString,
 										Description:  "Optional. Notification group type to alert. Supports only default contacts for now.",
 										Optional:     true,
+										Computed:     false,
 										ValidateFunc: validation.StringInSlice([]string{"default contacts"}, false),
 									},
 									"alert_type": {
@@ -675,6 +690,7 @@ func resourceWebTestType() *schema.Resource {
 									"alert_sub_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
+										Computed:     false,
 										Description:  "Optional. Sets the sub alert type: 'dns', 'connect', 'send', 'wait', 'load', 'ttfb', 'content load', 'response', 'test time', 'dom load', 'test time with suspect', 'server response', 'document complete', 'redirect', 'test', 'content', '% downtime'",
 										ValidateFunc: validation.StringInSlice([]string{"dns", "connect", "send", "wait", "load", "ttfb", "content load", "response", "test time", "dom load", "test time with suspect", "server response", "document complete", "redirect", "test", "content", "% downtime", "# requests", "# hosts", "# connections", "# redirects", "# other", "# images", "# scripts", "# html", "# css", "# xml", "# flash", "# media", "regular expression", "response code", "response headers", "byte length", "page", "file size"}, false),
 									},
@@ -682,13 +698,13 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeBool,
 										Description: "Optional. Sets enforce test failure property for an alert",
 										Optional:    true,
-										Default:     false,
+										Computed:    false,
 									},
 									"omit_scatterplot": {
 										Type:        schema.TypeBool,
 										Description: "Optional. Omits scatterplot image from alert emails if set to true",
 										Optional:    true,
-										Default:     false,
+										Computed:    false,
 									},
 									"notification_group": {
 										Type:        schema.TypeSet,
@@ -701,19 +717,19 @@ func resourceWebTestType() *schema.Resource {
 													Type:        schema.TypeBool,
 													Description: "Optional. Set to true to include warning alerts in notifications. Default is false.",
 													Optional:    true,
-													Default:     false,
+													Computed:    false,
 												},
 												"notify_on_critical": {
 													Type:        schema.TypeBool,
 													Description: "Optional. Set to true to include critical alerts in notifications. Default is false.",
 													Optional:    true,
-													Default:     false,
+													Computed:    false,
 												},
 												"notify_on_improved": {
 													Type:        schema.TypeBool,
 													Description: "Optional. Set to true to include improved alerts in notifications. Default is false.",
 													Optional:    true,
-													Default:     false,
+													Computed:    false,
 												},
 												"subject": {
 													Type:        schema.TypeString,
@@ -723,6 +739,7 @@ func resourceWebTestType() *schema.Resource {
 												"recipient_email_ids": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    false,
 													Description: "Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -731,6 +748,7 @@ func resourceWebTestType() *schema.Resource {
 												"contact_groups": {
 													Type:        schema.TypeList,
 													Optional:    true,
+													Computed:    false,
 													Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 													Elem: &schema.Schema{
 														Type: schema.TypeString,
@@ -757,6 +775,7 @@ func resourceWebTestType() *schema.Resource {
 									"alert_webhook_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    false,
 										Description: "Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.",
 										Elem: &schema.Schema{
 											Type: schema.TypeInt,
@@ -765,6 +784,7 @@ func resourceWebTestType() *schema.Resource {
 									"recipient_email_ids": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    false,
 										Description: "Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,
@@ -773,6 +793,7 @@ func resourceWebTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeList,
 										Optional:    true,
+										Computed:    false,
 										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
 											Type: schema.TypeString,

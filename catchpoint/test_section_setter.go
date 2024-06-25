@@ -251,8 +251,8 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		if node_threshold_type_id == -1 {
 			return errors.New("invalid node threshold type string provided. acceptable values are runs and node")
 		}
-		threshold_number_of_runs := alert_rule["threshold_number_of_runs"].(int)
-		consecutive_number_of_runs := alert_rule["consecutive_number_of_runs"].(int)
+		threshold_number_of_runs, thresholdnoOfRunsOk := alert_rule["threshold_number_of_runs"].(int)
+		consecutive_number_of_runs, consecutiveNoOfRunsOK := alert_rule["consecutive_number_of_runs"].(int)
 		threshold_percentage_of_runs := alert_rule["threshold_percentage_of_runs"].(float64)
 		enable_consecutive := alert_rule["enable_consecutive"].(bool)
 		warning_reminder := alert_rule["warning_reminder"].(string)
@@ -319,8 +319,8 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		if alert_rule["expression"] != nil {
 			expression = alert_rule["expression"].(string)
 		}
-		warning_trigger := alert_rule["warning_trigger"].(float64)
-		critical_trigger := alert_rule["critical_trigger"].(float64)
+		warning_trigger, warningOk := alert_rule["warning_trigger"].(float64)
+		critical_trigger, criticalOk := alert_rule["critical_trigger"].(float64)
 		alert_sub_type := alert_rule["alert_sub_type"].(string)
 		var alert_sub_type_id int
 		var alert_sub_type_name string
@@ -347,6 +347,10 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			notifyOnCritical = notification_group["notify_on_critical"].(bool)
 			notifyOnWarning = notification_group["notify_on_warning"].(bool)
 			notifyOnImproved = notification_group["notify_on_improved"].(bool)
+			// subject, subjectOk := notification_group["subject"].(string)
+			// notifyOnCritical, notifyOnCriticalOk := notification_group["notify_on_critical"].(bool)
+			// notifyOnWarning, notifyOnWarningOk := notification_group["notify_on_warning"].(bool)
+			// notifyOnImproved, notifyOnImprovedOk := notification_group["notify_on_improved"].(bool)
 			var emailIds []interface{}
 
 			if notificationGroup, ok := notification_group["recipient_email_ids"]; ok {
@@ -378,30 +382,151 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 				all_email_ids = append(all_email_ids, Recipient{Id: i + 1, RecipientType: contactGroupType, Name: contact})
 			}
 
+			// notificationGroups := NotificationGroupStruct{}
+
+			// if subjectOk {
+			// 	notificationGroups.Subject = &subject
+			// }
+
+			// if notifyOnCriticalOk {
+			// 	notificationGroups.NotifyOnCritical = &notifyOnCritical
+			// }
+
+			// if notifyOnWarningOk {
+			// 	notificationGroups.NotifyOnWarning = &notifyOnWarning
+			// }
+
+			// if notifyOnImprovedOk {
+			// 	notificationGroups.NotifyOnCritical = &notifyOnImproved
+			// }
+
+			// notificationGroups.AlertWebhooks = []AlertWebhook{}
+			// notificationGroups.Recipients = all_email_ids
 			notificationGroups = append(notificationGroups, NotificationGroupStruct{Subject: subject,
 				NotifyOnWarning:  notifyOnWarning,
 				NotifyOnCritical: notifyOnCritical,
 				NotifyOnImproved: notifyOnImproved,
 				AlertWebhooks:    []AlertWebhook{},
 				Recipients:       all_email_ids})
+
 		}
 
-		testConfig.AlertRuleConfigs = append(testConfig.AlertRuleConfigs, AlertRuleConfig{AlertNodeThresholdType: IdName{Id: node_threshold_type_id, Name: node_threshold_type_name}, AlertThresholdNumOfRuns: threshold_number_of_runs, AlertConsecutiveNumOfRuns: consecutive_number_of_runs, AlertThresholdPercentOfRuns: threshold_percentage_of_runs,
-			AlertThresholdNumOfFailingNodes: number_of_failing_nodes, TriggerType: IdName{Id: trigger_type_id, Name: trigger_type_name},
-			OperationType:              IdName{Id: operation_type_id, Name: operation_type_name},
-			StatisticalType:            IdName{Id: statistical_type_id, Name: statistical_type_name},
-			TrailingHistoricalInterval: IdName{Id: historical_interval_id, Name: historical_interval_name},
-			AlertWarningTrigger:        warning_trigger, AlertCriticalTrigger: critical_trigger, Expression: expression,
-			AlertEnableConsecutive: enable_consecutive, AlertWarningReminder: IdName{Id: warning_reminder_id, Name: warning_reminder_name},
-			AlertCriticalReminder:  IdName{Id: critical_reminder_id, Name: critical_reminder_name},
-			AlertThresholdInterval: IdName{Id: threshold_interval_id, Name: threshold_interval_name},
-			AlertUseRollingWindow:  use_rolling_window, AlertNotificationType: notification_type_id,
-			AlertType:               IdName{Id: alert_type_id, Name: alert_type_name},
-			AlertSubType:            IdName{Id: alert_sub_type_id, Name: alert_sub_type_name},
-			AlertEnforceTestFailure: enforce_test_failure,
-			AlertOmitScatterplot:    omit_scatterplot,
-			NotificationGroups:      notificationGroups,
-		})
+		config := AlertRuleConfig{}
+
+		if node_threshold_type_id != 0 && node_threshold_type_name != "" {
+			config.AlertNodeThresholdType = IdName{Id: node_threshold_type_id, Name: node_threshold_type_name}
+		}
+		if thresholdnoOfRunsOk {
+			config.AlertThresholdNumOfRuns = threshold_number_of_runs
+		}
+		if consecutiveNoOfRunsOK {
+			config.AlertConsecutiveNumOfRuns = consecutive_number_of_runs
+		}
+		if threshold_percentage_of_runs != 0 {
+			config.AlertThresholdPercentOfRuns = threshold_percentage_of_runs
+		}
+		if number_of_failing_nodes != 0 {
+			config.AlertThresholdNumOfFailingNodes = number_of_failing_nodes
+		}
+		if trigger_type_id != 0 && trigger_type_name != "" {
+			config.TriggerType = IdName{Id: trigger_type_id, Name: trigger_type_name}
+		}
+		if operation_type_id != 0 && operation_type_name != "" {
+			config.OperationType = IdName{Id: operation_type_id, Name: operation_type_name}
+		}
+		if statistical_type_id != 0 && statistical_type_name != "" {
+			config.StatisticalType = IdName{Id: statistical_type_id, Name: statistical_type_name}
+		}
+		if historical_interval_id != 0 && historical_interval_name != "" {
+			config.AlertThresholdInterval = IdName{Id: historical_interval_id, Name: historical_interval_name}
+		}
+
+		if warningOk {
+			config.AlertWarningTrigger = warning_trigger
+		}
+		if criticalOk {
+			config.AlertCriticalTrigger = critical_trigger
+		}
+		if expression != "" {
+			config.Expression = expression
+		}
+		if enable_consecutive {
+			config.AlertEnableConsecutive = enable_consecutive
+		}
+		if warning_reminder_id != 0 && warning_reminder_name != "" {
+			config.AlertWarningReminder = IdName{Id: warning_reminder_id, Name: warning_reminder_name}
+		}
+		if critical_reminder_id != 0 && critical_reminder_name != "" {
+			config.AlertCriticalReminder = IdName{Id: critical_reminder_id, Name: critical_reminder_name}
+		}
+		if threshold_interval_id != 0 && threshold_interval_name != "" {
+			config.AlertNodeThresholdType = IdName{Id: threshold_interval_id, Name: threshold_interval_name}
+		}
+		if use_rolling_window {
+			config.AlertUseRollingWindow = use_rolling_window
+		}
+		if notification_type_id != 0 {
+			config.AlertNotificationType = notification_type_id
+		}
+		if alert_type_id != 0 && alert_type_name != "" {
+			config.AlertType = IdName{Id: alert_type_id, Name: alert_type_name}
+		}
+		if alert_sub_type_id != 0 && alert_sub_type_name != "" {
+			config.AlertSubType = IdName{Id: alert_sub_type_id, Name: alert_sub_type_name}
+		}
+		if enforce_test_failure {
+			config.AlertEnforceTestFailure = enforce_test_failure
+		}
+		if omit_scatterplot {
+			config.AlertOmitScatterplot = omit_scatterplot
+		}
+		if notificationGroups != nil {
+			config.NotificationGroups = notificationGroups
+		}
+
+		// testConfig.AlertRuleConfigs = append(testConfig.AlertRuleConfigs, AlertRuleConfig{AlertNodeThresholdType: IdName{Id: node_threshold_type_id, Name: node_threshold_type_name},
+		// AlertThresholdNumOfRuns: threshold_number_of_runs, AlertConsecutiveNumOfRuns: &consecutive_number_of_runs,
+		// AlertThresholdPercentOfRuns: threshold_percentage_of_runs,
+		// 	AlertThresholdNumOfFailingNodes: number_of_failing_nodes, TriggerType: IdName{Id: trigger_type_id, Name: trigger_type_name},
+		// 	OperationType:              IdName{Id: operation_type_id, Name: operation_type_name},
+		// 	StatisticalType:            IdName{Id: statistical_type_id, Name: statistical_type_name},
+		// 	TrailingHistoricalInterval: IdName{Id: historical_interval_id, Name: historical_interval_name},
+		// 	AlertWarningTrigger:        warning_trigger, AlertCriticalTrigger: critical_trigger, Expression: expression,
+		// 	AlertEnableConsecutive: enable_consecutive, AlertWarningReminder: IdName{Id: warning_reminder_id, Name: warning_reminder_name},
+		// 	AlertCriticalReminder:  IdName{Id: critical_reminder_id, Name: critical_reminder_name},
+		// 	AlertThresholdInterval: IdName{Id: threshold_interval_id, Name: threshold_interval_name},
+		// 	AlertUseRollingWindow:  use_rolling_window, AlertNotificationType: notification_type_id,
+		// 	AlertType:               IdName{Id: alert_type_id, Name: alert_type_name},
+		// 	AlertSubType:            IdName{Id: alert_sub_type_id, Name: alert_sub_type_name},
+		// 	AlertEnforceTestFailure: enforce_test_failure,
+		// 	AlertOmitScatterplot:    omit_scatterplot,
+		// 	NotificationGroups:      notificationGroups,
+		// })
+		// testConfig.AlertRuleConfigs = createAlertRuleConfig(
+		// 	IdName{Id: node_threshold_type_id, Name: node_threshold_type_name},
+		// 	threshold_number_of_runs,
+		// 	&consecutive_number_of_runs,
+		// 	threshold_percentage_of_runs,
+		// 	number_of_failing_nodes,
+		// 	IdName{Id: trigger_type_id, Name: trigger_type_name},
+		// 	IdName{Id: operation_type_id, Name: operation_type_name},
+		// 	IdName{Id: statistical_type_id, Name: statistical_type_name},
+		// 	IdName{Id: historical_interval_id, Name: historical_interval_name},
+		// 	warning_trigger,
+		// 	critical_trigger,
+		// 	expression,
+		// 	enable_consecutive,
+		// 	IdName{Id: warning_reminder_id, Name: warning_reminder_name},
+		// 	IdName{Id: critical_reminder_id, Name: critical_reminder_name},
+		// 	IdName{Id: threshold_interval_id, Name: threshold_interval_name},
+		// 	use_rolling_window,
+		// 	notification_type_id,
+		// 	IdName{Id: alert_type_id, Name: alert_type_name},
+		// 	IdName{Id: alert_sub_type_id, Name: alert_sub_type_name},
+		// 	enforce_test_failure,
+		// 	omit_scatterplot,
+		// 	notificationGroups,
+		// )
 	}
 
 	notif_group_list := alert_setting["notification_group"].(*schema.Set).List()
