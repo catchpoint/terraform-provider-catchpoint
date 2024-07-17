@@ -625,11 +625,6 @@ func resourceSslTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("test_location", testNew["test_url"])
 	d.Set("enforce_certificate_pinning", testNew["enforce_certificate_pinning"])
 	d.Set("enforce_certificate_key_pinning", testNew["enforce_certificate_key_pinning"])
-	d.Set("label", testNew["label"])
-	d.Set("thresholds", testNew["thresholds"])
-	d.Set("schedule_settings", testNew["schedule_settings"])
-	d.Set("alert_settings", testNew["alert_settings"])
-	d.Set("advanced_settings", testNew["advanced_settings"])
 
 	log.Printf("[DEBUG RESOURCE] %v", d)
 
