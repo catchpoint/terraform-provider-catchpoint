@@ -1,3 +1,9 @@
+# v1.2.0
+
+BUG FIXES
+
+* "terraform apply" command showing changes to be updated even though main.tf file was not modified
+
 # v1.0.1
 
 Catchpoint internal testing:
