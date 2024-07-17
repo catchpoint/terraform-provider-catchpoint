@@ -1130,13 +1130,6 @@ func resourcePlaywrightTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", testNew["status"])
 	d.Set("test_script", testNew["test_script"])
 	d.Set("test_script_type", testNew["test_script_type"])
-	d.Set("label", testNew["label"])
-	d.Set("thresholds", testNew["thresholds"])
-	d.Set("request_settings", testNew["request_settings"])
-	d.Set("insights", testNew["insights"])
-	d.Set("schedule_settings", testNew["schedule_settings"])
-	d.Set("alert_settings", testNew["alert_settings"])
-	d.Set("advanced_settings", testNew["advanced_settings"])
 
 	return nil
 }
