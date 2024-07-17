@@ -612,11 +612,6 @@ func resourceTracerouteTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("end_time", testNew["end_time"])
 	d.Set("status", testNew["status"])
 	d.Set("test_location", testNew["test_url"])
-	d.Set("label", testNew["label"])
-	d.Set("thresholds", testNew["thresholds"])
-	d.Set("schedule_settings", testNew["schedule_settings"])
-	d.Set("alert_settings", testNew["alert_settings"])
-	d.Set("advanced_settings", testNew["advanced_settings"])
 
 	return nil
 }

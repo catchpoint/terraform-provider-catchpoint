@@ -464,8 +464,6 @@ func resourceBgpTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("end_time", testNew["end_time"])
 	d.Set("status", testNew["status"])
 	d.Set("prefix", testNew["test_url"])
-	d.Set("label", testNew["label"])
-	d.Set("alert_settings", testNew["alert_settings"])
 
 	return nil
 }
