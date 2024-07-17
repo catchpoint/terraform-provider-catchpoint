@@ -2,7 +2,7 @@
 
 BUG FIXES
 
-* "terraform apply" command showing changes to be updated even though main.tf file was not modified
+* Fixed a minor bug to detect changes correctly for optional fields on running "terraform apply" command.
 
 # v1.0.1
 
