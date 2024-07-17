@@ -1,3 +1,9 @@
+# v1.2.0
+
+BUG FIXES
+
+* Fixed a minor bug to detect changes correctly for optional fields on running "terraform apply" command.
+
 # v1.0.1
 
 Catchpoint internal testing:
