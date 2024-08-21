@@ -6,6 +6,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"strings"
+	"time"
 
 	"github.com/google/go-cmp/cmp"
 )
@@ -212,6 +213,36 @@ type Test struct {
 	AdvancedSettings             AdvancedSetting             `json:"advancedSettings"`
 }
 
+const (
+	rateLimit         = 7 // 7 requests per second
+	bucketSize        = 7 // same as rate limit
+	requestsPerSecond = time.Second / rateLimit
+)
+
+var (
+	tokens = make(chan struct{}, bucketSize)
+)
+
+func init() {
+	// Fill the bucket with initial tokens
+	for i := 0; i < bucketSize; i++ {
+		tokens <- struct{}{}
+	}
+
+	// Refill tokens at a rate of 7 per second
+	go func() {
+		ticker := time.NewTicker(requestsPerSecond)
+		defer ticker.Stop()
+		for range ticker.C {
+			select {
+			case tokens <- struct{}{}:
+			default:
+				// The bucket is full; discard new tokens
+			}
+		}
+	}()
+}
+
 func createJson(config TestConfig) string {
 
 	//Set properties
@@ -288,6 +319,9 @@ func getTest(apiToken string, testId string) (*Test, string, error) {
 		TraceId      string     `json:"traceId"`
 	}
 
+	// Consume a token before proceeding
+	<-tokens
+
 	var response Response
 	var responseStatus = ""
 	getURL := catchpointTestURI + "/" + testId + "?showInheritedProperties=false"
@@ -332,6 +366,9 @@ func createTest(apiToken string, jsonPayload string) (string, string, string, er
 		TraceId      string     `json:"traceId"`
 	}
 
+	// Consume a token before proceeding
+	<-tokens
+
 	var response Response
 	var postBody = []byte(jsonPayload)
 	var responseBody = ""
@@ -373,6 +410,9 @@ func deleteTest(apiToken string, testId string) (string, string, bool, error) {
 		Completed    bool       `json:"completed"`
 		TraceId      string     `json:"traceId"`
 	}
+
+	// Consume a token before proceeding
+	<-tokens
 
 	deleteURL := catchpointTestURI + "/" + testId
 	var response Response
@@ -756,6 +796,9 @@ func updateTest(apiToken string, testId string, jsonPayload string) (string, str
 		Completed    bool       `json:"completed"`
 		TraceId      string     `json:"traceId"`
 	}
+
+	// Consume a token before proceeding
+	<-tokens
 
 	updateURL := catchpointTestURI + "/" + testId
 	var jsonPatchDocument = []byte(jsonPayload)
