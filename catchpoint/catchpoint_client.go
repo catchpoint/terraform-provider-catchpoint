@@ -216,7 +216,7 @@ type Test struct {
 const (
 	rateLimit         = 7 // 7 requests per second
 	bucketSize        = 7 // same as rate limit
-	requestsPerSecond = time.Second / rateLimit
+	requestInterval = time.Second / rateLimit
 )
 
 var (
@@ -231,7 +231,7 @@ func init() {
 
 	// Refill tokens at a rate of 7 per second
 	go func() {
-		ticker := time.NewTicker(requestsPerSecond)
+		ticker := time.NewTicker(requestInterval)
 		defer ticker.Stop()
 		for range ticker.C {
 			select {
