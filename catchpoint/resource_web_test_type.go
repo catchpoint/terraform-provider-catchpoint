@@ -1124,7 +1124,6 @@ func resourceTestRead(d *schema.ResourceData, m interface{}) error {
 		return nil
 	}
 	log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
-	log.Printf("[DEBUG] testXXXXXXXXXXXXXXXXXXX : %#v", test)
 
 	testNew := flattenTest(test)
 
