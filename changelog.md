@@ -1,15 +1,22 @@
+# v1.3.0
+
+ENHANCEMENT
+
+* A minor change to handle bulk requests by limiting the processing of number of requests to 7 per second has context menu.
+
 # v1.2.0
 
 BUG FIXES
 
 * Fixed a minor bug to detect changes correctly for optional fields on running "terraform apply" command.
 
+
 # v1.0.1
 
 Catchpoint internal testing:
 
-* Bug 187721: [Terraform] Import command fails when the alert settings are set to Override
-* Bug 188869: [Terraform] Update operation in terraform without any changes, displays 1 change applied message
+* import command fails when the alert settings are set to Override
+* Update operation in terraform without any changes, displays 1 change applied message
 
 # v1.0.0
 
