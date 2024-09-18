@@ -585,10 +585,11 @@ func resourceSslTestCreate(d *schema.ResourceData, m interface{}) error {
 	log.Print(respBody)
 
 	d.SetId(testId)
-	return resourceSslTestRead(d, m)
+	return nil
 }
 
 func resourceSslTestRead(d *schema.ResourceData, m interface{}) error {
+	division_id := d.Get("division_id").(int)
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
 
@@ -625,9 +626,16 @@ func resourceSslTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("test_location", testNew["test_url"])
 	d.Set("enforce_certificate_pinning", testNew["enforce_certificate_pinning"])
 	d.Set("enforce_certificate_key_pinning", testNew["enforce_certificate_key_pinning"])
+	d.Set("label", testNew["label"])
+	d.Set("thresholds", testNew["thresholds"])
+	d.Set("schedule_settings", testNew["schedule_settings"])
+	d.Set("advanced_settings", testNew["advanced_settings"])
+	// "Don't update request settings and alert setting to state file while creating a test as it is causing issue when we run a plan command"
+	if division_id <= 0 {
 
+		d.Set("alert_settings", testNew["alert_settings"])
+	}
 	log.Printf("[DEBUG RESOURCE] %v", d)
-
 	return nil
 }
 
@@ -803,7 +811,7 @@ func resourceSslTestUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
-		return resourceSslTestRead(d, m)
+		return nil
 
 	} else {
 		return errors.New("no changes. Your infrastructure matches the configuration")

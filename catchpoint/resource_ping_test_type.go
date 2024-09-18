@@ -574,10 +574,11 @@ func resourcePingTestCreate(d *schema.ResourceData, m interface{}) error {
 	log.Print(respBody)
 
 	d.SetId(testId)
-	return resourcePingTestRead(d, m)
+	return nil
 }
 
 func resourcePingTestRead(d *schema.ResourceData, m interface{}) error {
+	division_id := d.Get("division_id").(int)
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
 
@@ -612,7 +613,14 @@ func resourcePingTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("end_time", testNew["end_time"])
 	d.Set("status", testNew["status"])
 	d.Set("test_location", testNew["test_url"])
-
+	d.Set("label", testNew["label"])
+	d.Set("thresholds", testNew["thresholds"])
+	d.Set("schedule_settings", testNew["schedule_settings"])
+	d.Set("advanced_settings", testNew["advanced_settings"])
+	// "Don't update request settings and alert setting to state file while creating a test as it is causing issue when we run a plan command"
+	if division_id <= 0 {
+		d.Set("alert_settings", testNew["alert_settings"])
+	}
 	return nil
 }
 
@@ -785,7 +793,7 @@ func resourcePingTestUpdate(d *schema.ResourceData, m interface{}) error {
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
 
-		return resourcePingTestRead(d, m)
+		return nil
 	} else {
 		return errors.New("no changes. Your infrastructure matches the configuration")
 	}
