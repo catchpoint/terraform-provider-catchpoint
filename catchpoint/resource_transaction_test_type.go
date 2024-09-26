@@ -1146,6 +1146,7 @@ func resourceTransactionTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("schedule_settings", testNew["schedule_settings"])
 	// "Don't update request settings and alert setting to state file while creating a test as it is causing issue when we run a plan command"
 	if division_id <= 0 {
+		d.Set("request_settings", testNew["request_settings"])
 		d.Set("alert_settings", testNew["alert_settings"])
 
 	}
