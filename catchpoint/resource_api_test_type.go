@@ -1069,10 +1069,11 @@ func resourceApiTestCreate(d *schema.ResourceData, m interface{}) error {
 	log.Print(respBody)
 
 	d.SetId(testId)
-	return resourceApiTestRead(d, m)
+	return nil
 }
 
 func resourceApiTestRead(d *schema.ResourceData, m interface{}) error {
+	division_id := d.Get("division_id").(int)
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
 
@@ -1109,7 +1110,16 @@ func resourceApiTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("status", testNew["status"])
 	d.Set("test_script", testNew["test_script"])
 	d.Set("test_script_type", testNew["test_script_type"])
-
+	d.Set("label", testNew["label"])
+	d.Set("insights", testNew["insights"])
+	d.Set("thresholds", testNew["thresholds"])
+	d.Set("schedule_settings", testNew["schedule_settings"])
+	d.Set("advanced_settings", testNew["advanced_settings"])
+	// "Don't update request settings and alert setting to state file while creating a test as it is causing issue when we run a plan command"
+	if division_id <= 0 {
+		d.Set("request_settings", testNew["request_settings"])
+		d.Set("alert_settings", testNew["alert_settings"])
+	}
 	return nil
 }
 
@@ -1329,7 +1339,7 @@ func resourceApiTestUpdate(d *schema.ResourceData, m interface{}) error {
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
 
-		return resourceApiTestRead(d, m)
+		return nil
 	} else {
 		return errors.New("no changes. Your infrastructure matches the configuration")
 	}

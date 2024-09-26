@@ -426,10 +426,11 @@ func resourceBgpTestCreate(d *schema.ResourceData, m interface{}) error {
 	log.Print(respBody)
 
 	d.SetId(testId)
-	return resourceBgpTestRead(d, m)
+	return nil
 }
 
 func resourceBgpTestRead(d *schema.ResourceData, m interface{}) error {
+	division_id := d.Get("division_id").(int)
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
 
@@ -464,7 +465,11 @@ func resourceBgpTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("end_time", testNew["end_time"])
 	d.Set("status", testNew["status"])
 	d.Set("prefix", testNew["test_url"])
-
+	d.Set("label", testNew["label"])
+	// "Don't update request settings and alert setting to state file while creating a test as it is causing issue when we run a plan command"
+	if division_id <= 0 {
+		d.Set("alert_settings", testNew["alert_settings"])
+	}
 	return nil
 }
 
@@ -586,7 +591,7 @@ func resourceBgpTestUpdate(d *schema.ResourceData, m interface{}) error {
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
 
-		return resourceBgpTestRead(d, m)
+		return nil
 	} else {
 		return errors.New("no changes. Your infrastructure matches the configuration")
 	}

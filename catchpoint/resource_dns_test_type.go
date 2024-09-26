@@ -637,10 +637,11 @@ func resourceDnsTestCreate(d *schema.ResourceData, m interface{}) error {
 	log.Print(respBody)
 
 	d.SetId(testId)
-	return resourceDnsTestRead(d, m)
+	return nil
 }
 
 func resourceDnsTestRead(d *schema.ResourceData, m interface{}) error {
+	division_id := d.Get("division_id").(int)
 	testId := d.Id()
 	api_token := m.(*Config).ApiToken
 
@@ -677,7 +678,14 @@ func resourceDnsTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("test_domain", testNew["test_url"])
 	d.Set("query_type", testNew["query_type"])
 	d.Set("dns_server", testNew["dns_server"])
-
+	d.Set("label", testNew["label"])
+	d.Set("thresholds", testNew["thresholds"])
+	d.Set("schedule_settings", testNew["schedule_settings"])
+	d.Set("advanced_settings", testNew["advanced_settings"])
+	// "Don't update request settings and alert setting to state file while creating a test as it is causing issue when we run a plan command"
+	if division_id <= 0 {
+		d.Set("alert_settings", testNew["alert_settings"])
+	}
 	return nil
 }
 
@@ -864,7 +872,7 @@ func resourceDnsTestUpdate(d *schema.ResourceData, m interface{}) error {
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
 
-		return resourceDnsTestRead(d, m)
+		return nil
 	} else {
 		return errors.New("no changes. Your infrastructure matches the configuration")
 	}
