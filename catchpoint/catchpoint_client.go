@@ -78,6 +78,11 @@ type TriggerStruct struct {
 	CriticalTrigger           float64                 `json:"criticalTrigger,omitempty"`
 	UseIntervalRollingWindow  bool                    `json:"useIntervalRollingWindow"`
 	Expression                string                  `json:"expression,omitempty"`
+	DnsResolvedName           string                  `json:"dnsResolvedName,omitempty"`
+	DnsTTl                    int                     `json:"dnsTTL,omitempty"`
+	DnsRecordType             *GenericIdNameOmitEmpty `json:"dnsRecordType,omitempty"`
+	FilterType                *GenericIdNameOmitEmpty `json:"filterType,omitempty"`
+	Filtervalue               string                  `json:"filterValue,omitempty"`
 }
 
 type AlertGroupItem struct {
@@ -214,8 +219,8 @@ type Test struct {
 }
 
 const (
-	rateLimit         = 7 // 7 requests per second
-	bucketSize        = 7 // same as rate limit
+	rateLimit       = 7 // 7 requests per second
+	bucketSize      = 7 // same as rate limit
 	requestInterval = time.Second / rateLimit
 )
 
@@ -486,9 +491,16 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 		statisticalType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].StatisticalType.Id, Name: config.AlertRuleConfigs[i].StatisticalType.Name}
 		historicalInterval := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].TrailingHistoricalInterval.Id, Name: config.AlertRuleConfigs[i].TrailingHistoricalInterval.Name}
 		thresholdInterval := GenericIdName{Id: config.AlertRuleConfigs[i].AlertThresholdInterval.Id, Name: config.AlertRuleConfigs[i].AlertThresholdInterval.Name}
-
-		trigger := TriggerStruct{Id: 0, WarningReminderFrequency: warningReminder, CriticalReminderFrequency: criticalReminder, Expression: config.AlertRuleConfigs[i].Expression, TriggerType: triggerType, OperationType: operationType, ThresholdInterval: thresholdInterval, UseIntervalRollingWindow: config.AlertRuleConfigs[i].AlertUseRollingWindow, WarningTrigger: warningTrigger, CriticalTrigger: criticalTrigger}
-
+		dnsRecordType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].DnsRecordType.Id, Name: config.AlertRuleConfigs[i].DnsRecordType.Name}
+		filterType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].FilterType.Id, Name: config.AlertRuleConfigs[i].FilterType.Name}
+		trigger := TriggerStruct{Id: 0, WarningReminderFrequency: warningReminder, CriticalReminderFrequency: criticalReminder, Expression: config.AlertRuleConfigs[i].Expression, TriggerType: triggerType, OperationType: operationType, ThresholdInterval: thresholdInterval, UseIntervalRollingWindow: config.AlertRuleConfigs[i].AlertUseRollingWindow, WarningTrigger: warningTrigger, CriticalTrigger: criticalTrigger, DnsResolvedName: config.AlertRuleConfigs[i].DnsResolvedName, DnsTTl: config.AlertRuleConfigs[i].DnsTTL}
+		if filterType != (GenericIdNameOmitEmpty{}) {
+			trigger.FilterType = &filterType
+			trigger.Filtervalue = config.AlertRuleConfigs[i].FilterValue
+		}
+		if dnsRecordType != (GenericIdNameOmitEmpty{}) {
+			trigger.DnsRecordType = &dnsRecordType
+		}
 		if statisticalType != (GenericIdNameOmitEmpty{}) && historicalInterval != (GenericIdNameOmitEmpty{}) {
 			trigger.StatisticalType = &statisticalType
 			trigger.HistoricalInterval = &historicalInterval
@@ -499,7 +511,7 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 		alertSubType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].AlertSubType.Id, Name: config.AlertRuleConfigs[i].AlertSubType.Name}
 		notificationGroups := config.AlertRuleConfigs[i].NotificationGroups
 		if alertSubType != (GenericIdNameOmitEmpty{}) {
-			alertGroupItems = append(alertGroupItems, AlertGroupItem{NodeThreshold: nodeThreshold, Trigger: trigger, NotificationType: notificationType, AlertType: alertType, AlertSubType: &alertSubType, EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure, OmitScatterplot: config.AlertRuleConfigs[i].AlertOmitScatterplot, MatchAllRecords: false, NotificationGroups: notificationGroups})
+			alertGroupItems = append(alertGroupItems, AlertGroupItem{NodeThreshold: nodeThreshold, Trigger: trigger, NotificationType: notificationType, AlertType: alertType, AlertSubType: &alertSubType, EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure, OmitScatterplot: config.AlertRuleConfigs[i].AlertOmitScatterplot, MatchAllRecords: config.AlertRuleConfigs[i].AllMatchRecords, NotificationGroups: notificationGroups})
 		} else {
 			alertGroupItems = append(alertGroupItems,
 				AlertGroupItem{NodeThreshold: nodeThreshold,
@@ -508,7 +520,7 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 					AlertType:          alertType,
 					EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure,
 					OmitScatterplot:    config.AlertRuleConfigs[i].AlertOmitScatterplot,
-					MatchAllRecords:    false,
+					MatchAllRecords:    config.AlertRuleConfigs[i].AllMatchRecords,
 					NotificationGroups: notificationGroups,
 				})
 		}
