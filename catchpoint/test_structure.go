@@ -106,6 +106,12 @@ type AlertRuleConfig struct {
 	AlertSubType                    IdName
 	AlertEnforceTestFailure         bool
 	AlertOmitScatterplot            bool
+	DnsResolvedName                 string
+	DnsTTL                          int
+	DnsRecordType                   IdName
+	AllMatchRecords                 bool
+	FilterType                      IdName
+	FilterValue                     string
 	NotificationGroups              []NotificationGroupStruct
 }
 
