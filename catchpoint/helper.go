@@ -691,6 +691,7 @@ func getAlertTypeId(alertType string) (int, string) {
 		12: "ping",
 		13: "requests",
 		15: "availability",
+		17: "dns",
 		20: "path",
 		23: "asn",
 	}
@@ -762,6 +763,7 @@ func getAlertSubTypeId(alertSubType string) (int, string) {
 		140: "test",
 		141: "content",
 		142: "% downtime",
+		161: "dns answer",
 		190: "# cities",
 		191: "# asns",
 		193: "# countries",
@@ -1074,4 +1076,34 @@ func isValidEmail(email string) bool {
 
 	// Use the MatchString method to check if the email matches the pattern
 	return regex.MatchString(email)
+}
+func getDnsTypeId(dnsRecordType string) (int, string) {
+	dnsRecordTypes := map[int]string{
+		1:     "a",
+		2:     "ns",
+		5:     "cname",
+		28:    "aaaa",
+		32770: "aoraaaa",
+	}
+	for id, dnsRecordTypeString := range dnsRecordTypes {
+		if dnsRecordTypeString == dnsRecordType {
+			return id, dnsRecordTypeString
+		}
+	}
+	return 0, ""
+}
+func getFilterTypeid(filterType string) (int, string) {
+	filterTypes := map[int]string{
+		1: "index",
+		3: "address",
+	}
+	for id, filterTypeString := range filterTypes {
+		if filterTypeString == filterType {
+			return id, filterTypeString
+		}
+	}
+	if filterType == "last" {
+		return 1, "index"
+	}
+	return 0, ""
 }
