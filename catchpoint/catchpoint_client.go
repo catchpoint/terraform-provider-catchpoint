@@ -163,6 +163,7 @@ type AdvancedSetting struct {
 	EdnsSubnet                string                   `json:"ednsSubnet,omitempty"`
 	AdditionalMonitor         *GenericIdNameOmitEmpty  `json:"additionalMonitor,omitempty"`
 	TestBandwidthThrottling   *GenericIdNameOmitEmpty  `json:"testBandwidthThrottling,omitempty"`
+	VerifytestOnFailure       bool                     `json:"verifyTestOnFailure,omitempty"`
 	Id                        int                      `json:"id"`
 }
 
@@ -212,10 +213,23 @@ type Test struct {
 	ScheduleSettings             ScheduleSetting             `json:"scheduleSettings"`
 	AdvancedSettings             AdvancedSetting             `json:"advancedSettings"`
 }
+type Product struct {
+	Id                int               `json:"id"`
+	DivisionId        int               `json:"divisionId"`
+	Name              string            `json:"name"`
+	Status            GenericIdName     `json:"status"`
+	AlertGroupId      int               `json:"alertGroupId,omitempty"`
+	TestDataWebhookId int               `json:"testDataWebhookId,omitempty"`
+	RequestSettings   RequestSetting    `json:"requestSettings"`
+	AlertGroup        AlertGroupStruct  `json:"alertGroup"`
+	InsightData       InsightDataStruct `json:"insightsData"`
+	ScheduleSettings  ScheduleSetting   `json:"scheduleSettings"`
+	AdvancedSettings  AdvancedSetting   `json:"advancedSettingsModel"`
+}
 
 const (
-	rateLimit         = 7 // 7 requests per second
-	bucketSize        = 7 // same as rate limit
+	rateLimit       = 7 // 7 requests per second
+	bucketSize      = 7 // same as rate limit
 	requestInterval = time.Second / rateLimit
 )
 
@@ -301,6 +315,27 @@ func createJson(config TestConfig) string {
 	testJson, _ := json.Marshal(t)
 	return string(testJson)
 }
+func createProductJson(config ProductConfig) string {
+	status := GenericIdName{Id: config.ProductStatus, Name: "Active"}
+
+	alertGroup := setProductAlertSettings(&config)
+
+	insightData := setProductInsightSettings(&config)
+
+	scheduleSettings := setProductScheduleSettings(&config)
+
+	advancedSettings := setProductAdvancedSettings(&config)
+
+	requestSettings := setProductRequestSettings(&config)
+
+	productId := 0
+
+	var product = Product{}
+
+	product = Product{Id: productId, DivisionId: config.DivisionId, Name: config.ProductName, Status: status, TestDataWebhookId: config.TestDataWebhookId, AlertGroupId: config.AlertGroupId, ScheduleSettings: scheduleSettings, AlertGroup: alertGroup, RequestSettings: requestSettings, InsightData: insightData, AdvancedSettings: advancedSettings}
+	productJson, _ := json.Marshal(product)
+	return string(productJson)
+}
 
 func getTest(apiToken string, testId string) (*Test, string, error) {
 
@@ -348,6 +383,50 @@ func getTest(apiToken string, testId string) (*Test, string, error) {
 
 	return &test, responseStatus, nil
 }
+func getProduct(apiToken string, productId string) (*Product, string, error) {
+	type Data struct {
+		Products []Product `json:"products"`
+	}
+	type ApiError struct {
+		Id      json.Number `json:"id"`
+		Message string      `json:"message"`
+	}
+	type Response struct {
+		ResponseData Data       `json:"data"`
+		Messages     []string   `json:"messages"`
+		Errors       []ApiError `json:"errors"`
+		Completed    bool       `json:"completed"`
+		TraceId      string     `json:"traceId"`
+	}
+	// Consume a token before proceeding
+	<-tokens
+
+	var response Response
+	var responseStatus = ""
+	getURL := catchpointProductURI + "/" + productId
+	req, _ := http.NewRequest("", getURL, nil)
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return &Product{}, responseStatus, err
+	}
+	defer resp.Body.Close()
+
+	responseStatus = strings.ToLower(string(resp.Status))
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &response)
+	if !response.Completed {
+		return nil, responseStatus, err
+	}
+	product := response.ResponseData.Products[0]
+
+	return &product, responseStatus, nil
+
+}
 
 func createTest(apiToken string, jsonPayload string) (string, string, string, error) {
 
@@ -392,6 +471,50 @@ func createTest(apiToken string, jsonPayload string) (string, string, string, er
 	testId = string(response.ResponseData.Id)
 
 	return string(body), responseStatus, testId, nil
+}
+func createProduct(apiToken string, jsonPayload string) (string, string, string, error) {
+
+	type Data struct {
+		Id json.Number `json:"id"`
+	}
+	type ApiError struct {
+		Id      json.Number `json:"id"`
+		Message string      `json:"message"`
+	}
+	type Response struct {
+		ResponseData Data       `json:"data"`
+		Messages     []string   `json:"messages"`
+		Errors       []ApiError `json:"errors"`
+		Completed    bool       `json:"completed"`
+		TraceId      string     `json:"traceId"`
+	}
+
+	// Consume a token before proceeding
+	<-tokens
+
+	var response Response
+	var postBody = []byte(jsonPayload)
+	var responseBody = ""
+	var responseStatus = ""
+	var productId = ""
+	req, _ := http.NewRequest("POST", catchpointProductURI, bytes.NewBuffer(postBody))
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return responseBody, responseStatus, productId, err
+	}
+	defer resp.Body.Close()
+
+	responseStatus = strings.ToLower(string(resp.Status))
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &response)
+	productId = string(response.ResponseData.Id)
+
+	return string(body), responseStatus, productId, nil
 }
 
 func deleteTest(apiToken string, testId string) (string, string, bool, error) {
@@ -544,8 +667,107 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 
 	return alertGroup
 }
+func setProductAlertSettings(config *ProductConfig) AlertGroupStruct {
+	alertGroupItems := []AlertGroupItem{}
+	recipients := []Recipient{}
+	alertWebhooks := []AlertWebhook{}
+
+	alertSettingType := GenericIdName{Id: config.AlertSettingType, Name: "Inherit"}
+
+	for i := range config.AlertRuleConfigs {
+		nodeThresholdType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertNodeThresholdType.Id, Name: config.AlertRuleConfigs[i].AlertNodeThresholdType.Name}
+		nodeThreshold := NodeThresholdStruct{Id: 0, Name: "", NodeThresholdType: nodeThresholdType, NumberOfUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfRuns, PercentageOfUnits: config.AlertRuleConfigs[i].AlertThresholdPercentOfRuns, NumberOfFailingUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfFailingNodes, ConsecutiveRunsEnabled: config.AlertRuleConfigs[i].AlertEnableConsecutive, UtilizePerNodeHistoricalAverage: false, NumberOfConsecutiveRuns: config.AlertRuleConfigs[i].AlertConsecutiveNumOfRuns}
+		warningTrigger := config.AlertRuleConfigs[i].AlertWarningTrigger
+		criticalTrigger := config.AlertRuleConfigs[i].AlertCriticalTrigger
+		warningReminder := GenericIdName{Id: config.AlertRuleConfigs[i].AlertWarningReminder.Id, Name: config.AlertRuleConfigs[i].AlertWarningReminder.Name}
+		criticalReminder := GenericIdName{Id: config.AlertRuleConfigs[i].AlertCriticalReminder.Id, Name: config.AlertRuleConfigs[i].AlertCriticalReminder.Name}
+		triggerType := GenericIdName{Id: config.AlertRuleConfigs[i].TriggerType.Id, Name: config.AlertRuleConfigs[i].TriggerType.Name}
+		operationType := GenericIdName{Id: config.AlertRuleConfigs[i].OperationType.Id, Name: config.AlertRuleConfigs[i].OperationType.Name}
+		statisticalType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].StatisticalType.Id, Name: config.AlertRuleConfigs[i].StatisticalType.Name}
+		historicalInterval := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].TrailingHistoricalInterval.Id, Name: config.AlertRuleConfigs[i].TrailingHistoricalInterval.Name}
+		thresholdInterval := GenericIdName{Id: config.AlertRuleConfigs[i].AlertThresholdInterval.Id, Name: config.AlertRuleConfigs[i].AlertThresholdInterval.Name}
+
+		trigger := TriggerStruct{Id: 0, WarningReminderFrequency: warningReminder, CriticalReminderFrequency: criticalReminder, Expression: config.AlertRuleConfigs[i].Expression, TriggerType: triggerType, OperationType: operationType, ThresholdInterval: thresholdInterval, UseIntervalRollingWindow: config.AlertRuleConfigs[i].AlertUseRollingWindow, WarningTrigger: warningTrigger, CriticalTrigger: criticalTrigger}
+
+		if statisticalType != (GenericIdNameOmitEmpty{}) && historicalInterval != (GenericIdNameOmitEmpty{}) {
+			trigger.StatisticalType = &statisticalType
+			trigger.HistoricalInterval = &historicalInterval
+		}
+
+		notificationType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertNotificationType, Name: "DefaultContacts"}
+		alertType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertType.Id, Name: config.AlertRuleConfigs[i].AlertType.Name}
+		alertSubType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].AlertSubType.Id, Name: config.AlertRuleConfigs[i].AlertSubType.Name}
+		notificationGroups := config.AlertRuleConfigs[i].NotificationGroups
+		if alertSubType != (GenericIdNameOmitEmpty{}) {
+			alertGroupItems = append(alertGroupItems, AlertGroupItem{NodeThreshold: nodeThreshold, Trigger: trigger, NotificationType: notificationType, AlertType: alertType, AlertSubType: &alertSubType, EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure, OmitScatterplot: config.AlertRuleConfigs[i].AlertOmitScatterplot, MatchAllRecords: false, NotificationGroups: notificationGroups})
+		} else {
+			alertGroupItems = append(alertGroupItems,
+				AlertGroupItem{NodeThreshold: nodeThreshold,
+					Trigger:            trigger,
+					NotificationType:   notificationType,
+					AlertType:          alertType,
+					EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure,
+					OmitScatterplot:    config.AlertRuleConfigs[i].AlertOmitScatterplot,
+					MatchAllRecords:    false,
+					NotificationGroups: notificationGroups,
+				})
+		}
+	}
+
+	if len(config.AlertRecipientEmails) > 0 {
+		recipientType := GenericIdName{Id: 2, Name: "Email"}
+		for i := range config.AlertRecipientEmails {
+			recipients = append(recipients, Recipient{Email: config.AlertRecipientEmails[i], RecipientType: recipientType})
+		}
+	}
+
+	if len(config.AlertContactGroups) > 0 {
+		recipientType := GenericIdName{Id: 1, Name: "ContactGroup"}
+		for i := range config.AlertContactGroups {
+			recipients = append(recipients, Recipient{Id: i + 1, RecipientType: recipientType, Name: config.AlertContactGroups[i]})
+		}
+	}
+
+	if len(config.AlertWebhookIds) > 0 {
+		for i := range config.AlertWebhookIds {
+			alertWebhooks = append(alertWebhooks, AlertWebhook{Id: config.AlertWebhookIds[i]})
+		}
+	}
+
+	notifSubject := "${NotificationLevel}:  test=#${TestId} - ${TestName}, alert=${AlertType}"
+	if config.AlertSubject != "" {
+		notifSubject = config.AlertSubject
+	}
+	notificationGroup := NotificationGroupStruct{Subject: notifSubject, NotifyOnWarning: true, NotifyOnCritical: true, NotifyOnImproved: true, AlertWebhooks: alertWebhooks, Recipients: recipients}
+
+	alertGroup := AlertGroupStruct{AlertSettingType: alertSettingType, NotificationGroup: notificationGroup, AlertGroupItems: alertGroupItems}
+
+	return alertGroup
+}
 
 func setTestInsightSettings(config *TestConfig) InsightDataStruct {
+	tracepoints := []GenericIdName{}
+	indicators := []GenericIdName{}
+
+	insightSettingType := GenericIdName{Id: config.InsightSettingType, Name: "Inherit"}
+
+	if len(config.TracepointIds) > 0 {
+		for i := range config.TracepointIds {
+			tracepoints = append(tracepoints, GenericIdName{Id: config.TracepointIds[i], Name: "Tracepoint"})
+		}
+	}
+	if len(config.IndicatorIds) > 0 {
+		for i := range config.IndicatorIds {
+			indicators = append(indicators, GenericIdName{Id: config.IndicatorIds[i], Name: "Indicator"})
+		}
+	}
+
+	insightData := InsightDataStruct{InsightSettingType: insightSettingType, Indicators: indicators, Tracepoints: tracepoints}
+
+	return insightData
+}
+
+func setProductInsightSettings(config *ProductConfig) InsightDataStruct {
 	tracepoints := []GenericIdName{}
 	indicators := []GenericIdName{}
 
@@ -600,7 +822,39 @@ func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 
 	return scheduleSettings
 }
+func setProductScheduleSettings(config *ProductConfig) ScheduleSetting {
+	nodes := []Node{}
+	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
+	frequency := GenericIdName{Id: config.TestFrequency.Id, Name: config.TestFrequency.Name}
+	testNodeDistribution := GenericIdName{Id: config.NodeDistribution.Id, Name: config.NodeDistribution.Name}
+	networkType := GenericIdName{Id: 0, Name: "Backbone"}
+	if len(config.NodeIds) > 0 {
+		for i := range config.NodeIds {
+			nodes = append(nodes, Node{Id: config.NodeIds[i], Name: "node", NetworkType: networkType})
+		}
+	}
+	// Initialize an empty slice of NodeGroup
+	var nodeGroups []NodeGroup
+	if len(config.NodeGroupIds) > 0 {
+		for i := range config.NodeGroupIds {
+			nodeGroup := NodeGroup{
+				Id:                   config.NodeGroupIds[i].Id,
+				Name:                 "DefaultNodeGroupName",
+				Description:          "",
+				SyntheticNetworkType: networkType,
+				Nodes:                []Node{{Id: 123, Name: "DefaultNodeName", NetworkType: networkType}},
+			}
+			nodeGroups = append(nodeGroups, nodeGroup)
+		}
+	}
+	scheduleSettingId := 0
+	scheduleSettings := ScheduleSetting{ScheduleSettingType: scheduleSettingType, RunScheduleId: config.ScheduleRunScheduleId, MaintenanceScheduleId: config.ScheduleMaintenanceScheduleId, Frequency: frequency, TestNodeDistribution: testNodeDistribution, NetworkType: networkType, Nodes: nodes, NodeGroups: nodeGroups, Id: scheduleSettingId}
+	if config.NoOfSubsetNodes > 0 {
+		scheduleSettings.NoOfSubsetNodes = config.NoOfSubsetNodes
+	}
 
+	return scheduleSettings
+}
 func setTestRequestSettings(config *TestConfig) RequestSetting {
 	httpHeaderRequests := []HttpHeaderRequest{}
 	requestSettingType := GenericIdName{Id: config.RequestSettingType, Name: "Inherit"}
@@ -627,7 +881,32 @@ func setTestRequestSettings(config *TestConfig) RequestSetting {
 	}
 	return requestSetting
 }
+func setProductRequestSettings(config *ProductConfig) RequestSetting {
+	httpHeaderRequests := []HttpHeaderRequest{}
+	requestSettingType := GenericIdName{Id: config.RequestSettingType, Name: "Inherit"}
 
+	if len(config.TestHttpHeaderRequests) > 0 {
+		for i := range config.TestHttpHeaderRequests {
+			requestHeaderType := GenericIdName{Id: config.TestHttpHeaderRequests[i].RequestHeaderType.Id, Name: config.TestHttpHeaderRequests[i].RequestHeaderType.Name}
+			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern})
+		}
+	}
+
+	var authentication = AuthenticationStruct{}
+	// config.AuthenticationType == 0 indicates no authentication type(id) has been set.
+	if config.AuthenticationType.Id != 0 {
+		authenticationMethodType := GenericIdNameOmitEmpty{Id: config.AuthenticationType.Id, Name: config.AuthenticationType.Name}
+		passwordIds := config.AuthenticationPasswordIds
+		authentication = AuthenticationStruct{AuthenticationMethodType: authenticationMethodType, PasswordIds: passwordIds, Id: 0}
+	}
+
+	requestSetting := RequestSetting{RequestSettingType: requestSettingType, HttpHeaderRequests: httpHeaderRequests, TokenIds: config.AuthenticationTokenIds, LibraryCertificateIds: config.AuthenticationCertificateIds}
+
+	if !cmp.Equal(AuthenticationStruct{}, authentication) {
+		requestSetting.Authentication = &authentication
+	}
+	return requestSetting
+}
 func setTestAdvancedSettings(config *TestConfig) AdvancedSetting {
 	appliedTestFlags := []GenericIdNameOmitEmpty{}
 	advancedSettingId := 0
@@ -642,6 +921,31 @@ func setTestAdvancedSettings(config *TestConfig) AdvancedSetting {
 
 	advancedSettings := AdvancedSetting{}
 	advancedSettings = AdvancedSetting{AdvancedSettingType: advancedSettingType, AppliedTestFlags: appliedTestFlags, MaxStepRuntimeSecOverride: config.MaxStepRuntimeSecOverride, WaitForNoActivity: config.WaitForNoActivityOnDocComplete, ViewportHeight: config.ViewportHeight, ViewportWidth: config.ViewportWidth, FailureHopCount: config.TracerouteFailureHopCount, PingCount: config.TraceroutePingCount, EdnsSubnet: config.EdnsSubnet, Id: advancedSettingId}
+	additionalMonitor := GenericIdNameOmitEmpty{Id: config.AdditionalMonitorType.Id, Name: config.AdditionalMonitorType.Name}
+	if additionalMonitor != (GenericIdNameOmitEmpty{}) {
+		advancedSettings.AdditionalMonitor = &additionalMonitor
+	}
+	bandwidthThrottling := GenericIdNameOmitEmpty{Id: config.BandwidthThrottling.Id, Name: config.BandwidthThrottling.Name}
+	if bandwidthThrottling != (GenericIdNameOmitEmpty{}) {
+		advancedSettings.TestBandwidthThrottling = &bandwidthThrottling
+	}
+
+	return advancedSettings
+}
+func setProductAdvancedSettings(config *ProductConfig) AdvancedSetting {
+	appliedTestFlags := []GenericIdNameOmitEmpty{}
+	advancedSettingId := 0
+	advancedSettingType := GenericIdName{Id: config.AdvancedSettingType, Name: "Override"}
+	if len(config.AppliedTestFlags) > 0 {
+		for i := range config.AppliedTestFlags {
+			if config.AppliedTestFlags[i] != 0 {
+				appliedTestFlags = append(appliedTestFlags, GenericIdNameOmitEmpty{Id: config.AppliedTestFlags[i], Name: "Flag"})
+			}
+		}
+	}
+
+	advancedSettings := AdvancedSetting{}
+	advancedSettings = AdvancedSetting{AdvancedSettingType: advancedSettingType, AppliedTestFlags: appliedTestFlags, MaxStepRuntimeSecOverride: config.MaxStepRuntimeSecOverride, WaitForNoActivity: config.WaitForNoActivityOnDocComplete, ViewportHeight: config.ViewportHeight, ViewportWidth: config.ViewportWidth, FailureHopCount: config.TracerouteFailureHopCount, PingCount: config.TraceroutePingCount, EdnsSubnet: config.EdnsSubnet, Id: advancedSettingId, VerifytestOnFailure: config.VerifytestOnFailure}
 	additionalMonitor := GenericIdNameOmitEmpty{Id: config.AdditionalMonitorType.Id, Name: config.AdditionalMonitorType.Name}
 	if additionalMonitor != (GenericIdNameOmitEmpty{}) {
 		advancedSettings.AdditionalMonitor = &additionalMonitor
@@ -779,6 +1083,90 @@ func createJsonPatchDocument(config TestConfigUpdate, path string, isTestMetaDat
 	}
 	return string(jsonPatchDoc)
 }
+func createJsonProductPatchDocument(config ProductConfigUpdate, path string, isProductMetaData bool) string {
+	type JsonPatch struct {
+		Value string `json:"value"`
+		Path  string `json:"path"`
+		Op    string `json:"op"`
+	}
+
+	type JsonPatchAdvanced struct {
+		AdvancedSettingValue AdvancedSetting `json:"value"`
+		Path                 string          `json:"path"`
+		Op                   string          `json:"op"`
+	}
+	type JsonPatchRequest struct {
+		RequestSettingValue RequestSetting `json:"value"`
+		Path                string         `json:"path"`
+		Op                  string         `json:"op"`
+	}
+	type JsonPatchSchedule struct {
+		ScheduleSettingValue ScheduleSetting `json:"value"`
+		Path                 string          `json:"path"`
+		Op                   string          `json:"op"`
+	}
+	type JsonPatchInsight struct {
+		InsightDataValue InsightDataStruct `json:"value"`
+		Path             string            `json:"path"`
+		Op               string            `json:"op"`
+	}
+	type JsonPatchAlert struct {
+		AlertSettingValue AlertGroupStruct `json:"value"`
+		Path              string           `json:"path"`
+		Op                string           `json:"op"`
+	}
+	var jsonPatchDoc = []byte{}
+
+	if isProductMetaData {
+		jsonPatchObject := JsonPatch{
+			Value: config.UpdatedFieldValue,
+			Path:  path,
+			Op:    "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/advancedSettingsModel" {
+		jsonPatchObject := JsonPatchAdvanced{
+			AdvancedSettingValue: config.UpdatedAdvancedSettingsSection,
+			Path:                 path,
+			Op:                   "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/requestSettings" {
+		jsonPatchObject := JsonPatchRequest{
+			RequestSettingValue: config.UpdatedRequestSettingsSection,
+			Path:                path,
+			Op:                  "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/insightsData" {
+		jsonPatchObject := JsonPatchInsight{
+			InsightDataValue: config.UpdatedInsightSettingsSection,
+			Path:             path,
+			Op:               "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/scheduleSettings" {
+		jsonPatchObject := JsonPatchSchedule{
+			ScheduleSettingValue: config.UpdatedScheduleSettingsSection,
+			Path:                 path,
+			Op:                   "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/alertGroup" {
+		jsonPatchObject := JsonPatchAlert{
+			AlertSettingValue: config.UpdatedAlertSettingsSection,
+			Path:              path,
+			Op:                "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	return string(jsonPatchDoc)
+}
 
 func updateTest(apiToken string, testId string, jsonPayload string) (string, string, bool, error) {
 
@@ -801,6 +1189,53 @@ func updateTest(apiToken string, testId string, jsonPayload string) (string, str
 	<-tokens
 
 	updateURL := catchpointTestURI + "/" + testId
+	var jsonPatchDocument = []byte(jsonPayload)
+	var response Response
+	var responseBody = ""
+	var responseStatus = ""
+	var completed = false
+	req, _ := http.NewRequest("PATCH", updateURL, bytes.NewBuffer(jsonPatchDocument))
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return responseBody, responseStatus, completed, err
+	}
+	defer resp.Body.Close()
+
+	responseStatus = strings.ToLower(string(resp.Status))
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	json.Unmarshal([]byte(body), &response)
+	completed = response.Completed
+
+	return string(body), responseStatus, completed, nil
+}
+
+func updateProduct(apiToken string, productId string, jsonPayload string) (string, string, bool, error) {
+
+	type Data struct {
+		Id int `json:"id"`
+	}
+	type ApiError struct {
+		Id      json.Number `json:"id"`
+		Message string      `json:"message"`
+	}
+	type Response struct {
+		ResponseData Data       `json:"data"`
+		Messages     []string   `json:"messages"`
+		Errors       []ApiError `json:"errors"`
+		Completed    bool       `json:"completed"`
+		TraceId      string     `json:"traceId"`
+	}
+
+	// Consume a token before proceeding
+	<-tokens
+
+	updateURL := catchpointProductURI + "/" + productId
 	var jsonPatchDocument = []byte(jsonPayload)
 	var response Response
 	var responseBody = ""
