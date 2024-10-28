@@ -68,6 +68,48 @@ type TestConfig struct {
 	TraceroutePingCount            int
 	AlertSubject                   string
 }
+type ProductConfig struct {
+	DivisionId                     int
+	ProductName                    string
+	ProductStatus                  int
+	TestDataWebhookId              int
+	EdnsSubnet                     string
+	AlertGroupId                   int
+	RequestSettingType             int
+	AuthenticationType             IdName
+	AuthenticationPasswordIds      []int
+	AuthenticationTokenIds         []int
+	AuthenticationCertificateIds   []int
+	TestHttpHeaderRequests         []TestHttpHeaderRequest
+	InsightSettingType             int
+	TracepointIds                  []int
+	IndicatorIds                   []int
+	ScheduleSettingType            int
+	ScheduleRunScheduleId          int
+	ScheduleMaintenanceScheduleId  int
+	TestFrequency                  IdName
+	NodeDistribution               IdName
+	NodeIds                        []int
+	NodeGroupIds                   []NodeGroup
+	NoOfSubsetNodes                int
+	AlertSettingType               int
+	AlertRuleConfigs               []AlertRuleConfig
+	AlertWebhookIds                []int
+	AlertRecipientEmails           []string
+	AlertContactGroups             []string
+	AdvancedSettingType            int
+	AppliedTestFlags               []int
+	MaxStepRuntimeSecOverride      int
+	AdditionalMonitorType          IdName
+	BandwidthThrottling            IdName
+	WaitForNoActivityOnDocComplete *int
+	ViewportHeight                 int
+	ViewportWidth                  int
+	TracerouteFailureHopCount      int
+	TraceroutePingCount            int
+	VerifytestOnFailure            bool
+	AlertSubject                   string
+}
 
 type TestHttpHeaderRequest struct {
 	RequestHeaderType IdName
@@ -124,5 +166,14 @@ type TestConfigUpdate struct {
 	UpdatedLabels                  []Label
 	UpdatedTestThresholds          Thresholds
 	UpdatedTestRequestData         TestRequestDataStruct
+	SectionToUpdate                string
+}
+type ProductConfigUpdate struct {
+	UpdatedFieldValue              string
+	UpdatedAdvancedSettingsSection AdvancedSetting
+	UpdatedRequestSettingsSection  RequestSetting
+	UpdatedScheduleSettingsSection ScheduleSetting
+	UpdatedInsightSettingsSection  InsightDataStruct
+	UpdatedAlertSettingsSection    AlertGroupStruct
 	SectionToUpdate                string
 }

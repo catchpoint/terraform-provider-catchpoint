@@ -39,6 +39,7 @@ func Provider() *schema.Provider {
 			"ssl_test":         resourceSslTestType(),
 			"playwright_test":  resourcePlaywrightTestType(),
 			"puppeteer_test":   resourcePuppeteerTestType(),
+			"manage_product":   resourceManageProduct(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
