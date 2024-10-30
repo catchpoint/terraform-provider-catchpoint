@@ -677,6 +677,11 @@ func resourceDnsTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("test_domain", testNew["test_url"])
 	d.Set("query_type", testNew["query_type"])
 	d.Set("dns_server", testNew["dns_server"])
+	d.Set("label", testNew["label"])
+	d.Set("thresholds", testNew["thresholds"])
+	d.Set("schedule_settings", testNew["schedule_settings"])
+	d.Set("alert_settings", testNew["alert_settings"])
+	d.Set("advanced_settings", testNew["advanced_settings"])
 
 	return nil
 }
