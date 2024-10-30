@@ -1142,6 +1142,13 @@ func resourceTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("start_time", testNew["start_time"])
 	d.Set("end_time", testNew["end_time"])
 	d.Set("status", testNew["status"])
+	d.Set("label", testNew["label"])
+	d.Set("thresholds", testNew["thresholds"])
+	d.Set("request_settings", testNew["request_settings"])
+	d.Set("insights", testNew["insights"])
+	d.Set("schedule_settings", testNew["schedule_settings"])
+	d.Set("alert_settings", testNew["alert_settings"])
+	d.Set("advanced_settings", testNew["advanced_settings"])
 
 	return nil
 }

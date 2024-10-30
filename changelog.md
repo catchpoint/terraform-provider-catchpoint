@@ -1,3 +1,9 @@
+# v1.4.0
+
+FIX
+
+* Added support to import additional settings for a test. [Known Issue]: The fix done in v1.2.0 to correctly detect changes for optional fields may not work for some additional settings.
+
 # v1.3.0
 
 ENHANCEMENT
@@ -77,6 +83,7 @@ BUG FIXES:
 
 * catchpoint test import issues fixed.
 * plugin crashed issue fixed
+
 # v0.2.4
 
 BUG FIXES:
