@@ -30,18 +30,25 @@ func flattenThresholds(thresholds Thresholds) []interface{} {
 	}
 	return []interface{}{thresholdsMap}
 }
-
-func flattenRequestSetting(requestSetting RequestSetting) []interface{} {
-	httpHeaderRequests := make(map[string]interface{}, len(requestSetting.HttpHeaderRequests))
+func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
+	httpHeaderRequests := make([]interface{}, 0, len(requestSetting.HttpHeaderRequests))
 	for _, header := range requestSetting.HttpHeaderRequests {
-		httpHeaderRequests[getReqHeaderTypeName(header.RequestHeaderType.Id)] = map[string]interface{}{
+		// get the header type name
+		key := getReqHeaderTypeName(header.RequestHeaderType.Id)
+		userAgentHeader := map[string]interface{}{
 			"value":              header.RequestValue,
 			"child_host_pattern": header.ChildHostPattern,
 		}
+		httpHeaderRequests = append(httpHeaderRequests, map[string]interface{}{
+			key: []interface{}{userAgentHeader},
+		})
 	}
-
+	return httpHeaderRequests
+}
+func flattenRequestSetting(requestSetting RequestSetting) []interface{} {
 	requestSettingMap := map[string]interface{}{
-		"authentication": flattenAuthenticationStruct(requestSetting.Authentication),
+		"authentication":       flattenAuthenticationStruct(requestSetting.Authentication),
+		"http_request_headers": flattenHttpHeaderRequests(requestSetting),
 	}
 	if len(requestSetting.LibraryCertificateIds) > 0 {
 		requestSettingMap["library_certificate_ids"] = requestSetting.LibraryCertificateIds
