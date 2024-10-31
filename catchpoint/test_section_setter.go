@@ -242,6 +242,14 @@ func setScheduleSettings(testTypeId int, schedule_setting map[string]interface{}
 }
 
 func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, testConfig *TestConfig) error {
+	var (
+		dns_resolved_name string
+		dns_ttl           int
+		dns_record_type   string
+		all_match_records bool
+		filter_type       string
+		filter_value      string
+	)
 
 	alert_rule_list := alert_setting["alert_rule"].(*schema.Set).List()
 	for i := range alert_rule_list {
@@ -283,6 +291,33 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		}
 		enforce_test_failure := alert_rule["enforce_test_failure"].(bool)
 		omit_scatterplot := alert_rule["omit_scatterplot"].(bool)
+		if alert_rule["dns_resolved_name"] != nil {
+			dns_resolved_name = alert_rule["dns_resolved_name"].(string)
+		}
+		if alert_rule["dns_ttl"] != nil {
+			dns_ttl = alert_rule["dns_ttl"].(int)
+		}
+		if alert_rule["dns_record_type"] != nil {
+			dns_record_type = alert_rule["dns_record_type"].(string)
+		}
+		dns_record_type_id, dns_record_type_name := getDnsTypeId(dns_record_type)
+		if dns_record_type_id == 0 {
+			log.Printf("[INFO] dns_record_type was not set")
+		}
+		if alert_rule["all_match_records"] != nil {
+			all_match_records = alert_rule["all_match_records"].(bool)
+		}
+		if alert_rule["level"] != nil {
+			level_list := alert_rule["level"].(*schema.Set).List()
+			for _, level_item := range level_list {
+				filter_type = level_item.(map[string]interface{})["filter_type"].(string)
+				filter_value = level_item.(map[string]interface{})["filter_value"].(string)
+			}
+		}
+		filter_type_id, filter_type_name := getFilterTypeid(filter_type)
+		if filter_type_id == 0 {
+			log.Printf("[INFO] level  filter type was not set")
+		}
 
 		number_of_failing_nodes := alert_rule["number_of_failing_nodes"].(int)
 		trigger_type := alert_rule["trigger_type"].(string)
@@ -400,6 +435,12 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 			AlertSubType:            IdName{Id: alert_sub_type_id, Name: alert_sub_type_name},
 			AlertEnforceTestFailure: enforce_test_failure,
 			AlertOmitScatterplot:    omit_scatterplot,
+			DnsResolvedName:         dns_resolved_name,
+			DnsTTL:                  dns_ttl,
+			DnsRecordType:           IdName{Id: dns_record_type_id, Name: dns_record_type_name},
+			AllMatchRecords:         all_match_records,
+			FilterType:              IdName{Id: filter_type_id, Name: filter_type_name},
+			FilterValue:             filter_value,
 			NotificationGroups:      notificationGroups,
 		})
 	}
