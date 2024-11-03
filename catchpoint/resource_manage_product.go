@@ -841,7 +841,6 @@ func resourceManageProduct() *schema.Resource {
 	}
 }
 func resourceProductRead(d *schema.ResourceData, m interface{}) error {
-	division_id := d.Get("division_id").(int)
 	productId := d.Id()
 	api_token := m.(*Config).ApiToken
 
@@ -871,10 +870,8 @@ func resourceProductRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("insights", productNew["insights"])
 	d.Set("schedule_settings", productNew["schedule_settings"])
 	d.Set("advanced_settings", productNew["advanced_settings"])
-	if division_id <= 0 {
-		d.Set("request_settings", productNew["request_settings"])
-		d.Set("alert_settings", productNew["alert_settings"])
-	}
+	d.Set("request_settings", productNew["request_settings"])
+	d.Set("alert_settings", productNew["alert_settings"])
 
 	return nil
 }
@@ -964,7 +961,7 @@ func resourceProductCreate(d *schema.ResourceData, m interface{}) error {
 	log.Print(respBody)
 	d.SetId(productId)
 
-	return nil
+	return resourceProductRead(d, m)
 }
 
 func resourceProductUpdate(d *schema.ResourceData, m interface{}) error {
@@ -1080,7 +1077,6 @@ func resourceProductUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 	}
 	jsonPatchDoc := "[" + strings.Join(jsonPatchDocs, ",") + "]"
-	log.Printf("jsonPatchDoc : %+v", jsonPatchDoc)
 
 	if jsonPatchDoc != "[]" {
 		log.Printf("[DEBUG] Updating product: %v", productId)
@@ -1098,7 +1094,7 @@ func resourceProductUpdate(d *schema.ResourceData, m interface{}) error {
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
-		return nil
+		return resourceProductRead(d, m)
 	} else {
 		return errors.New("no changes. Your infrastructure matches the configuration")
 	}
