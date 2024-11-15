@@ -1077,6 +1077,7 @@ func isValidEmail(email string) bool {
 	// Use the MatchString method to check if the email matches the pattern
 	return regex.MatchString(email)
 }
+
 func getDnsTypeId(dnsRecordType string) (int, string) {
 	dnsRecordTypes := map[int]string{
 		1:     "a",
@@ -1092,18 +1093,16 @@ func getDnsTypeId(dnsRecordType string) (int, string) {
 	}
 	return 0, ""
 }
+
 func getFilterTypeid(filterType string) (int, string) {
-	filterTypes := map[int]string{
-		1: "index",
-		3: "address",
+	filterTypes := map[string]int{
+		"index":   1,
+		"last":    1,
+		"address": 3,
 	}
-	for id, filterTypeString := range filterTypes {
-		if filterTypeString == filterType {
-			return id, filterTypeString
-		}
-	}
-	if filterType == "last" {
-		return 1, "index"
+	id, ok := filterTypes[filterType]
+	if ok {
+		return id, filterType
 	}
 	return 0, ""
 }
