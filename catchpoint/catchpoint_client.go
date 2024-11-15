@@ -79,10 +79,10 @@ type TriggerStruct struct {
 	UseIntervalRollingWindow  bool                    `json:"useIntervalRollingWindow"`
 	Expression                string                  `json:"expression,omitempty"`
 	DnsResolvedName           string                  `json:"dnsResolvedName,omitempty"`
-	DnsTTl                    int                     `json:"dnsTTL,omitempty"`
+	DnsTTL                    int                     `json:"dnsTTL,omitempty"`
 	DnsRecordType             *GenericIdNameOmitEmpty `json:"dnsRecordType,omitempty"`
 	FilterType                *GenericIdNameOmitEmpty `json:"filterType,omitempty"`
-	Filtervalue               string                  `json:"filterValue,omitempty"`
+	FilterValue               string                  `json:"filterValue,omitempty"`
 }
 
 type AlertGroupItem struct {
@@ -493,10 +493,10 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 		thresholdInterval := GenericIdName{Id: config.AlertRuleConfigs[i].AlertThresholdInterval.Id, Name: config.AlertRuleConfigs[i].AlertThresholdInterval.Name}
 		dnsRecordType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].DnsRecordType.Id, Name: config.AlertRuleConfigs[i].DnsRecordType.Name}
 		filterType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].FilterType.Id, Name: config.AlertRuleConfigs[i].FilterType.Name}
-		trigger := TriggerStruct{Id: 0, WarningReminderFrequency: warningReminder, CriticalReminderFrequency: criticalReminder, Expression: config.AlertRuleConfigs[i].Expression, TriggerType: triggerType, OperationType: operationType, ThresholdInterval: thresholdInterval, UseIntervalRollingWindow: config.AlertRuleConfigs[i].AlertUseRollingWindow, WarningTrigger: warningTrigger, CriticalTrigger: criticalTrigger, DnsResolvedName: config.AlertRuleConfigs[i].DnsResolvedName, DnsTTl: config.AlertRuleConfigs[i].DnsTTL}
+		trigger := TriggerStruct{Id: 0, WarningReminderFrequency: warningReminder, CriticalReminderFrequency: criticalReminder, Expression: config.AlertRuleConfigs[i].Expression, TriggerType: triggerType, OperationType: operationType, ThresholdInterval: thresholdInterval, UseIntervalRollingWindow: config.AlertRuleConfigs[i].AlertUseRollingWindow, WarningTrigger: warningTrigger, CriticalTrigger: criticalTrigger, DnsResolvedName: config.AlertRuleConfigs[i].DnsResolvedName, DnsTTL: config.AlertRuleConfigs[i].DnsTTL}
 		if filterType != (GenericIdNameOmitEmpty{}) {
 			trigger.FilterType = &filterType
-			trigger.Filtervalue = config.AlertRuleConfigs[i].FilterValue
+			trigger.FilterValue = config.AlertRuleConfigs[i].FilterValue
 		}
 		if dnsRecordType != (GenericIdNameOmitEmpty{}) {
 			trigger.DnsRecordType = &dnsRecordType
