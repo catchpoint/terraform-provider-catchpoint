@@ -15,6 +15,7 @@ type GenericIdName struct {
 	Id   int    `json:"id"`
 	Name string `json:"name"`
 }
+
 type GenericIdNameOmitEmpty struct {
 	Id   int    `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
@@ -213,6 +214,7 @@ type Test struct {
 	ScheduleSettings             ScheduleSetting             `json:"scheduleSettings"`
 	AdvancedSettings             AdvancedSetting             `json:"advancedSettings"`
 }
+
 type Product struct {
 	Id                int               `json:"id"`
 	DivisionId        int               `json:"divisionId"`
@@ -225,6 +227,71 @@ type Product struct {
 	InsightData       InsightDataStruct `json:"insightsData"`
 	ScheduleSettings  ScheduleSetting   `json:"scheduleSettings"`
 	AdvancedSettings  AdvancedSetting   `json:"advancedSettingsModel"`
+}
+
+type Data struct {
+	Id json.Number `json:"id"`
+}
+
+type ProductData struct {
+	Products []Product `json:"products"`
+}
+
+type ApiError struct {
+	Id      json.Number `json:"id"`
+	Message string      `json:"message"`
+}
+
+type Response struct {
+	ResponseData Data       `json:"data"`
+	Messages     []string   `json:"messages"`
+	Errors       []ApiError `json:"errors"`
+	Completed    bool       `json:"completed"`
+	TraceId      string     `json:"traceId"`
+}
+
+type ProductResponse struct {
+	ResponseData ProductData `json:"data"`
+	Messages     []string    `json:"messages"`
+	Errors       []ApiError  `json:"errors"`
+	Completed    bool        `json:"completed"`
+	TraceId      string      `json:"traceId"`
+}
+
+type JsonPatch struct {
+	Value string `json:"value"`
+	Path  string `json:"path"`
+	Op    string `json:"op"`
+}
+
+type JsonPatchAdvanced struct {
+	AdvancedSettingValue AdvancedSetting `json:"value"`
+	Path                 string          `json:"path"`
+	Op                   string          `json:"op"`
+}
+
+type JsonPatchRequest struct {
+	RequestSettingValue RequestSetting `json:"value"`
+	Path                string         `json:"path"`
+	Op                  string         `json:"op"`
+}
+
+type JsonPatchSchedule struct {
+	ScheduleSettingValue ScheduleSetting `json:"value"`
+	Path                 string          `json:"path"`
+	Op                   string          `json:"op"`
+}
+
+type JsonPatchInsight struct {
+	InsightDataValue InsightDataStruct `json:"value"`
+	Path             string            `json:"path"`
+	Op               string            `json:"op"`
+}
+
+type JsonPatchAlert struct {
+	AlertSettingValue AlertGroupStruct `json:"value"`
+	Path              string           `json:"path"`
+	Op                string           `json:"op"`
 }
 
 const (
@@ -315,6 +382,7 @@ func createJson(config TestConfig) string {
 	testJson, _ := json.Marshal(t)
 	return string(testJson)
 }
+
 func createProductJson(config ProductConfig) string {
 	status := GenericIdName{Id: config.ProductStatus, Name: "Active"}
 
@@ -383,25 +451,12 @@ func getTest(apiToken string, testId string) (*Test, string, error) {
 
 	return &test, responseStatus, nil
 }
+
 func getProduct(apiToken string, productId string) (*Product, string, error) {
-	type Data struct {
-		Products []Product `json:"products"`
-	}
-	type ApiError struct {
-		Id      json.Number `json:"id"`
-		Message string      `json:"message"`
-	}
-	type Response struct {
-		ResponseData Data       `json:"data"`
-		Messages     []string   `json:"messages"`
-		Errors       []ApiError `json:"errors"`
-		Completed    bool       `json:"completed"`
-		TraceId      string     `json:"traceId"`
-	}
 	// Consume a token before proceeding
 	<-tokens
 
-	var response Response
+	var response ProductResponse
 	var responseStatus = ""
 	getURL := catchpointProductURI + "/" + productId
 	req, _ := http.NewRequest("", getURL, nil)
@@ -472,23 +527,8 @@ func createTest(apiToken string, jsonPayload string) (string, string, string, er
 
 	return string(body), responseStatus, testId, nil
 }
+
 func createProduct(apiToken string, jsonPayload string) (string, string, string, error) {
-
-	type Data struct {
-		Id json.Number `json:"id"`
-	}
-	type ApiError struct {
-		Id      json.Number `json:"id"`
-		Message string      `json:"message"`
-	}
-	type Response struct {
-		ResponseData Data       `json:"data"`
-		Messages     []string   `json:"messages"`
-		Errors       []ApiError `json:"errors"`
-		Completed    bool       `json:"completed"`
-		TraceId      string     `json:"traceId"`
-	}
-
 	// Consume a token before proceeding
 	<-tokens
 
@@ -667,6 +707,7 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 
 	return alertGroup
 }
+
 func setProductAlertSettings(config *ProductConfig) AlertGroupStruct {
 	alertGroupItems := []AlertGroupItem{}
 	recipients := []Recipient{}
@@ -822,6 +863,7 @@ func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 
 	return scheduleSettings
 }
+
 func setProductScheduleSettings(config *ProductConfig) ScheduleSetting {
 	nodes := []Node{}
 	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
@@ -855,6 +897,7 @@ func setProductScheduleSettings(config *ProductConfig) ScheduleSetting {
 
 	return scheduleSettings
 }
+
 func setTestRequestSettings(config *TestConfig) RequestSetting {
 	httpHeaderRequests := []HttpHeaderRequest{}
 	requestSettingType := GenericIdName{Id: config.RequestSettingType, Name: "Inherit"}
@@ -881,6 +924,7 @@ func setTestRequestSettings(config *TestConfig) RequestSetting {
 	}
 	return requestSetting
 }
+
 func setProductRequestSettings(config *ProductConfig) RequestSetting {
 	httpHeaderRequests := []HttpHeaderRequest{}
 	requestSettingType := GenericIdName{Id: config.RequestSettingType, Name: "Inherit"}
@@ -893,7 +937,6 @@ func setProductRequestSettings(config *ProductConfig) RequestSetting {
 	}
 
 	var authentication = AuthenticationStruct{}
-	// config.AuthenticationType == 0 indicates no authentication type(id) has been set.
 	if config.AuthenticationType.Id != 0 {
 		authenticationMethodType := GenericIdNameOmitEmpty{Id: config.AuthenticationType.Id, Name: config.AuthenticationType.Name}
 		passwordIds := config.AuthenticationPasswordIds
@@ -907,6 +950,7 @@ func setProductRequestSettings(config *ProductConfig) RequestSetting {
 	}
 	return requestSetting
 }
+
 func setTestAdvancedSettings(config *TestConfig) AdvancedSetting {
 	appliedTestFlags := []GenericIdNameOmitEmpty{}
 	advancedSettingId := 0
@@ -932,6 +976,7 @@ func setTestAdvancedSettings(config *TestConfig) AdvancedSetting {
 
 	return advancedSettings
 }
+
 func setProductAdvancedSettings(config *ProductConfig) AdvancedSetting {
 	appliedTestFlags := []GenericIdNameOmitEmpty{}
 	advancedSettingId := 0
@@ -1083,38 +1128,8 @@ func createJsonPatchDocument(config TestConfigUpdate, path string, isTestMetaDat
 	}
 	return string(jsonPatchDoc)
 }
-func createJsonProductPatchDocument(config ProductConfigUpdate, path string, isProductMetaData bool) string {
-	type JsonPatch struct {
-		Value string `json:"value"`
-		Path  string `json:"path"`
-		Op    string `json:"op"`
-	}
 
-	type JsonPatchAdvanced struct {
-		AdvancedSettingValue AdvancedSetting `json:"value"`
-		Path                 string          `json:"path"`
-		Op                   string          `json:"op"`
-	}
-	type JsonPatchRequest struct {
-		RequestSettingValue RequestSetting `json:"value"`
-		Path                string         `json:"path"`
-		Op                  string         `json:"op"`
-	}
-	type JsonPatchSchedule struct {
-		ScheduleSettingValue ScheduleSetting `json:"value"`
-		Path                 string          `json:"path"`
-		Op                   string          `json:"op"`
-	}
-	type JsonPatchInsight struct {
-		InsightDataValue InsightDataStruct `json:"value"`
-		Path             string            `json:"path"`
-		Op               string            `json:"op"`
-	}
-	type JsonPatchAlert struct {
-		AlertSettingValue AlertGroupStruct `json:"value"`
-		Path              string           `json:"path"`
-		Op                string           `json:"op"`
-	}
+func createJsonProductPatchDocument(config ProductConfigUpdate, path string, isProductMetaData bool) string {
 	var jsonPatchDoc = []byte{}
 
 	if isProductMetaData {
@@ -1216,22 +1231,6 @@ func updateTest(apiToken string, testId string, jsonPayload string) (string, str
 }
 
 func updateProduct(apiToken string, productId string, jsonPayload string) (string, string, bool, error) {
-
-	type Data struct {
-		Id int `json:"id"`
-	}
-	type ApiError struct {
-		Id      json.Number `json:"id"`
-		Message string      `json:"message"`
-	}
-	type Response struct {
-		ResponseData Data       `json:"data"`
-		Messages     []string   `json:"messages"`
-		Errors       []ApiError `json:"errors"`
-		Completed    bool       `json:"completed"`
-		TraceId      string     `json:"traceId"`
-	}
-
 	// Consume a token before proceeding
 	<-tokens
 

@@ -30,6 +30,7 @@ func flattenThresholds(thresholds Thresholds) []interface{} {
 	}
 	return []interface{}{thresholdsMap}
 }
+
 func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
 	httpHeaderRequests := make([]interface{}, 0, len(requestSetting.HttpHeaderRequests))
 	for _, header := range requestSetting.HttpHeaderRequests {
@@ -45,6 +46,7 @@ func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
 	}
 	return httpHeaderRequests
 }
+
 func flattenRequestSetting(requestSetting RequestSetting) []interface{} {
 	requestSettingMap := map[string]interface{}{
 		"authentication":       flattenAuthenticationStruct(requestSetting.Authentication),
@@ -386,6 +388,7 @@ func flattenTest(test *Test) map[string]interface{} {
 	}
 	return testMap
 }
+
 func flattenProduct(product *Product) map[string]interface{} {
 	productMap := map[string]interface{}{
 		"id":                   product.Id,

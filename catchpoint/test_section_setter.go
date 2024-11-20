@@ -108,6 +108,7 @@ func setAdvancedSettings(testTypeId int, advanced_setting map[string]interface{}
 	testConfig.AppliedTestFlags = applied_test_flag_ids
 
 }
+
 func configureProductAdvancedSettings(advanced_setting map[string]interface{}, productConfig *ProductConfig) {
 	var applied_test_flag_ids []int
 
@@ -232,6 +233,7 @@ func setRequestSettings(testTypeId int, request_setting map[string]interface{}, 
 
 	return nil
 }
+
 func configureProductRequestSettings(request_setting map[string]interface{}, productConfig *ProductConfig) error {
 	authentication_list := request_setting["authentication"].(*schema.Set).List()
 	for i := range authentication_list {
@@ -308,6 +310,7 @@ func setInsightSettings(testTypeId int, insight_setting map[string]interface{}, 
 	testConfig.TracepointIds = tracepoint_ids
 	testConfig.IndicatorIds = indicator_ids
 }
+
 func configureProductInsightSettings(insight_setting map[string]interface{}, productConfig *ProductConfig) {
 
 	tftracepoint_ids := insight_setting["tracepoint_ids"].([]interface{})
@@ -434,6 +437,7 @@ func configureProductScheduleSettings(schedule_setting map[string]interface{}, p
 
 	return nil
 }
+
 func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, testConfig *TestConfig) error {
 
 	alert_rule_list := alert_setting["alert_rule"].(*schema.Set).List()
@@ -633,6 +637,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 	return nil
 }
+
 func configureProductAlertSettings(alert_setting map[string]interface{}, productConfig *ProductConfig) error {
 
 	alert_rule_list := alert_setting["alert_rule"].(*schema.Set).List()
