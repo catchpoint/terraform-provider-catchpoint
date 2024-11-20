@@ -68,6 +68,7 @@ type TestConfig struct {
 	TraceroutePingCount            int
 	AlertSubject                   string
 }
+
 type ProductConfig struct {
 	DivisionId                     int
 	ProductName                    string
@@ -168,6 +169,7 @@ type TestConfigUpdate struct {
 	UpdatedTestRequestData         TestRequestDataStruct
 	SectionToUpdate                string
 }
+
 type ProductConfigUpdate struct {
 	UpdatedFieldValue              string
 	UpdatedAdvancedSettingsSection AdvancedSetting
