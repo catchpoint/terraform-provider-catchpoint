@@ -30,6 +30,7 @@ func flattenThresholds(thresholds Thresholds) []interface{} {
 	}
 	return []interface{}{thresholdsMap}
 }
+
 func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
 	httpHeaderRequests := make([]interface{}, 0, len(requestSetting.HttpHeaderRequests))
 	for _, header := range requestSetting.HttpHeaderRequests {
@@ -45,6 +46,7 @@ func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
 	}
 	return httpHeaderRequests
 }
+
 func flattenRequestSetting(requestSetting RequestSetting) []interface{} {
 	requestSettingMap := map[string]interface{}{
 		"authentication":       flattenAuthenticationStruct(requestSetting.Authentication),
@@ -385,4 +387,21 @@ func flattenTest(test *Test) map[string]interface{} {
 		}
 	}
 	return testMap
+}
+
+func flattenProduct(product *Product) map[string]interface{} {
+	productMap := map[string]interface{}{
+		"id":                   product.Id,
+		"division_id":          product.DivisionId,
+		"product_name":         product.Name,
+		"status":               strings.ToLower(product.Status.Name),
+		"alert_group_id":       product.AlertGroupId,
+		"test_data_webhook_id": product.TestDataWebhookId,
+		"request_settings":     flattenRequestSetting(product.RequestSettings),
+		"alert_settings":       flattenAlertGroupStruct(product.AlertGroup),
+		"insights":             flattenInsightDataStruct(product.InsightData),
+		"schedule_settings":    flattenScheduleSetting(product.ScheduleSettings),
+		"advanced_settings":    flattenAdvancedSetting(product.AdvancedSettings),
+	}
+	return productMap
 }
