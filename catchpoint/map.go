@@ -848,3 +848,20 @@ func getFilterTypeIds() map[string]int {
 	return filterTypes
 
 }
+
+func getAlertSettingTypeIds() map[string]int {
+	alertSettingTypes := map[string]int{
+		"override":      1,
+		"inherit & add": 2,
+	}
+	return alertSettingTypes
+}
+
+func getAlertSettingTypeNames() map[int]string {
+	alertSettingTypes := map[int]string{
+		0: "inherit",
+		1: "override",
+		2: "inherit & add",
+	}
+	return alertSettingTypes
+}
