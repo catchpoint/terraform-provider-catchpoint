@@ -394,3 +394,19 @@ func getFilterTypeid(filterType string) (int, string) {
 	}
 	return 0, ""
 }
+
+func getAlertSettingTypeId(alertSettingType string) (int, string) {
+	id, ok := getAlertSettingTypeIds()[alertSettingType]
+	if ok {
+		return id, alertSettingType
+	}
+	return 1, "override"
+}
+
+func getAlertSettingTypeName(alertSettingType int) string {
+	name, ok := getAlertSettingTypeNames()[alertSettingType]
+	if ok {
+		return name
+	}
+	return ""
+}

@@ -51,7 +51,7 @@ type TestConfig struct {
 	NodeIds                        []int
 	NodeGroupIds                   []NodeGroup
 	NoOfSubsetNodes                int
-	AlertSettingType               int
+	AlertSettingType               IdName
 	AlertRuleConfigs               []AlertRuleConfig
 	AlertWebhookIds                []int
 	AlertRecipientEmails           []string
