@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 	"strings"
 	"time"
 
@@ -282,15 +283,15 @@ type JsonPatchRequest struct {
 }
 
 type JsonPatchSchedule struct {
-	ScheduleSettingValue ScheduleSetting `json:"value"`
-	Path                 string          `json:"path"`
-	Op                   string          `json:"op"`
+	ScheduleSettingValue interface{} `json:"value"`
+	Path                 string      `json:"path"`
+	Op                   string      `json:"op"`
 }
 
 type JsonPatchInsight struct {
-	InsightDataValue InsightDataStruct `json:"value"`
-	Path             string            `json:"path"`
-	Op               string            `json:"op"`
+	InsightDataValue []map[string]int `json:"value"`
+	Path             string           `json:"path"`
+	Op               string           `json:"op"`
 }
 
 type JsonPatchAlert struct {
@@ -842,6 +843,31 @@ func setProductInsightSettings(config *ProductConfig) InsightDataStruct {
 	return insightData
 }
 
+func updateProductInsightSettings(insightSetting map[string]interface{}, jsonPatchDocs *[]string) {
+	tracepoint_ids, ok := insightSetting["tracepoint_ids"].([]interface{})
+	if ok {
+		productConfigUpdate := ProductConfigUpdate{}
+		for _, tracepoint_id := range tracepoint_ids {
+
+			productConfigUpdate.UpdatedInsightSettingsSection = append(productConfigUpdate.UpdatedInsightSettingsSection, map[string]int{"id": tracepoint_id.(int)})
+
+		}
+
+		productConfigUpdate.SectionToUpdate = "/insightsData/tracepoints"
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
+
+	indicator_ids, ok := insightSetting["indicator_ids"].([]interface{})
+	if ok {
+		productConfigUpdate := ProductConfigUpdate{}
+		for _, indicator_id := range indicator_ids {
+			productConfigUpdate.UpdatedInsightSettingsSection = append(productConfigUpdate.UpdatedInsightSettingsSection, map[string]int{"id": indicator_id.(int)})
+		}
+		productConfigUpdate.SectionToUpdate = "/insightsData/indicators"
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
+}
+
 func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 	nodes := []Node{}
 	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
@@ -908,6 +934,95 @@ func setProductScheduleSettings(config *ProductConfig) ScheduleSetting {
 	}
 
 	return scheduleSettings
+}
+
+func updateProductScheduleSettings(scheduleSetting map[string]interface{}, jsonPatchDocs *[]string) {
+	var value string
+	frequency, ok := scheduleSetting["frequency"].(string)
+	if ok {
+		frequency_id, frequency_name := getFrequencyId(frequency)
+		productConfigUpdate := ProductConfigUpdate{
+			UpdatedScheduleSettingsSection: map[string]interface{}{"id": frequency_id, "name": frequency_name},
+			SectionToUpdate:                "/scheduleSettings/frequency",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
+
+	node_distribution, ok := scheduleSetting["node_distribution"].(string)
+	if ok {
+		node_distribution_id, node_distribution_name := getNodeDistributionId(node_distribution)
+		productConfigUpdate := ProductConfigUpdate{
+			UpdatedScheduleSettingsSection: map[string]interface{}{"id": node_distribution_id, "name": node_distribution_name},
+			SectionToUpdate:                "/scheduleSettings/testNodeDistribution",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
+
+	run_schedule_id, ok := scheduleSetting["run_schedule_id"].(int)
+	if ok {
+		value = ""
+		if run_schedule_id != 0 {
+			value = strconv.Itoa(run_schedule_id)
+		}
+		productConfigUpdate := ProductConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSettings/runScheduleId",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
+
+	maintenance_schedule_id, ok := scheduleSetting["maintenance_schedule_id"].(int)
+	if ok {
+		value = ""
+		if maintenance_schedule_id != 0 {
+			value = strconv.Itoa(maintenance_schedule_id)
+		}
+		productConfigUpdate := ProductConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSettings/maintenanceScheduleId",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
+
+	no_of_subset_nodes, ok := scheduleSetting["no_of_subset_nodes"].(int)
+	if ok {
+		value = ""
+		if no_of_subset_nodes != 0 {
+			value = strconv.Itoa(no_of_subset_nodes)
+		}
+		productConfigUpdate := ProductConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSettings/roundRobinAmount",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
+
+	nodes := []map[string]int{}
+	node_ids, ok := scheduleSetting["node_ids"].([]interface{})
+	if ok {
+		for _, node_id := range node_ids {
+			nodes = append(nodes, map[string]int{"id": node_id.(int)})
+		}
+		productConfigUpdate := ProductConfigUpdate{
+			UpdatedScheduleSettingsSection: nodes,
+			SectionToUpdate:                "/scheduleSettings/nodes",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+
+	}
+
+	node_group_ids, ok := scheduleSetting["node_group_ids"].([]interface{})
+	if ok {
+		nodes = []map[string]int{}
+		for _, node_group_id := range node_group_ids {
+			nodes = append(nodes, map[string]int{"id": node_group_id.(int)})
+		}
+		productConfigUpdate := ProductConfigUpdate{
+			UpdatedScheduleSettingsSection: nodes,
+			SectionToUpdate:                "/scheduleSettings/nodeGroups",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+	}
 }
 
 func setTestRequestSettings(config *TestConfig) RequestSetting {
@@ -1168,7 +1283,7 @@ func createJsonProductPatchDocument(config ProductConfigUpdate, path string, isP
 		}
 		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
 	}
-	if config.SectionToUpdate == "/insightsData" {
+	if strings.Contains(config.SectionToUpdate, "/insightsData") {
 		jsonPatchObject := JsonPatchInsight{
 			InsightDataValue: config.UpdatedInsightSettingsSection,
 			Path:             path,
@@ -1176,7 +1291,7 @@ func createJsonProductPatchDocument(config ProductConfigUpdate, path string, isP
 		}
 		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
 	}
-	if config.SectionToUpdate == "/scheduleSettings" {
+	if strings.Contains(config.SectionToUpdate, "/scheduleSettings") {
 		jsonPatchObject := JsonPatchSchedule{
 			ScheduleSettingValue: config.UpdatedScheduleSettingsSection,
 			Path:                 path,
