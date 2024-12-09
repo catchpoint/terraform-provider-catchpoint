@@ -330,6 +330,7 @@ func flattenAlertGroupStruct(alertGroup AlertGroupStruct) []interface{} {
 	alertGroupMap := map[string]interface{}{
 		"notification_group": flattenNotificationGroup(alertGroup.NotificationGroup, false),
 		"alert_rule":         alertGroupItems,
+		"alert_setting_type": getAlertSettingTypeName(alertGroup.AlertSettingType.Id),
 	}
 	return []interface{}{alertGroupMap}
 }
