@@ -411,28 +411,30 @@ func resourceManageProduct() *schema.Resource {
 						},
 						"frequency": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
+							Default:      "5 minutes",
 							Description:  "Sets the scheduling frequency: '1 minute', '5 minutes', '10 minutes', '15 minutes', '20 minutes', '30 minutes', '60 minutes', '2 hours', '3 hours', '4 hours', '6 hours', '8 hours', '12 hours', '24 hours', '4 minutes', '2 minutes'",
 							ValidateFunc: validation.StringInSlice([]string{"1 minute", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "60 minutes", "2 hours", "3 hours", "4 hours", "6 hours", "8 hours", "12 hours", "24 hours", "4 minutes", "2 minutes"}, false),
 						},
 						"node_distribution": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
+							Default:      "random",
 							Description:  "Node distribution type: 'random' or 'concurrent'",
 							ValidateFunc: validation.StringInSlice([]string{"random", "concurrent"}, false),
 						},
 						"node_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "Optional. if node_group_ids is used. Node ids in a list",
+							Description: "Node ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
 						},
 						"node_group_ids": {
 							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "Optional if node_ids is used. Node group ids in a list",
+							Required:    true,
+							Description: "Node group ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
@@ -1029,14 +1031,8 @@ func resourceProductUpdate(d *schema.ResourceData, m interface{}) error {
 		if insight_settingsOk {
 			insight_setting_list := insight_settings.(*schema.Set).List()
 			insight_setting := insight_setting_list[0].(map[string]interface{})
+			updateProductInsightSettings(insight_setting, &jsonPatchDocs)
 
-			configureProductInsightSettings(insight_setting, &productConfig)
-
-			productConfigUpdate := ProductConfigUpdate{
-				UpdatedInsightSettingsSection: setProductInsightSettings(&productConfig),
-				SectionToUpdate:               "/insightsData",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
 		}
 	}
 	if d.HasChange("schedule_settings") {
@@ -1044,17 +1040,7 @@ func resourceProductUpdate(d *schema.ResourceData, m interface{}) error {
 		if schedule_settingsOk {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
-
-			err := configureProductScheduleSettings(schedule_setting, &productConfig)
-			if err != nil {
-				return err
-			}
-
-			productConfigUpdate := ProductConfigUpdate{
-				UpdatedScheduleSettingsSection: setProductScheduleSettings(&productConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonProductPatchDocument(productConfigUpdate, productConfigUpdate.SectionToUpdate, false))
+			updateProductScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 
