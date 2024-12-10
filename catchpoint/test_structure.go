@@ -112,6 +112,47 @@ type ProductConfig struct {
 	AlertSubject                   string
 }
 
+type FolderConfig struct {
+	DivisionId                     int
+	ProductId                      int
+	FolderName                     string
+	EdnsSubnet                     string
+	RequestSettingType             int
+	AuthenticationType             IdName
+	AuthenticationPasswordIds      []int
+	AuthenticationTokenIds         []int
+	AuthenticationCertificateIds   []int
+	TestHttpHeaderRequests         []TestHttpHeaderRequest
+	InsightSettingType             int
+	TracepointIds                  []int
+	IndicatorIds                   []int
+	ScheduleSettingType            int
+	ScheduleRunScheduleId          int
+	ScheduleMaintenanceScheduleId  int
+	TestFrequency                  IdName
+	NodeDistribution               IdName
+	NodeIds                        []int
+	NodeGroupIds                   []NodeGroup
+	NoOfSubsetNodes                int
+	AlertSettingType               IdName
+	AlertRuleConfigs               []AlertRuleConfig
+	AlertWebhookIds                []int
+	AlertRecipientEmails           []string
+	AlertContactGroups             []string
+	AdvancedSettingType            int
+	AppliedTestFlags               []int
+	MaxStepRuntimeSecOverride      int
+	AdditionalMonitorType          IdName
+	BandwidthThrottling            IdName
+	WaitForNoActivityOnDocComplete *int
+	ViewportHeight                 int
+	ViewportWidth                  int
+	TracerouteFailureHopCount      int
+	TraceroutePingCount            int
+	VerifytestOnFailure            bool
+	AlertSubject                   string
+}
+
 type TestHttpHeaderRequest struct {
 	RequestHeaderType IdName
 	RequestValue      string
@@ -177,6 +218,16 @@ type TestConfigUpdate struct {
 }
 
 type ProductConfigUpdate struct {
+	UpdatedFieldValue              string
+	UpdatedAdvancedSettingsSection AdvancedSetting
+	UpdatedRequestSettingsSection  RequestSetting
+	UpdatedScheduleSettingsSection interface{}
+	UpdatedInsightSettingsSection  []map[string]int
+	UpdatedAlertSettingsSection    AlertGroupStruct
+	SectionToUpdate                string
+}
+
+type FolderConfigUpdate struct {
 	UpdatedFieldValue              string
 	UpdatedAdvancedSettingsSection AdvancedSetting
 	UpdatedRequestSettingsSection  RequestSetting
