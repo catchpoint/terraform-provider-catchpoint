@@ -40,6 +40,7 @@ func Provider() *schema.Provider {
 			"playwright_test":  resourcePlaywrightTestType(),
 			"puppeteer_test":   resourcePuppeteerTestType(),
 			"manage_product":   resourceManageProduct(),
+			"manage_folder":    resourceManageFolder(),
 		},
 		ConfigureFunc: providerConfigure,
 	}
