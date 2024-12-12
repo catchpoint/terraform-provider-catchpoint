@@ -412,6 +412,7 @@ func flattenFolder(folder *Folder) map[string]interface{} {
 		"id":                folder.Id,
 		"division_id":       folder.DivisionId,
 		"product_id":        folder.ProductId,
+		"parent_id":         folder.ParentId,
 		"folder_name":       folder.Name,
 		"request_settings":  flattenRequestSetting(folder.RequestSettings),
 		"alert_settings":    flattenAlertGroupStruct(folder.AlertGroup),
