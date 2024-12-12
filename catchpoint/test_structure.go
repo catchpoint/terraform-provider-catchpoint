@@ -115,6 +115,7 @@ type ProductConfig struct {
 type FolderConfig struct {
 	DivisionId                     int
 	ProductId                      int
+	ParentId                       int
 	FolderName                     string
 	EdnsSubnet                     string
 	RequestSettingType             int

@@ -239,6 +239,7 @@ type Folder struct {
 	Id               int               `json:"id"`
 	DivisionId       int               `json:"divisionId"`
 	ProductId        int               `json:"productId"`
+	ParentId         int               `json:"parentId,omitempty"`
 	Name             string            `json:"name"`
 	TestFolderTypeId GenericIdName     `json:"testFolderTypeId"`
 	RequestSettings  RequestSetting    `json:"requestSetting"`
@@ -453,7 +454,7 @@ func createFolderJson(config FolderConfig) string {
 
 	var folder = Folder{}
 
-	folder = Folder{Id: folderId, DivisionId: config.DivisionId, ProductId: config.ProductId, Name: config.FolderName, TestFolderTypeId: testFolderTypeId, ScheduleSettings: scheduleSettings, AlertGroup: alertGroup, RequestSettings: requestSettings, InsightData: insightData, AdvancedSettings: advancedSettings}
+	folder = Folder{Id: folderId, DivisionId: config.DivisionId, ProductId: config.ProductId, ParentId: config.ParentId, Name: config.FolderName, TestFolderTypeId: testFolderTypeId, ScheduleSettings: scheduleSettings, AlertGroup: alertGroup, RequestSettings: requestSettings, InsightData: insightData, AdvancedSettings: advancedSettings}
 	folderJson, _ := json.Marshal(folder)
 	return string(folderJson)
 }

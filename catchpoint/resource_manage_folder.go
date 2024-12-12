@@ -30,6 +30,11 @@ func resourceManageFolder() *schema.Resource {
 				Required:    true,
 				Description: "The Product  where the Folder will be created",
 			},
+			"parent_id": {
+				Type:        schema.TypeInt,
+				Optional:    true,
+				Description: "the Parent Id  of folder",
+			},
 			"folder_name": {
 				Type:        schema.TypeString,
 				Required:    true,
@@ -859,6 +864,7 @@ func resourceFolderRead(d *schema.ResourceData, m interface{}) error {
 	folderNew := flattenFolder(folder)
 	d.Set("division_id", folderNew["division_id"])
 	d.Set("product_id", folderNew["product_id"])
+	d.Set("parent_id", folderNew["parent_id"])
 	d.Set("folder_name", folderNew["folder_name"])
 	d.Set("insights", folderNew["insights"])
 	d.Set("schedule_settings", folderNew["schedule_settings"])
@@ -873,12 +879,14 @@ func resourceFolderCreate(d *schema.ResourceData, m interface{}) error {
 	api_token := m.(*Config).ApiToken
 	division_id := d.Get("division_id").(int)
 	product_id := d.Get("product_id").(int)
+	parent_id := d.Get("parent_id").(int)
 	folder_name := d.Get("folder_name").(string)
 	var folderConfig = FolderConfig{}
 	folderConfig = FolderConfig{
 		DivisionId: division_id,
 		ProductId:  product_id,
 		FolderName: folder_name,
+		ParentId:   parent_id,
 	}
 	schedule_settings, schedule_settingsOk := d.GetOk("schedule_settings")
 	if schedule_settingsOk {
