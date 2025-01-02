@@ -455,6 +455,13 @@ func resourceManageProduct() *schema.Resource {
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"alert_setting_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "override",
+							Description:  "Specifies the type of alert setting: 'override'.",
+							ValidateFunc: validation.StringInSlice([]string{"override"}, false),
+						},
 						"alert_rule": {
 							Type:        schema.TypeSet,
 							Optional:    true,

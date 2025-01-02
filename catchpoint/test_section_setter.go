@@ -684,6 +684,11 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 }
 
 func configureProductAlertSettings(alert_setting map[string]interface{}, productConfig *ProductConfig) error {
+	var alert_setting_type string
+	if alert_setting["alert_setting_type"] != nil {
+		alert_setting_type = alert_setting["alert_setting_type"].(string)
+	}
+	alert_setting_type_id, alert_setting_type_name := getAlertSettingTypeId(alert_setting_type)
 
 	alert_rule_list := alert_setting["alert_rule"].(*schema.Set).List()
 	for i := range alert_rule_list {
@@ -874,7 +879,7 @@ func configureProductAlertSettings(alert_setting map[string]interface{}, product
 		subject = subject + notification_group["subject"].(string)
 	}
 
-	productConfig.AlertSettingType = 1
+	productConfig.AlertSettingType = IdName{Id: alert_setting_type_id, Name: alert_setting_type_name}
 	productConfig.AlertWebhookIds = all_alert_webhook_ids
 	productConfig.AlertRecipientEmails = all_email_ids
 	productConfig.AlertContactGroups = all_contact_groups
