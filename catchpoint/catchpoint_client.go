@@ -235,12 +235,30 @@ type Product struct {
 	AdvancedSettings  AdvancedSetting   `json:"advancedSettingsModel"`
 }
 
+type Folder struct {
+	Id               int               `json:"id"`
+	DivisionId       int               `json:"divisionId"`
+	ProductId        int               `json:"productId"`
+	ParentId         int               `json:"parentId,omitempty"`
+	Name             string            `json:"name"`
+	TestFolderTypeId GenericIdName     `json:"testFolderTypeId"`
+	RequestSettings  RequestSetting    `json:"requestSetting"`
+	AlertGroup       AlertGroupStruct  `json:"alertGroup"`
+	InsightData      InsightDataStruct `json:"insights"`
+	ScheduleSettings ScheduleSetting   `json:"scheduleSetting"`
+	AdvancedSettings AdvancedSetting   `json:"advancedSettings"`
+}
+
 type Data struct {
 	Id json.Number `json:"id"`
 }
 
 type ProductData struct {
 	Products []Product `json:"products"`
+}
+
+type FolderData struct {
+	Folders []Folder `json:"folders"`
 }
 
 type ApiError struct {
@@ -262,6 +280,14 @@ type ProductResponse struct {
 	Errors       []ApiError  `json:"errors"`
 	Completed    bool        `json:"completed"`
 	TraceId      string      `json:"traceId"`
+}
+
+type FolderResponse struct {
+	ResponseData FolderData `json:"data"`
+	Messages     []string   `json:"messages"`
+	Errors       []ApiError `json:"errors"`
+	Completed    bool       `json:"completed"`
+	TraceId      string     `json:"traceId"`
 }
 
 type JsonPatch struct {
@@ -411,6 +437,28 @@ func createProductJson(config ProductConfig) string {
 	return string(productJson)
 }
 
+func createFolderJson(config FolderConfig) string {
+	testFolderTypeId := GenericIdName{Id: 1, Name: "Synthetic"}
+
+	alertGroup := setFolderAlertSettings(&config)
+
+	insightData := setFolderInsightSettings(&config)
+
+	scheduleSettings := setFolderScheduleSettings(&config)
+
+	advancedSettings := setFolderAdvancedSettings(&config)
+
+	requestSettings := setFolderRequestSettings(&config)
+
+	folderId := 0
+
+	var folder = Folder{}
+
+	folder = Folder{Id: folderId, DivisionId: config.DivisionId, ProductId: config.ProductId, ParentId: config.ParentId, Name: config.FolderName, TestFolderTypeId: testFolderTypeId, ScheduleSettings: scheduleSettings, AlertGroup: alertGroup, RequestSettings: requestSettings, InsightData: insightData, AdvancedSettings: advancedSettings}
+	folderJson, _ := json.Marshal(folder)
+	return string(folderJson)
+}
+
 func getTest(apiToken string, testId string) (*Test, string, error) {
 
 	type Data struct {
@@ -488,6 +536,36 @@ func getProduct(apiToken string, productId string) (*Product, string, error) {
 	return &product, responseStatus, nil
 
 }
+func getFolder(apiToken string, folderId string) (*Folder, string, error) {
+	// Consume a token before proceeding
+	<-tokens
+
+	var response FolderResponse
+	var responseStatus = ""
+	getURL := catchpointFolderURI + "/" + folderId + "?showInheritedProperties=false"
+	req, _ := http.NewRequest("", getURL, nil)
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return &Folder{}, responseStatus, err
+	}
+	defer resp.Body.Close()
+
+	responseStatus = strings.ToLower(string(resp.Status))
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &response)
+	if !response.Completed {
+		return nil, responseStatus, err
+	}
+	folder := response.ResponseData.Folders[0]
+
+	return &folder, responseStatus, nil
+
+}
 
 func createTest(apiToken string, jsonPayload string) (string, string, string, error) {
 
@@ -561,6 +639,35 @@ func createProduct(apiToken string, jsonPayload string) (string, string, string,
 	productId = string(response.ResponseData.Id)
 
 	return string(body), responseStatus, productId, nil
+}
+
+func createFolder(apiToken string, jsonPayload string) (string, string, string, error) {
+	// Consume a token before proceeding
+	<-tokens
+
+	var response Response
+	var postBody = []byte(jsonPayload)
+	var responseBody = ""
+	var responseStatus = ""
+	var folderId = ""
+	req, _ := http.NewRequest("POST", catchpointFolderURI, bytes.NewBuffer(postBody))
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return responseBody, responseStatus, folderId, err
+	}
+	defer resp.Body.Close()
+
+	responseStatus = strings.ToLower(string(resp.Status))
+	body, _ := ioutil.ReadAll(resp.Body)
+	json.Unmarshal([]byte(body), &response)
+	folderId = string(response.ResponseData.Id)
+
+	return string(body), responseStatus, folderId, nil
 }
 
 func deleteTest(apiToken string, testId string) (string, string, bool, error) {
@@ -803,6 +910,88 @@ func setProductAlertSettings(config *ProductConfig) AlertGroupStruct {
 	return alertGroup
 }
 
+func setFolderAlertSettings(config *FolderConfig) AlertGroupStruct {
+	alertGroupItems := []AlertGroupItem{}
+	recipients := []Recipient{}
+	alertWebhooks := []AlertWebhook{}
+
+	// alert setting type will  be inherit  if we not provide alert Settings block
+	alertSettingType := GenericIdName{Id: config.AlertSettingType.Id, Name: "inherit"}
+	if config.AlertSettingType.Name != "" {
+		alertSettingType = GenericIdName{Id: config.AlertSettingType.Id, Name: config.AlertSettingType.Name}
+	}
+
+	for i := range config.AlertRuleConfigs {
+		nodeThresholdType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertNodeThresholdType.Id, Name: config.AlertRuleConfigs[i].AlertNodeThresholdType.Name}
+		nodeThreshold := NodeThresholdStruct{Id: 0, Name: "", NodeThresholdType: nodeThresholdType, NumberOfUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfRuns, PercentageOfUnits: config.AlertRuleConfigs[i].AlertThresholdPercentOfRuns, NumberOfFailingUnits: config.AlertRuleConfigs[i].AlertThresholdNumOfFailingNodes, ConsecutiveRunsEnabled: config.AlertRuleConfigs[i].AlertEnableConsecutive, UtilizePerNodeHistoricalAverage: false, NumberOfConsecutiveRuns: config.AlertRuleConfigs[i].AlertConsecutiveNumOfRuns}
+		warningTrigger := config.AlertRuleConfigs[i].AlertWarningTrigger
+		criticalTrigger := config.AlertRuleConfigs[i].AlertCriticalTrigger
+		warningReminder := GenericIdName{Id: config.AlertRuleConfigs[i].AlertWarningReminder.Id, Name: config.AlertRuleConfigs[i].AlertWarningReminder.Name}
+		criticalReminder := GenericIdName{Id: config.AlertRuleConfigs[i].AlertCriticalReminder.Id, Name: config.AlertRuleConfigs[i].AlertCriticalReminder.Name}
+		triggerType := GenericIdName{Id: config.AlertRuleConfigs[i].TriggerType.Id, Name: config.AlertRuleConfigs[i].TriggerType.Name}
+		operationType := GenericIdName{Id: config.AlertRuleConfigs[i].OperationType.Id, Name: config.AlertRuleConfigs[i].OperationType.Name}
+		statisticalType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].StatisticalType.Id, Name: config.AlertRuleConfigs[i].StatisticalType.Name}
+		historicalInterval := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].TrailingHistoricalInterval.Id, Name: config.AlertRuleConfigs[i].TrailingHistoricalInterval.Name}
+		thresholdInterval := GenericIdName{Id: config.AlertRuleConfigs[i].AlertThresholdInterval.Id, Name: config.AlertRuleConfigs[i].AlertThresholdInterval.Name}
+
+		trigger := TriggerStruct{Id: 0, WarningReminderFrequency: warningReminder, CriticalReminderFrequency: criticalReminder, Expression: config.AlertRuleConfigs[i].Expression, TriggerType: triggerType, OperationType: operationType, ThresholdInterval: thresholdInterval, UseIntervalRollingWindow: config.AlertRuleConfigs[i].AlertUseRollingWindow, WarningTrigger: warningTrigger, CriticalTrigger: criticalTrigger}
+
+		if statisticalType != (GenericIdNameOmitEmpty{}) && historicalInterval != (GenericIdNameOmitEmpty{}) {
+			trigger.StatisticalType = &statisticalType
+			trigger.HistoricalInterval = &historicalInterval
+		}
+
+		notificationType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertNotificationType, Name: "DefaultContacts"}
+		alertType := GenericIdName{Id: config.AlertRuleConfigs[i].AlertType.Id, Name: config.AlertRuleConfigs[i].AlertType.Name}
+		alertSubType := GenericIdNameOmitEmpty{Id: config.AlertRuleConfigs[i].AlertSubType.Id, Name: config.AlertRuleConfigs[i].AlertSubType.Name}
+		notificationGroups := config.AlertRuleConfigs[i].NotificationGroups
+		if alertSubType != (GenericIdNameOmitEmpty{}) {
+			alertGroupItems = append(alertGroupItems, AlertGroupItem{NodeThreshold: nodeThreshold, Trigger: trigger, NotificationType: notificationType, AlertType: alertType, AlertSubType: &alertSubType, EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure, OmitScatterplot: config.AlertRuleConfigs[i].AlertOmitScatterplot, MatchAllRecords: false, NotificationGroups: notificationGroups})
+		} else {
+			alertGroupItems = append(alertGroupItems,
+				AlertGroupItem{NodeThreshold: nodeThreshold,
+					Trigger:            trigger,
+					NotificationType:   notificationType,
+					AlertType:          alertType,
+					EnforceTestFailure: config.AlertRuleConfigs[i].AlertEnforceTestFailure,
+					OmitScatterplot:    config.AlertRuleConfigs[i].AlertOmitScatterplot,
+					MatchAllRecords:    false,
+					NotificationGroups: notificationGroups,
+				})
+		}
+	}
+
+	if len(config.AlertRecipientEmails) > 0 {
+		recipientType := GenericIdName{Id: 2, Name: "Email"}
+		for i := range config.AlertRecipientEmails {
+			recipients = append(recipients, Recipient{Email: config.AlertRecipientEmails[i], RecipientType: recipientType})
+		}
+	}
+
+	if len(config.AlertContactGroups) > 0 {
+		recipientType := GenericIdName{Id: 1, Name: "ContactGroup"}
+		for i := range config.AlertContactGroups {
+			recipients = append(recipients, Recipient{Id: i + 1, RecipientType: recipientType, Name: config.AlertContactGroups[i]})
+		}
+	}
+
+	if len(config.AlertWebhookIds) > 0 {
+		for i := range config.AlertWebhookIds {
+			alertWebhooks = append(alertWebhooks, AlertWebhook{Id: config.AlertWebhookIds[i]})
+		}
+	}
+
+	notifSubject := "${NotificationLevel}:  test=#${TestId} - ${TestName}, alert=${AlertType}"
+	if config.AlertSubject != "" {
+		notifSubject = config.AlertSubject
+	}
+	notificationGroup := NotificationGroupStruct{Subject: notifSubject, NotifyOnWarning: true, NotifyOnCritical: true, NotifyOnImproved: true, AlertWebhooks: alertWebhooks, Recipients: recipients}
+
+	alertGroup := AlertGroupStruct{AlertSettingType: alertSettingType, NotificationGroup: notificationGroup, AlertGroupItems: alertGroupItems}
+
+	return alertGroup
+}
+
 func setTestInsightSettings(config *TestConfig) InsightDataStruct {
 	tracepoints := []GenericIdName{}
 	indicators := []GenericIdName{}
@@ -826,6 +1015,28 @@ func setTestInsightSettings(config *TestConfig) InsightDataStruct {
 }
 
 func setProductInsightSettings(config *ProductConfig) InsightDataStruct {
+	tracepoints := []GenericIdName{}
+	indicators := []GenericIdName{}
+
+	insightSettingType := GenericIdName{Id: config.InsightSettingType, Name: "Inherit"}
+
+	if len(config.TracepointIds) > 0 {
+		for i := range config.TracepointIds {
+			tracepoints = append(tracepoints, GenericIdName{Id: config.TracepointIds[i], Name: "Tracepoint"})
+		}
+	}
+	if len(config.IndicatorIds) > 0 {
+		for i := range config.IndicatorIds {
+			indicators = append(indicators, GenericIdName{Id: config.IndicatorIds[i], Name: "Indicator"})
+		}
+	}
+
+	insightData := InsightDataStruct{InsightSettingType: insightSettingType, Indicators: indicators, Tracepoints: tracepoints}
+
+	return insightData
+}
+
+func setFolderInsightSettings(config *FolderConfig) InsightDataStruct {
 	tracepoints := []GenericIdName{}
 	indicators := []GenericIdName{}
 
@@ -872,6 +1083,31 @@ func updateProductInsightSettings(insightSetting map[string]interface{}, jsonPat
 	}
 }
 
+func updateFolderInsightSettings(insightSetting map[string]interface{}, jsonPatchDocs *[]string) {
+	tracepoint_ids, ok := insightSetting["tracepoint_ids"].([]interface{})
+	if ok {
+		folderConfigUpdate := FolderConfigUpdate{}
+		for _, tracepoint_id := range tracepoint_ids {
+
+			folderConfigUpdate.UpdatedInsightSettingsSection = append(folderConfigUpdate.UpdatedInsightSettingsSection, map[string]int{"id": tracepoint_id.(int)})
+
+		}
+
+		folderConfigUpdate.SectionToUpdate = "/insights/tracepoints"
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+
+	indicator_ids, ok := insightSetting["indicator_ids"].([]interface{})
+	if ok {
+		folderConfigUpdate := FolderConfigUpdate{}
+		for _, indicator_id := range indicator_ids {
+			folderConfigUpdate.UpdatedInsightSettingsSection = append(folderConfigUpdate.UpdatedInsightSettingsSection, map[string]int{"id": indicator_id.(int)})
+		}
+		folderConfigUpdate.SectionToUpdate = "/insights/indicators"
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+}
+
 func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 	nodes := []Node{}
 	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
@@ -907,6 +1143,40 @@ func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 }
 
 func setProductScheduleSettings(config *ProductConfig) ScheduleSetting {
+	nodes := []Node{}
+	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
+	frequency := GenericIdName{Id: config.TestFrequency.Id, Name: config.TestFrequency.Name}
+	testNodeDistribution := GenericIdName{Id: config.NodeDistribution.Id, Name: config.NodeDistribution.Name}
+	networkType := GenericIdName{Id: 0, Name: "Backbone"}
+	if len(config.NodeIds) > 0 {
+		for i := range config.NodeIds {
+			nodes = append(nodes, Node{Id: config.NodeIds[i], Name: "node", NetworkType: networkType})
+		}
+	}
+	// Initialize an empty slice of NodeGroup
+	var nodeGroups []NodeGroup
+	if len(config.NodeGroupIds) > 0 {
+		for i := range config.NodeGroupIds {
+			nodeGroup := NodeGroup{
+				Id:                   config.NodeGroupIds[i].Id,
+				Name:                 "DefaultNodeGroupName",
+				Description:          "",
+				SyntheticNetworkType: networkType,
+				Nodes:                []Node{{Id: 123, Name: "DefaultNodeName", NetworkType: networkType}},
+			}
+			nodeGroups = append(nodeGroups, nodeGroup)
+		}
+	}
+	scheduleSettingId := 0
+	scheduleSettings := ScheduleSetting{ScheduleSettingType: scheduleSettingType, RunScheduleId: config.ScheduleRunScheduleId, MaintenanceScheduleId: config.ScheduleMaintenanceScheduleId, Frequency: frequency, TestNodeDistribution: testNodeDistribution, NetworkType: networkType, Nodes: nodes, NodeGroups: nodeGroups, Id: scheduleSettingId}
+	if config.NoOfSubsetNodes > 0 {
+		scheduleSettings.NoOfSubsetNodes = config.NoOfSubsetNodes
+	}
+
+	return scheduleSettings
+}
+
+func setFolderScheduleSettings(config *FolderConfig) ScheduleSetting {
 	nodes := []Node{}
 	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
 	frequency := GenericIdName{Id: config.TestFrequency.Id, Name: config.TestFrequency.Name}
@@ -1029,6 +1299,95 @@ func updateProductScheduleSettings(scheduleSetting map[string]interface{}, jsonP
 	}
 }
 
+func updateFolderScheduleSettings(scheduleSetting map[string]interface{}, jsonPatchDocs *[]string) {
+	var value string
+	frequency, ok := scheduleSetting["frequency"].(string)
+	if ok {
+		frequency_id, frequency_name := getFrequencyId(frequency)
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedScheduleSettingsSection: map[string]interface{}{"id": frequency_id, "name": frequency_name},
+			SectionToUpdate:                "/scheduleSetting/frequency",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+
+	node_distribution, ok := scheduleSetting["node_distribution"].(string)
+	if ok {
+		node_distribution_id, node_distribution_name := getNodeDistributionId(node_distribution)
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedScheduleSettingsSection: map[string]interface{}{"id": node_distribution_id, "name": node_distribution_name},
+			SectionToUpdate:                "/scheduleSetting/testNodeDistribution",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+
+	run_schedule_id, ok := scheduleSetting["run_schedule_id"].(int)
+	if ok {
+		value = ""
+		if run_schedule_id != 0 {
+			value = strconv.Itoa(run_schedule_id)
+		}
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSetting/runScheduleId",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+
+	maintenance_schedule_id, ok := scheduleSetting["maintenance_schedule_id"].(int)
+	if ok {
+		value = ""
+		if maintenance_schedule_id != 0 {
+			value = strconv.Itoa(maintenance_schedule_id)
+		}
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSetting/maintenanceScheduleId",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+
+	no_of_subset_nodes, ok := scheduleSetting["no_of_subset_nodes"].(int)
+	if ok {
+		value = ""
+		if no_of_subset_nodes != 0 {
+			value = strconv.Itoa(no_of_subset_nodes)
+		}
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSetting/roundRobinAmount",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+
+	nodes := []map[string]int{}
+	node_ids, ok := scheduleSetting["node_ids"].([]interface{})
+	if ok {
+		for _, node_id := range node_ids {
+			nodes = append(nodes, map[string]int{"id": node_id.(int)})
+		}
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedScheduleSettingsSection: nodes,
+			SectionToUpdate:                "/scheduleSetting/nodes",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+
+	}
+
+	node_group_ids, ok := scheduleSetting["node_group_ids"].([]interface{})
+	if ok {
+		nodes = []map[string]int{}
+		for _, node_group_id := range node_group_ids {
+			nodes = append(nodes, map[string]int{"id": node_group_id.(int)})
+		}
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedScheduleSettingsSection: nodes,
+			SectionToUpdate:                "/scheduleSetting/nodeGroups",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
+	}
+}
+
 func setTestRequestSettings(config *TestConfig) RequestSetting {
 	httpHeaderRequests := []HttpHeaderRequest{}
 	requestSettingType := GenericIdName{Id: config.RequestSettingType, Name: "Inherit"}
@@ -1082,6 +1441,32 @@ func setProductRequestSettings(config *ProductConfig) RequestSetting {
 	return requestSetting
 }
 
+func setFolderRequestSettings(config *FolderConfig) RequestSetting {
+	httpHeaderRequests := []HttpHeaderRequest{}
+	requestSettingType := GenericIdName{Id: config.RequestSettingType, Name: "Inherit"}
+
+	if len(config.TestHttpHeaderRequests) > 0 {
+		for i := range config.TestHttpHeaderRequests {
+			requestHeaderType := GenericIdName{Id: config.TestHttpHeaderRequests[i].RequestHeaderType.Id, Name: config.TestHttpHeaderRequests[i].RequestHeaderType.Name}
+			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern})
+		}
+	}
+
+	var authentication = AuthenticationStruct{}
+	if config.AuthenticationType.Id != 0 {
+		authenticationMethodType := GenericIdNameOmitEmpty{Id: config.AuthenticationType.Id, Name: config.AuthenticationType.Name}
+		passwordIds := config.AuthenticationPasswordIds
+		authentication = AuthenticationStruct{AuthenticationMethodType: authenticationMethodType, PasswordIds: passwordIds, Id: 0}
+	}
+
+	requestSetting := RequestSetting{RequestSettingType: requestSettingType, HttpHeaderRequests: httpHeaderRequests, TokenIds: config.AuthenticationTokenIds, LibraryCertificateIds: config.AuthenticationCertificateIds}
+
+	if !cmp.Equal(AuthenticationStruct{}, authentication) {
+		requestSetting.Authentication = &authentication
+	}
+	return requestSetting
+}
+
 func setTestAdvancedSettings(config *TestConfig) AdvancedSetting {
 	appliedTestFlags := []GenericIdNameOmitEmpty{}
 	advancedSettingId := 0
@@ -1109,6 +1494,32 @@ func setTestAdvancedSettings(config *TestConfig) AdvancedSetting {
 }
 
 func setProductAdvancedSettings(config *ProductConfig) AdvancedSetting {
+	appliedTestFlags := []GenericIdNameOmitEmpty{}
+	advancedSettingId := 0
+	advancedSettingType := GenericIdName{Id: config.AdvancedSettingType, Name: "Override"}
+	if len(config.AppliedTestFlags) > 0 {
+		for i := range config.AppliedTestFlags {
+			if config.AppliedTestFlags[i] != 0 {
+				appliedTestFlags = append(appliedTestFlags, GenericIdNameOmitEmpty{Id: config.AppliedTestFlags[i], Name: "Flag"})
+			}
+		}
+	}
+
+	advancedSettings := AdvancedSetting{}
+	advancedSettings = AdvancedSetting{AdvancedSettingType: advancedSettingType, AppliedTestFlags: appliedTestFlags, MaxStepRuntimeSecOverride: config.MaxStepRuntimeSecOverride, WaitForNoActivity: config.WaitForNoActivityOnDocComplete, ViewportHeight: config.ViewportHeight, ViewportWidth: config.ViewportWidth, FailureHopCount: config.TracerouteFailureHopCount, PingCount: config.TraceroutePingCount, EdnsSubnet: config.EdnsSubnet, Id: advancedSettingId, VerifytestOnFailure: config.VerifytestOnFailure}
+	additionalMonitor := GenericIdNameOmitEmpty{Id: config.AdditionalMonitorType.Id, Name: config.AdditionalMonitorType.Name}
+	if additionalMonitor != (GenericIdNameOmitEmpty{}) {
+		advancedSettings.AdditionalMonitor = &additionalMonitor
+	}
+	bandwidthThrottling := GenericIdNameOmitEmpty{Id: config.BandwidthThrottling.Id, Name: config.BandwidthThrottling.Name}
+	if bandwidthThrottling != (GenericIdNameOmitEmpty{}) {
+		advancedSettings.TestBandwidthThrottling = &bandwidthThrottling
+	}
+
+	return advancedSettings
+}
+
+func setFolderAdvancedSettings(config *FolderConfig) AdvancedSetting {
 	appliedTestFlags := []GenericIdNameOmitEmpty{}
 	advancedSettingId := 0
 	advancedSettingType := GenericIdName{Id: config.AdvancedSettingType, Name: "Override"}
@@ -1314,6 +1725,60 @@ func createJsonProductPatchDocument(config ProductConfigUpdate, path string, isP
 	return string(jsonPatchDoc)
 }
 
+func createJsonFolderPatchDocument(config FolderConfigUpdate, path string, isFolderMetaData bool) string {
+	var jsonPatchDoc = []byte{}
+
+	if isFolderMetaData {
+		jsonPatchObject := JsonPatch{
+			Value: config.UpdatedFieldValue,
+			Path:  path,
+			Op:    "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/advancedSettings" {
+		jsonPatchObject := JsonPatchAdvanced{
+			AdvancedSettingValue: config.UpdatedAdvancedSettingsSection,
+			Path:                 path,
+			Op:                   "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/requestSetting" {
+		jsonPatchObject := JsonPatchRequest{
+			RequestSettingValue: config.UpdatedRequestSettingsSection,
+			Path:                path,
+			Op:                  "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if strings.Contains(config.SectionToUpdate, "/insights") {
+		jsonPatchObject := JsonPatchInsight{
+			InsightDataValue: config.UpdatedInsightSettingsSection,
+			Path:             path,
+			Op:               "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if strings.Contains(config.SectionToUpdate, "/scheduleSetting") {
+		jsonPatchObject := JsonPatchSchedule{
+			ScheduleSettingValue: config.UpdatedScheduleSettingsSection,
+			Path:                 path,
+			Op:                   "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	if config.SectionToUpdate == "/alertGroup" {
+		jsonPatchObject := JsonPatchAlert{
+			AlertSettingValue: config.UpdatedAlertSettingsSection,
+			Path:              path,
+			Op:                "replace",
+		}
+		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
+	}
+	return string(jsonPatchDoc)
+}
+
 func updateTest(apiToken string, testId string, jsonPayload string) (string, string, bool, error) {
 
 	type Data struct {
@@ -1366,6 +1831,37 @@ func updateProduct(apiToken string, productId string, jsonPayload string) (strin
 	<-tokens
 
 	updateURL := catchpointProductURI + "/" + productId
+	var jsonPatchDocument = []byte(jsonPayload)
+	var response Response
+	var responseBody = ""
+	var responseStatus = ""
+	var completed = false
+	req, _ := http.NewRequest("PATCH", updateURL, bytes.NewBuffer(jsonPatchDocument))
+	req.Header.Set("Authorization", "Bearer "+apiToken)
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("cp-integration", "1")
+
+	client := &http.Client{}
+	resp, err := client.Do(req)
+	if err != nil {
+		return responseBody, responseStatus, completed, err
+	}
+	defer resp.Body.Close()
+
+	responseStatus = strings.ToLower(string(resp.Status))
+	body, _ := ioutil.ReadAll(resp.Body)
+
+	json.Unmarshal([]byte(body), &response)
+	completed = response.Completed
+
+	return string(body), responseStatus, completed, nil
+}
+
+func updateFolder(apiToken string, folderId string, jsonPayload string) (string, string, bool, error) {
+	// Consume a token before proceeding
+	<-tokens
+
+	updateURL := catchpointFolderURI + "/" + folderId
 	var jsonPatchDocument = []byte(jsonPayload)
 	var response Response
 	var responseBody = ""
