@@ -640,7 +640,6 @@ func resourceSslTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("label", testNew["label"])
 	d.Set("thresholds", testNew["thresholds"])
 	d.Set("schedule_settings", testNew["schedule_settings"])
-	log.Printf("alert_settings ->%+v", testNew["alert_settings"])
 	d.Set("alert_settings", testNew["alert_settings"])
 	d.Set("advanced_settings", testNew["advanced_settings"])
 
