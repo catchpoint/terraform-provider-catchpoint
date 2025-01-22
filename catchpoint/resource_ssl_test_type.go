@@ -290,6 +290,11 @@ func resourceSslTestType() *schema.Resource {
 										Description: "Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node",
 										Optional:    true,
 									},
+									"expression": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Optional. Sets trigger expression for content match alert type ",
+									},
 									"warning_reminder": {
 										Type:         schema.TypeString,
 										Optional:     true,
@@ -635,6 +640,7 @@ func resourceSslTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("label", testNew["label"])
 	d.Set("thresholds", testNew["thresholds"])
 	d.Set("schedule_settings", testNew["schedule_settings"])
+	log.Printf("alert_settings ->%+v", testNew["alert_settings"])
 	d.Set("alert_settings", testNew["alert_settings"])
 	d.Set("advanced_settings", testNew["advanced_settings"])
 
@@ -764,17 +770,7 @@ func resourceSslTestUpdate(d *schema.ResourceData, m interface{}) error {
 		if schedule_settingsOk {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
-
-			err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
-			if err != nil {
-				return err
-			}
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedScheduleSettingsSection: setTestScheduleSettings(&testConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 

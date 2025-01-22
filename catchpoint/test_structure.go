@@ -209,8 +209,8 @@ type TestConfigUpdate struct {
 	UpdatedFieldValue              string
 	UpdatedAdvancedSettingsSection AdvancedSetting
 	UpdatedRequestSettingsSection  RequestSetting
-	UpdatedScheduleSettingsSection ScheduleSetting
-	UpdatedInsightSettingsSection  InsightDataStruct
+	UpdatedScheduleSettingsSection interface{}
+	UpdatedInsightSettingsSection  []map[string]int
 	UpdatedAlertSettingsSection    AlertGroupStruct
 	UpdatedLabels                  []Label
 	UpdatedTestThresholds          Thresholds

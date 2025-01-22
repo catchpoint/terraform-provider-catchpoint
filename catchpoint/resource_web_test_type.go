@@ -32,7 +32,7 @@ func resourceWebTestType() *schema.Resource {
 				Optional:     true,
 				Computed:     true,
 				Description:  "Optional. The device to simulate for mobile, mobile playback(playback source) monitors",
-				ValidateFunc: validation.StringInSlice([]string{"android", "iphone", "ipad 2", "kindle fire", "galaxy tab", "iphone 5", "ipad mini", "galaxy note", "nexus 7", "nexus 4", "nokia lumia920", "iphone 6", "blackberry z30", "galaxy s4", "htc onex", "lg optimusg", "droid razr hd", "nexus 6", "iphone 6s", "galaxy s6", "iphone 7", "google pixel", "galaxy s8"}, false),
+				ValidateFunc: validation.StringInSlice([]string{"android", "iphone", "ipad 2", "kindle fire", "galaxy tab", "iphone 5", "ipad mini", "galaxy note", "nexus 7", "nexus 4", "nokia lumia920", "iphone 6", "blackberry z30", "galaxy s4", "htc onex", "lg optimusg", "droid razr hd", "nexus 6", "iphone 6s", "galaxy s6", "iphone 7", "google pixel", "galaxy s8", "chrome", "ie"}, false),
 			},
 			"chrome_version": {
 				Type:         schema.TypeString,
@@ -1089,6 +1089,7 @@ func resourceTestCreate(d *schema.ResourceData, m interface{}) error {
 	}
 
 	jsonStr := createJson(testConfig)
+	log.Printf("Test Json %+v", jsonStr)
 	if m.(*Config).LogJson {
 		log.Printf("[TEST JSON] \n" + jsonStr)
 	}
@@ -1319,14 +1320,7 @@ func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
 		if insight_settingsOk {
 			insight_setting_list := insight_settings.(*schema.Set).List()
 			insight_setting := insight_setting_list[0].(map[string]interface{})
-
-			setInsightSettings(int(test_type), insight_setting, &testConfig)
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedInsightSettingsSection: setTestInsightSettings(&testConfig),
-				SectionToUpdate:               "/insightData",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestInsightSettings(insight_setting, &jsonPatchDocs)
 		}
 	}
 
@@ -1336,16 +1330,7 @@ func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
 
-			err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
-			if err != nil {
-				return err
-			}
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedScheduleSettingsSection: setTestScheduleSettings(&testConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 
