@@ -108,6 +108,9 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 	nodeGroups := make([]int, len(scheduleSetting.NodeGroups))
 	for i, group := range scheduleSetting.NodeGroups {
 		nodeGroups[i] = group.Id
+		if group.NodeGroupId != 0 {
+			nodeGroups[i] = group.NodeGroupId
+		}
 	}
 
 	if len(nodeGroups) > 0 {

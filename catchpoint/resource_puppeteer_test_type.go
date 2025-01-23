@@ -1325,13 +1325,7 @@ func resourcePuppeteerTestUpdate(d *schema.ResourceData, m interface{}) error {
 			insight_setting_list := insight_settings.(*schema.Set).List()
 			insight_setting := insight_setting_list[0].(map[string]interface{})
 
-			setInsightSettings(int(test_type), insight_setting, &testConfig)
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedInsightSettingsSection: setTestInsightSettings(&testConfig),
-				SectionToUpdate:               "/insightData",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestInsightSettings(insight_setting, &jsonPatchDocs)
 		}
 	}
 
@@ -1340,17 +1334,7 @@ func resourcePuppeteerTestUpdate(d *schema.ResourceData, m interface{}) error {
 		if schedule_settingsOk {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
-
-			err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
-			if err != nil {
-				return err
-			}
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedScheduleSettingsSection: setTestScheduleSettings(&testConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 
