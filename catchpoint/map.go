@@ -70,6 +70,8 @@ func getApiScriptTypeIds() map[string]int {
 
 func getUserAgentTypeIds() map[string]int {
 	userAgentTypes := map[string]int{
+		"ie":             1,
+		"chrome":         2,
 		"android":        3,
 		"iphone":         4,
 		"ipad 2":         5,
@@ -100,6 +102,8 @@ func getUserAgentTypeIds() map[string]int {
 
 func getUserAgentTypeNames() map[int]string {
 	userAgentTypes := map[int]string{
+		1:  "ie",
+		2:  "chrome",
 		3:  "android",
 		4:  "iphone",
 		5:  "ipad 2",

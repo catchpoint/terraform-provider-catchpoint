@@ -88,7 +88,7 @@ func setAdvancedSettings(testTypeId int, advanced_setting map[string]interface{}
 		testTypeId == int(TestType(Api)) ||
 		testTypeId == int(TestType(Transaction)) ||
 		testTypeId == int(TestType(Playwright)) ||
-		testTypeId == int(TestType(Puppeteer)) {
+		testTypeId == int(TestType(Puppeteer)) || testTypeId == int(TestType(Ping)) {
 		additional_monitor := advanced_setting["additional_monitor"].(string)
 		if additional_monitor != "" {
 			additional_monitor_id, additional_monitor_name := getAdditionalMonitorTypeId(additional_monitor)

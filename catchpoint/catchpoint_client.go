@@ -143,6 +143,7 @@ type NodeGroup struct {
 	Description          string        `json:"description"`
 	SyntheticNetworkType GenericIdName `json:"syntheticNetworkType"`
 	Nodes                []Node        `json:"nodes"`
+	NodeGroupId          int           `json:"nodeGroupId,omitempty"`
 }
 
 type ScheduleSetting struct {
@@ -1107,6 +1108,31 @@ func updateFolderInsightSettings(insightSetting map[string]interface{}, jsonPatc
 	}
 }
 
+func updateTestInsightSettings(insightSetting map[string]interface{}, jsonPatchDocs *[]string) {
+	tracepoint_ids, ok := insightSetting["tracepoint_ids"].([]interface{})
+	if ok {
+		testConfigUpdate := TestConfigUpdate{}
+		for _, tracepoint_id := range tracepoint_ids {
+
+			testConfigUpdate.UpdatedInsightSettingsSection = append(testConfigUpdate.UpdatedInsightSettingsSection, map[string]int{"id": tracepoint_id.(int)})
+
+		}
+
+		testConfigUpdate.SectionToUpdate = "/insightData/tracepoints"
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+
+	indicator_ids, ok := insightSetting["indicator_ids"].([]interface{})
+	if ok {
+		testConfigUpdate := TestConfigUpdate{}
+		for _, indicator_id := range indicator_ids {
+			testConfigUpdate.UpdatedInsightSettingsSection = append(testConfigUpdate.UpdatedInsightSettingsSection, map[string]int{"id": indicator_id.(int)})
+		}
+		testConfigUpdate.SectionToUpdate = "/insightData/indicators"
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+}
+
 func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 	nodes := []Node{}
 	scheduleSettingType := GenericIdName{Id: config.ScheduleSettingType, Name: "Inherit"}
@@ -1123,7 +1149,7 @@ func setTestScheduleSettings(config *TestConfig) ScheduleSetting {
 	if len(config.NodeGroupIds) > 0 {
 		for i := range config.NodeGroupIds {
 			nodeGroup := NodeGroup{
-				Id:                   config.NodeGroupIds[i].Id,
+				NodeGroupId:          config.NodeGroupIds[i].Id,
 				Name:                 "DefaultNodeGroupName",
 				Description:          "",
 				SyntheticNetworkType: networkType,
@@ -1387,6 +1413,95 @@ func updateFolderScheduleSettings(scheduleSetting map[string]interface{}, jsonPa
 	}
 }
 
+func updateTestScheduleSettings(scheduleSetting map[string]interface{}, jsonPatchDocs *[]string) {
+	var value string
+	frequency, ok := scheduleSetting["frequency"].(string)
+	if ok {
+		frequency_id, frequency_name := getFrequencyId(frequency)
+		testConfigUpdate := TestConfigUpdate{
+			UpdatedScheduleSettingsSection: map[string]interface{}{"id": frequency_id, "name": frequency_name},
+			SectionToUpdate:                "/scheduleSettings/frequency",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+
+	node_distribution, ok := scheduleSetting["node_distribution"].(string)
+	if ok {
+		node_distribution_id, node_distribution_name := getNodeDistributionId(node_distribution)
+		testConfigUpdate := TestConfigUpdate{
+			UpdatedScheduleSettingsSection: map[string]interface{}{"id": node_distribution_id, "name": node_distribution_name},
+			SectionToUpdate:                "/scheduleSettings/testNodeDistribution",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+
+	run_schedule_id, ok := scheduleSetting["run_schedule_id"].(int)
+	if ok {
+		value = ""
+		if run_schedule_id != 0 {
+			value = strconv.Itoa(run_schedule_id)
+		}
+		testConfigUpdate := TestConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSettings/runScheduleId",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+
+	maintenance_schedule_id, ok := scheduleSetting["maintenance_schedule_id"].(int)
+	if ok {
+		value = ""
+		if maintenance_schedule_id != 0 {
+			value = strconv.Itoa(maintenance_schedule_id)
+		}
+		testConfigUpdate := TestConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSettings/maintenanceScheduleId",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+
+	no_of_subset_nodes, ok := scheduleSetting["no_of_subset_nodes"].(int)
+	if ok {
+		value = ""
+		if no_of_subset_nodes != 0 {
+			value = strconv.Itoa(no_of_subset_nodes)
+		}
+		testConfigUpdate := TestConfigUpdate{
+			UpdatedScheduleSettingsSection: value,
+			SectionToUpdate:                "/scheduleSettings/roundRobinAmount",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+
+	nodes := []map[string]int{}
+	node_ids, ok := scheduleSetting["node_ids"].([]interface{})
+	if ok {
+		for _, node_id := range node_ids {
+			nodes = append(nodes, map[string]int{"id": node_id.(int)})
+		}
+		testConfigUpdate := TestConfigUpdate{
+			UpdatedScheduleSettingsSection: nodes,
+			SectionToUpdate:                "/scheduleSettings/nodes",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+
+	}
+
+	node_group_ids, ok := scheduleSetting["node_group_ids"].([]interface{})
+	if ok {
+		nodes = []map[string]int{}
+		for _, node_group_id := range node_group_ids {
+			nodes = append(nodes, map[string]int{"nodeGroupId": node_group_id.(int)})
+		}
+		testConfigUpdate := TestConfigUpdate{
+			UpdatedScheduleSettingsSection: nodes,
+			SectionToUpdate:                "/scheduleSettings/nodeGroups",
+		}
+		*jsonPatchDocs = append(*jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+	}
+}
+
 func setTestRequestSettings(config *TestConfig) RequestSetting {
 	httpHeaderRequests := []HttpHeaderRequest{}
 	requestSettingType := GenericIdName{Id: config.RequestSettingType, Name: "Inherit"}
@@ -1562,14 +1677,14 @@ func createJsonPatchDocument(config TestConfigUpdate, path string, isTestMetaDat
 		Op                  string         `json:"op"`
 	}
 	type JsonPatchSchedule struct {
-		ScheduleSettingValue ScheduleSetting `json:"value"`
-		Path                 string          `json:"path"`
-		Op                   string          `json:"op"`
+		ScheduleSettingValue interface{} `json:"value"`
+		Path                 string      `json:"path"`
+		Op                   string      `json:"op"`
 	}
 	type JsonPatchInsight struct {
-		InsightDataValue InsightDataStruct `json:"value"`
-		Path             string            `json:"path"`
-		Op               string            `json:"op"`
+		InsightDataValue []map[string]int `json:"value"`
+		Path             string           `json:"path"`
+		Op               string           `json:"op"`
 	}
 	type JsonPatchAlert struct {
 		AlertSettingValue AlertGroupStruct `json:"value"`
@@ -1643,7 +1758,7 @@ func createJsonPatchDocument(config TestConfigUpdate, path string, isTestMetaDat
 		}
 		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
 	}
-	if config.SectionToUpdate == "/insightData" {
+	if strings.Contains(config.SectionToUpdate, "/insightData") {
 		jsonPatchObject := JsonPatchInsight{
 			InsightDataValue: config.UpdatedInsightSettingsSection,
 			Path:             path,
@@ -1651,7 +1766,7 @@ func createJsonPatchDocument(config TestConfigUpdate, path string, isTestMetaDat
 		}
 		jsonPatchDoc, _ = json.Marshal(jsonPatchObject)
 	}
-	if config.SectionToUpdate == "/scheduleSettings" {
+	if strings.Contains(config.SectionToUpdate, "/scheduleSettings") {
 		jsonPatchObject := JsonPatchSchedule{
 			ScheduleSettingValue: config.UpdatedScheduleSettingsSection,
 			Path:                 path,
