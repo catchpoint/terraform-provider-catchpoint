@@ -208,14 +208,18 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct, include
 	}
 
 	var recipients []string
-	var contactGroups []string
+	var contactGroups []int
 	for _, recipient := range notificationGroup.Recipients {
 		recipientFlattened := flattenRecipient(recipient)
 		var value = recipientFlattened["email"].(string)
 		if isValidEmail(value) {
 			recipients = append(recipients, value)
-		} else {
-			contactGroups = append(contactGroups, value)
+		}
+		recipientType, ok := recipientFlattened["recipientType"].(string)
+		if ok && (strings.Contains(recipientType, "ContactGroup")) {
+			if contactGroupID, ok := recipientFlattened["id"].(int); ok {
+				contactGroups = append(contactGroups, contactGroupID)
+			}
 		}
 	}
 

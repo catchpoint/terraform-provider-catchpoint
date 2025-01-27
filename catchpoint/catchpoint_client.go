@@ -812,7 +812,7 @@ func setTestAlertSettings(config *TestConfig) AlertGroupStruct {
 	if len(config.AlertContactGroups) > 0 {
 		recipientType := GenericIdName{Id: 1, Name: "ContactGroup"}
 		for i := range config.AlertContactGroups {
-			recipients = append(recipients, Recipient{Id: i + 1, RecipientType: recipientType, Name: config.AlertContactGroups[i]})
+			recipients = append(recipients, Recipient{Id: config.AlertContactGroups[i], RecipientType: recipientType})
 		}
 	}
 
@@ -889,7 +889,7 @@ func setProductAlertSettings(config *ProductConfig) AlertGroupStruct {
 	if len(config.AlertContactGroups) > 0 {
 		recipientType := GenericIdName{Id: 1, Name: "ContactGroup"}
 		for i := range config.AlertContactGroups {
-			recipients = append(recipients, Recipient{Id: i + 1, RecipientType: recipientType, Name: config.AlertContactGroups[i]})
+			recipients = append(recipients, Recipient{Id: config.AlertContactGroups[i], RecipientType: recipientType})
 		}
 	}
 
@@ -971,7 +971,7 @@ func setFolderAlertSettings(config *FolderConfig) AlertGroupStruct {
 	if len(config.AlertContactGroups) > 0 {
 		recipientType := GenericIdName{Id: 1, Name: "ContactGroup"}
 		for i := range config.AlertContactGroups {
-			recipients = append(recipients, Recipient{Id: i + 1, RecipientType: recipientType, Name: config.AlertContactGroups[i]})
+			recipients = append(recipients, Recipient{Id: config.AlertContactGroups[i], RecipientType: recipientType})
 		}
 	}
 
