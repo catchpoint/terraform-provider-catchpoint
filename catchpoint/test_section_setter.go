@@ -847,7 +847,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
-	var all_contact_groups []string
+	var all_contact_groups []int
 	var subject string
 
 	for _, notif_group_item := range notif_group_list {
@@ -865,7 +865,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 		ContactGroups := notification_group["contact_groups"].([]interface{})
 		for _, contactGroup := range ContactGroups {
-			all_contact_groups = append(all_contact_groups, contactGroup.(string))
+			all_contact_groups = append(all_contact_groups, contactGroup.(int))
 		}
 
 		subject = subject + notification_group["subject"].(string)
@@ -1052,7 +1052,7 @@ func configureProductAlertSettings(alert_setting map[string]interface{}, product
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
-	var all_contact_groups []string
+	var all_contact_groups []int
 	var subject string
 
 	for _, notif_group_item := range notif_group_list {
@@ -1070,7 +1070,7 @@ func configureProductAlertSettings(alert_setting map[string]interface{}, product
 
 		ContactGroups := notification_group["contact_groups"].([]interface{})
 		for _, contactGroup := range ContactGroups {
-			all_contact_groups = append(all_contact_groups, contactGroup.(string))
+			all_contact_groups = append(all_contact_groups, contactGroup.(int))
 		}
 
 		subject = subject + notification_group["subject"].(string)
@@ -1258,7 +1258,7 @@ func configureFolderAlertSettings(alert_setting map[string]interface{}, folderCo
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
-	var all_contact_groups []string
+	var all_contact_groups []int
 	var subject string
 
 	for _, notif_group_item := range notif_group_list {
@@ -1276,7 +1276,7 @@ func configureFolderAlertSettings(alert_setting map[string]interface{}, folderCo
 
 		ContactGroups := notification_group["contact_groups"].([]interface{})
 		for _, contactGroup := range ContactGroups {
-			all_contact_groups = append(all_contact_groups, contactGroup.(string))
+			all_contact_groups = append(all_contact_groups, contactGroup.(int))
 		}
 
 		subject = subject + notification_group["subject"].(string)

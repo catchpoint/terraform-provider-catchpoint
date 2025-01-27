@@ -790,7 +790,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 										Optional:    true,
 										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
 										Elem: &schema.Schema{
-											Type: schema.TypeString,
+											Type: schema.TypeInt,
 										},
 									},
 								},

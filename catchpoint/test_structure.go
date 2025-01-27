@@ -55,7 +55,7 @@ type TestConfig struct {
 	AlertRuleConfigs               []AlertRuleConfig
 	AlertWebhookIds                []int
 	AlertRecipientEmails           []string
-	AlertContactGroups             []string
+	AlertContactGroups             []int
 	AdvancedSettingType            int
 	AppliedTestFlags               []int
 	MaxStepRuntimeSecOverride      int
@@ -97,7 +97,7 @@ type ProductConfig struct {
 	AlertRuleConfigs               []AlertRuleConfig
 	AlertWebhookIds                []int
 	AlertRecipientEmails           []string
-	AlertContactGroups             []string
+	AlertContactGroups             []int
 	AdvancedSettingType            int
 	AppliedTestFlags               []int
 	MaxStepRuntimeSecOverride      int
@@ -139,7 +139,7 @@ type FolderConfig struct {
 	AlertRuleConfigs               []AlertRuleConfig
 	AlertWebhookIds                []int
 	AlertRecipientEmails           []string
-	AlertContactGroups             []string
+	AlertContactGroups             []int
 	AdvancedSettingType            int
 	AppliedTestFlags               []int
 	MaxStepRuntimeSecOverride      int
