@@ -208,21 +208,18 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct, include
 	}
 
 	var recipients []string
-	var contactGroups []string
 	for _, recipient := range notificationGroup.Recipients {
 		recipientFlattened := flattenRecipient(recipient)
 		var value = recipientFlattened["email"].(string)
 		if isValidEmail(value) {
 			recipients = append(recipients, value)
-		} else {
-			contactGroups = append(contactGroups, value)
 		}
 	}
 
 	notifGroupMap := map[string]interface{}{
 		"recipient_email_ids": recipients,
 		"subject":             notificationGroup.Subject,
-		"contact_groups":      contactGroups,
+		"contact_groups":      flattenContactGroup(notificationGroup.Recipients),
 	}
 
 	if includeNotify {
@@ -235,6 +232,28 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct, include
 		notifGroupMap["alert_webhook_ids"] = alertWebhooks
 	}
 	return []interface{}{notifGroupMap}
+}
+
+func flattenContactGroup(recipients []Recipient) []interface{} {
+	var contactGroups []interface{}
+
+	for _, recipient := range recipients {
+		recipientFlattened := flattenRecipient(recipient)
+		recipientType, ok := recipientFlattened["recipientType"].(string)
+		if ok && strings.Contains(recipientType, "ContactGroup") {
+
+			contactGroupMap := map[string]interface{}{}
+			if contactGroupID, ok := recipientFlattened["id"].(int); ok {
+				contactGroupMap["contact_group_id"] = contactGroupID
+			}
+			if contactGroupName, ok := recipientFlattened["name"].(string); ok {
+				contactGroupMap["contact_group_name"] = contactGroupName
+			}
+
+			contactGroups = append(contactGroups, contactGroupMap)
+		}
+	}
+	return contactGroups
 }
 
 func flattenAlertRuleNotificationGroup(notificationGroups []NotificationGroupStruct, includeNotify bool) []interface{} {
