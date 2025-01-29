@@ -788,7 +788,7 @@ func resourcePuppeteerTestType() *schema.Resource {
 									"contact_groups": {
 										Type:        schema.TypeSet,
 										Optional:    true,
-										Description: "Optional. A set of contact groups to receive alert notifications. Each group must have a unique combination of id and name. Ensure either recipient_email_ids or contact_groups is provided.",
+										Description: "Optional. A set of contact groups to receive alert notifications.",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"contact_group_id": {
