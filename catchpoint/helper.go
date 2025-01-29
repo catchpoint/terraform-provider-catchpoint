@@ -317,7 +317,7 @@ func getAdditionalMonitorTypeId(additionalMonitorType string) (int, string) {
 	if ok {
 		return id, additionalMonitorType
 	}
-	return -1, ""
+	return 0, ""
 }
 
 func getAdditionalMonitorTypeName(additionalMonitorType int) string {

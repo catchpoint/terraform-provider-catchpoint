@@ -847,7 +847,7 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
-	var all_contact_groups []string
+	var all_contact_groups []IdName
 	var subject string
 
 	for _, notif_group_item := range notif_group_list {
@@ -862,10 +862,18 @@ func setAlertSettings(testTypeId int, alert_setting map[string]interface{}, test
 		for _, email_id := range tfemail_ids {
 			all_email_ids = append(all_email_ids, email_id.(string))
 		}
-
-		ContactGroups := notification_group["contact_groups"].([]interface{})
-		for _, contactGroup := range ContactGroups {
-			all_contact_groups = append(all_contact_groups, contactGroup.(string))
+		contact_groups := notification_group["contact_groups"].(*schema.Set).List()
+		for _, contact_group := range contact_groups {
+			contact_group_map, ok := contact_group.(map[string]interface{})
+			if ok {
+				contact_group_id, ok := contact_group_map["contact_group_id"].(int)
+				if ok {
+					contact_group_name, ok := contact_group_map["contact_group_name"].(string)
+					if ok {
+						all_contact_groups = append(all_contact_groups, IdName{Id: contact_group_id, Name: contact_group_name})
+					}
+				}
+			}
 		}
 
 		subject = subject + notification_group["subject"].(string)
@@ -1052,7 +1060,7 @@ func configureProductAlertSettings(alert_setting map[string]interface{}, product
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
-	var all_contact_groups []string
+	var all_contact_groups []IdName
 	var subject string
 
 	for _, notif_group_item := range notif_group_list {
@@ -1068,9 +1076,18 @@ func configureProductAlertSettings(alert_setting map[string]interface{}, product
 			all_email_ids = append(all_email_ids, email_id.(string))
 		}
 
-		ContactGroups := notification_group["contact_groups"].([]interface{})
-		for _, contactGroup := range ContactGroups {
-			all_contact_groups = append(all_contact_groups, contactGroup.(string))
+		contact_groups := notification_group["contact_groups"].(*schema.Set).List()
+		for _, contact_group := range contact_groups {
+			contact_group_map, ok := contact_group.(map[string]interface{})
+			if ok {
+				contact_group_id, ok := contact_group_map["contact_group_id"].(int)
+				if ok {
+					contact_group_name, ok := contact_group_map["contact_group_name"].(string)
+					if ok {
+						all_contact_groups = append(all_contact_groups, IdName{Id: contact_group_id, Name: contact_group_name})
+					}
+				}
+			}
 		}
 
 		subject = subject + notification_group["subject"].(string)
@@ -1258,7 +1275,7 @@ func configureFolderAlertSettings(alert_setting map[string]interface{}, folderCo
 
 	var all_alert_webhook_ids []int
 	var all_email_ids []string
-	var all_contact_groups []string
+	var all_contact_groups []IdName
 	var subject string
 
 	for _, notif_group_item := range notif_group_list {
@@ -1274,9 +1291,18 @@ func configureFolderAlertSettings(alert_setting map[string]interface{}, folderCo
 			all_email_ids = append(all_email_ids, email_id.(string))
 		}
 
-		ContactGroups := notification_group["contact_groups"].([]interface{})
-		for _, contactGroup := range ContactGroups {
-			all_contact_groups = append(all_contact_groups, contactGroup.(string))
+		contact_groups := notification_group["contact_groups"].(*schema.Set).List()
+		for _, contact_group := range contact_groups {
+			contact_group_map, ok := contact_group.(map[string]interface{})
+			if ok {
+				contact_group_id, ok := contact_group_map["contact_group_id"].(int)
+				if ok {
+					contact_group_name, ok := contact_group_map["contact_group_name"].(string)
+					if ok {
+						all_contact_groups = append(all_contact_groups, IdName{Id: contact_group_id, Name: contact_group_name})
+					}
+				}
+			}
 		}
 
 		subject = subject + notification_group["subject"].(string)
