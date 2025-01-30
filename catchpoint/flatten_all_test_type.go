@@ -40,6 +40,13 @@ func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
 			"value":              header.RequestValue,
 			"child_host_pattern": header.ChildHostPattern,
 		}
+		if header.HeaderName == "Sni-Override" {
+			key = "sni_override"
+			userAgentHeader["header_name"] = header.HeaderName
+		} else if header.RequestHeaderType.Name == "Custom" {
+			key = "custom"
+			userAgentHeader["header_name"] = header.HeaderName
+		}
 		httpHeaderRequests = append(httpHeaderRequests, map[string]interface{}{
 			key: []interface{}{userAgentHeader},
 		})
