@@ -45,6 +45,7 @@ type HttpHeaderRequest struct {
 	RequestValue      string        `json:"requestValue"`
 	RequestHeaderType GenericIdName `json:"requestHeaderType"`
 	ChildHostPattern  string        `json:"childHostPattern,omitempty"`
+	HeaderName        string        `json:"headerName,omitempty"`
 }
 
 type RequestSetting struct {
@@ -1508,7 +1509,7 @@ func setTestRequestSettings(config *TestConfig) RequestSetting {
 	if len(config.TestHttpHeaderRequests) > 0 {
 		for i := range config.TestHttpHeaderRequests {
 			requestHeaderType := GenericIdName{Id: config.TestHttpHeaderRequests[i].RequestHeaderType.Id, Name: config.TestHttpHeaderRequests[i].RequestHeaderType.Name}
-			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern})
+			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern, HeaderName: config.TestHttpHeaderRequests[i].HeaderName})
 		}
 	}
 
@@ -1535,7 +1536,7 @@ func setProductRequestSettings(config *ProductConfig) RequestSetting {
 	if len(config.TestHttpHeaderRequests) > 0 {
 		for i := range config.TestHttpHeaderRequests {
 			requestHeaderType := GenericIdName{Id: config.TestHttpHeaderRequests[i].RequestHeaderType.Id, Name: config.TestHttpHeaderRequests[i].RequestHeaderType.Name}
-			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern})
+			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern, HeaderName: config.TestHttpHeaderRequests[i].HeaderName})
 		}
 	}
 
@@ -1561,7 +1562,7 @@ func setFolderRequestSettings(config *FolderConfig) RequestSetting {
 	if len(config.TestHttpHeaderRequests) > 0 {
 		for i := range config.TestHttpHeaderRequests {
 			requestHeaderType := GenericIdName{Id: config.TestHttpHeaderRequests[i].RequestHeaderType.Id, Name: config.TestHttpHeaderRequests[i].RequestHeaderType.Name}
-			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern})
+			httpHeaderRequests = append(httpHeaderRequests, HttpHeaderRequest{RequestValue: config.TestHttpHeaderRequests[i].RequestValue, RequestHeaderType: requestHeaderType, ChildHostPattern: config.TestHttpHeaderRequests[i].ChildHostPattern, HeaderName: config.TestHttpHeaderRequests[i].HeaderName})
 		}
 	}
 

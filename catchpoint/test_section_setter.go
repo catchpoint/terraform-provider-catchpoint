@@ -278,7 +278,7 @@ func setRequestSettings(testTypeId int, request_setting map[string]interface{}, 
 	http_request_headers_list := request_setting["http_request_headers"].(*schema.Set).List()
 	for i := range http_request_headers_list {
 		http_request_headers := http_request_headers_list[i].(map[string]interface{})
-		request_headers := [14]string{"user_agent", "accept", "accept_encoding", "accept_language", "accept_charset", "cookie", "cache_control", "pragma", "referer", "host", "request_override", "dns_override", "request_block", "request_delay"}
+		request_headers := [18]string{"user_agent", "accept", "accept_encoding", "accept_language", "accept_charset", "cookie", "cache_control", "connection", "pragma", "referer", "host", "request_override", "dns_override", "request_block", "request_delay", "dns_resolver_override", "sni_override", "custom"}
 
 		for _, request_header := range request_headers {
 			request_header_list := http_request_headers[request_header].(*schema.Set).List()
@@ -289,6 +289,9 @@ func setRequestSettings(testTypeId int, request_setting map[string]interface{}, 
 				if request_value != "" {
 					request_header_id, request_header_name := getReqHeaderTypeId(request_header)
 					httpHeaderRequest := TestHttpHeaderRequest{RequestHeaderType: IdName{Id: request_header_id, Name: request_header_name}, RequestValue: request_value, ChildHostPattern: child_host_pattern}
+					if header_name, ok := request_header_map["header_name"].(string); ok {
+						httpHeaderRequest.HeaderName = header_name
+					}
 					testConfig.TestHttpHeaderRequests = append(testConfig.TestHttpHeaderRequests, httpHeaderRequest)
 				}
 			}
@@ -338,7 +341,7 @@ func configureProductRequestSettings(request_setting map[string]interface{}, pro
 	http_request_headers_list := request_setting["http_request_headers"].(*schema.Set).List()
 	for i := range http_request_headers_list {
 		http_request_headers := http_request_headers_list[i].(map[string]interface{})
-		request_headers := [14]string{"user_agent", "accept", "accept_encoding", "accept_language", "accept_charset", "cookie", "cache_control", "pragma", "referer", "host", "request_override", "dns_override", "request_block", "request_delay"}
+		request_headers := [18]string{"user_agent", "accept", "accept_encoding", "accept_language", "accept_charset", "cookie", "cache_control", "connection", "pragma", "referer", "host", "request_override", "dns_override", "request_block", "request_delay", "dns_resolver_override", "sni_override", "custom"}
 
 		for _, request_header := range request_headers {
 			request_header_list := http_request_headers[request_header].(*schema.Set).List()
@@ -349,6 +352,9 @@ func configureProductRequestSettings(request_setting map[string]interface{}, pro
 				if request_value != "" {
 					request_header_id, request_header_name := getReqHeaderTypeId(request_header)
 					httpHeaderRequest := TestHttpHeaderRequest{RequestHeaderType: IdName{Id: request_header_id, Name: request_header_name}, RequestValue: request_value, ChildHostPattern: child_host_pattern}
+					if header_name, ok := request_header_map["header_name"].(string); ok {
+						httpHeaderRequest.HeaderName = header_name
+					}
 					productConfig.TestHttpHeaderRequests = append(productConfig.TestHttpHeaderRequests, httpHeaderRequest)
 				}
 			}
@@ -398,7 +404,7 @@ func configureFolderRequestSettings(request_setting map[string]interface{}, fold
 	http_request_headers_list := request_setting["http_request_headers"].(*schema.Set).List()
 	for i := range http_request_headers_list {
 		http_request_headers := http_request_headers_list[i].(map[string]interface{})
-		request_headers := [14]string{"user_agent", "accept", "accept_encoding", "accept_language", "accept_charset", "cookie", "cache_control", "pragma", "referer", "host", "request_override", "dns_override", "request_block", "request_delay"}
+		request_headers := [18]string{"user_agent", "accept", "accept_encoding", "accept_language", "accept_charset", "cookie", "cache_control", "connection", "pragma", "referer", "host", "request_override", "dns_override", "request_block", "request_delay", "dns_resolver_override", "sni_override", "custom"}
 
 		for _, request_header := range request_headers {
 			request_header_list := http_request_headers[request_header].(*schema.Set).List()
@@ -409,6 +415,9 @@ func configureFolderRequestSettings(request_setting map[string]interface{}, fold
 				if request_value != "" {
 					request_header_id, request_header_name := getReqHeaderTypeId(request_header)
 					httpHeaderRequest := TestHttpHeaderRequest{RequestHeaderType: IdName{Id: request_header_id, Name: request_header_name}, RequestValue: request_value, ChildHostPattern: child_host_pattern}
+					if header_name, ok := request_header_map["header_name"].(string); ok {
+						httpHeaderRequest.HeaderName = header_name
+					}
 					folderConfig.TestHttpHeaderRequests = append(folderConfig.TestHttpHeaderRequests, httpHeaderRequest)
 				}
 			}
