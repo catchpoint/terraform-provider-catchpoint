@@ -345,6 +345,24 @@ func resourceTransactionTestType() *schema.Resource {
 											},
 										},
 									},
+									"connection": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the connection header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 									"pragma": {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
@@ -467,6 +485,69 @@ func resourceTransactionTestType() *schema.Resource {
 												"child_host_pattern": {
 													Type:     schema.TypeString,
 													Optional: true,
+												},
+											},
+										},
+									},
+									"dns_resolver_override": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the dns_resolver_override header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+									"sni_override": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the sni_override header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"header_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Default:  "Sni-Override",
+												},
+											},
+										},
+									},
+									"custom": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the custom header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"header_name": {
+													Type:     schema.TypeString,
+													Required: true,
 												},
 											},
 										},

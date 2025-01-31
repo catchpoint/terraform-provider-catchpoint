@@ -158,6 +158,7 @@ type TestHttpHeaderRequest struct {
 	RequestHeaderType IdName
 	RequestValue      string
 	ChildHostPattern  string
+	HeaderName        string
 }
 
 type TestRequestData struct {
