@@ -782,20 +782,24 @@ func getBandwidthThrottlingTypeNames() map[int]string {
 
 func getReqHeaderTypeIds() map[string]int {
 	requestHeaderTypes := map[string]int{
-		"user_agent":       1,
-		"accept":           2,
-		"accept_encoding":  3,
-		"accept_language":  4,
-		"accept_charset":   5,
-		"cookie":           6,
-		"cache_control":    7,
-		"pragma":           9,
-		"referer":          10,
-		"host":             12,
-		"request_override": 13,
-		"dns_override":     14,
-		"request_block":    15,
-		"request_delay":    16,
+		"user_agent":            1,
+		"accept":                2,
+		"accept_encoding":       3,
+		"accept_language":       4,
+		"accept_charset":        5,
+		"cookie":                6,
+		"cache_control":         7,
+		"connection":            8,
+		"pragma":                9,
+		"referer":               10,
+		"custom":                11,
+		"sni_override":          11,
+		"host":                  12,
+		"request_override":      13,
+		"dns_override":          14,
+		"request_block":         15,
+		"request_delay":         16,
+		"dns_resolver_override": 17,
 	}
 	return requestHeaderTypes
 
@@ -810,6 +814,7 @@ func getReqHeaderTypeNames() map[int]string {
 		5:  "accept_charset",
 		6:  "cookie",
 		7:  "cache_control",
+		8:  "connection",
 		9:  "pragma",
 		10: "referer",
 		12: "host",
@@ -817,6 +822,7 @@ func getReqHeaderTypeNames() map[int]string {
 		14: "dns_override",
 		15: "request_block",
 		16: "request_delay",
+		17: "dns_resolver_override",
 	}
 	return requestHeaderTypes
 
