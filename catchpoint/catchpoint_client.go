@@ -202,6 +202,11 @@ type Test struct {
 	TestThresholds               Thresholds                  `json:"thresholdRestModel,omitempty"`
 	EnforceCertificatePinning    bool                        `json:"enforceCertificatePinning"`
 	EnforceCertificateKeyPinning bool                        `json:"enforceCertificateKeyPinning"`
+	FileData                     string                      `json:"fileData,omitempty"`
+	PassPhrase                   string                      `json:"passPhrase,omitempty"`
+	CertificateName              string                      `json:"certificateName,omitempty"`
+	CertificateThumbprintValue   string                      `json:"certificateThumbprintValue,omitempty"`
+	PublicKeyThumbprintValue     string                      `json:"publicKeyThumbprintValue,omitempty"`
 	EnableTestDataWebhook        bool                        `json:"enableTestDataWebhook"`
 	AlertsPaused                 bool                        `json:"alertsPaused"`
 	ChangeDate                   string                      `json:"changeDate"`
@@ -384,7 +389,7 @@ func createJson(config TestConfig) string {
 	changeDate := getTime()
 	var t = Test{}
 
-	t = Test{Id: testId, DivisionId: config.DivisionId, ProductId: config.ProductId, FolderId: config.FolderId, Name: config.TestName, Description: config.TestDescription, Url: config.TestUrl, GatewayAddressOrHost: config.GatewayAddressOrHost, Labels: labels, TestThresholds: thresholds, EnforceCertificatePinning: config.EnforceCertificatePinning, EnforceCertificateKeyPinning: config.EnforceCertificateKeyPinning, EnableTestDataWebhook: config.EnableTestDataWebhook, AlertsPaused: config.AlertsPaused, ChangeDate: changeDate, StartTime: config.StartTime, EndTime: config.EndTime, Status: status, Monitor: monitor, TestType: testType, RequestHttpMethod: requestHttpMethod, RequestSettings: requestSettings, AlertGroup: alertGroup, InsightData: insightData, ScheduleSettings: scheduleSettings, AdvancedSettings: advancedSettings}
+	t = Test{Id: testId, DivisionId: config.DivisionId, ProductId: config.ProductId, FolderId: config.FolderId, Name: config.TestName, Description: config.TestDescription, Url: config.TestUrl, GatewayAddressOrHost: config.GatewayAddressOrHost, Labels: labels, TestThresholds: thresholds, EnforceCertificatePinning: config.EnforceCertificatePinning, EnforceCertificateKeyPinning: config.EnforceCertificateKeyPinning, FileData: config.FileData, PassPhrase: config.PassPhrase, CertificateName: config.CertificateName, EnableTestDataWebhook: config.EnableTestDataWebhook, AlertsPaused: config.AlertsPaused, ChangeDate: changeDate, StartTime: config.StartTime, EndTime: config.EndTime, Status: status, Monitor: monitor, TestType: testType, RequestHttpMethod: requestHttpMethod, RequestSettings: requestSettings, AlertGroup: alertGroup, InsightData: insightData, ScheduleSettings: scheduleSettings, AdvancedSettings: advancedSettings}
 
 	userAgentType := GenericIdNameOmitEmpty{Id: config.SimulateDevice, Name: ""}
 	if userAgentType != (GenericIdNameOmitEmpty{}) {

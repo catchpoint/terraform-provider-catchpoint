@@ -416,6 +416,15 @@ func flattenTest(test *Test) map[string]interface{} {
 			testMap["test_script_type"] = strings.ToLower(test.TestRequestData.TransactionScriptType.Name)
 		}
 	}
+	if test.CertificateName != "" {
+		testMap["certificate_name"] = test.CertificateName
+	}
+	if test.CertificateThumbprintValue != "" {
+		testMap["certificate_thumbprint_value"] = test.CertificateThumbprintValue
+	}
+	if test.PublicKeyThumbprintValue != "" {
+		testMap["public_key_thumbprint_value"] = test.PublicKeyThumbprintValue
+	}
 	return testMap
 }
 
