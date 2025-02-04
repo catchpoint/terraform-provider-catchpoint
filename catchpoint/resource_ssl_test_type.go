@@ -72,6 +72,31 @@ func resourceSslTestType() *schema.Resource {
 				Default:     false,
 				Description: "Optional. Switch for enabling Certificate Key Pinning feature",
 			},
+			"file_data": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. File data for certificate",
+			},
+			"passphrase": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Passphrase for certificate",
+			},
+			"certificate_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Name of certificate",
+			},
+			"certificate_thumbprint_value": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Certificate Thumbprint Value",
+			},
+			"public_key_thumbprint_value": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Public Key Thumbprint Value",
+			},
 			"enable_test_data_webhook": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -511,6 +536,9 @@ func resourceSslTestCreate(d *schema.ResourceData, m interface{}) error {
 	test_description := d.Get("test_description").(string)
 	enforce_certificate_pinning := d.Get("enforce_certificate_pinning").(bool)
 	enforce_certificate_key_pinning := d.Get("enforce_certificate_key_pinning").(bool)
+	file_data := d.Get("file_data").(string)
+	passphrase := d.Get("passphrase").(string)
+	certificate_name := d.Get("certificate_name").(string)
 	enable_test_data_webhook := d.Get("enable_test_data_webhook").(bool)
 	alerts_paused := d.Get("alerts_paused").(bool)
 	start_time := d.Get("start_time").(string)
@@ -535,6 +563,9 @@ func resourceSslTestCreate(d *schema.ResourceData, m interface{}) error {
 		TestDescription:              test_description,
 		EnforceCertificatePinning:    enforce_certificate_pinning,
 		EnforceCertificateKeyPinning: enforce_certificate_key_pinning,
+		FileData:                     file_data,
+		PassPhrase:                   passphrase,
+		CertificateName:              certificate_name,
 		EnableTestDataWebhook:        enable_test_data_webhook,
 		AlertsPaused:                 alerts_paused,
 		StartTime:                    start_time,
@@ -648,13 +679,14 @@ func resourceSslTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("test_location", testNew["test_url"])
 	d.Set("enforce_certificate_pinning", testNew["enforce_certificate_pinning"])
 	d.Set("enforce_certificate_key_pinning", testNew["enforce_certificate_key_pinning"])
+	d.Set("certificate_name", testNew["certificate_name"])
+	d.Set("public_key_thumbprint_value", testNew["public_key_thumbprint_value"])
+	d.Set("certificate_thumbprint_value", testNew["certificate_thumbprint_value"])
 	d.Set("label", testNew["label"])
 	d.Set("thresholds", testNew["thresholds"])
 	d.Set("schedule_settings", testNew["schedule_settings"])
 	d.Set("alert_settings", testNew["alert_settings"])
 	d.Set("advanced_settings", testNew["advanced_settings"])
-
-	log.Printf("[DEBUG RESOURCE] %v", d)
 
 	return nil
 }
