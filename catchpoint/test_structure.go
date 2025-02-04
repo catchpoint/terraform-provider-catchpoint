@@ -29,6 +29,9 @@ type TestConfig struct {
 	AvailabilityThresholdCritical  float64
 	EnforceCertificateKeyPinning   bool
 	EnforceCertificatePinning      bool
+	FileData                       string
+	PassPhrase                     string
+	CertificateName                string
 	EnableTestDataWebhook          bool
 	AlertsPaused                   bool
 	StartTime                      string
