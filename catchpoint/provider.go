@@ -1,7 +1,6 @@
 package catchpoint
 
 import (
-	"log"
 	"strconv"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
@@ -57,7 +56,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 		is_log_json = false
 	}
 	catchpoint_environment = d.Get("catchpoint_environment").(string)
-	log.Printf("CATCHPOINT ENVIROMENT %+v", catchpoint_environment)
 	setTestUriByEnv(catchpoint_environment)
 	return newConfig(api_token, is_log_json, catchpoint_environment), nil
 }
