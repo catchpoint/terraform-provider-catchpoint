@@ -38,8 +38,8 @@ func resourceWebTestType() *schema.Resource {
 				Type:         schema.TypeString,
 				Optional:     true,
 				Computed:     true,
-				Description:  "Optional. Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'",
-				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "108", "89", "87", "85", "75", "71", "66", "63", "59", "53"}, false),
+				Description:  "Optional. Chrome version to use. Supported: 'preview', 'stable', '120',108', '89', '87', '85','79', '75', '71', '66', '63', '59', '53'",
+				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "120", "108", "89", "87", "85", "79", "75", "71", "66", "63", "59", "53"}, false),
 			},
 			"division_id": {
 				Type:        schema.TypeInt,

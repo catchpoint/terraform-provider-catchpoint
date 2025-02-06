@@ -218,6 +218,7 @@ type Test struct {
 	DnsQueryType                 *GenericIdNameOmitEmpty     `json:"dnsQueryType,omitempty"`
 	UserAgentType                *GenericIdNameOmitEmpty     `json:"userAgentTypeId,omitempty"`
 	ChromeMonitorVersion         *ChromeMonitorVersionStruct `json:"chromeMonitorVersion,omitempty"`
+	ApplicationVersion           string                      `json:"applicationVersion,omitempty"`
 	TestRequestData              *TestRequestDataStruct      `json:"testRequestData,omitempty"`
 	TestType                     GenericIdName               `json:"testType"`
 	RequestHttpMethod            GenericIdName               `json:"requestHttpMethod"`
