@@ -374,8 +374,12 @@ func flattenTest(test *Test) map[string]interface{} {
 	if test.UserAgentType != nil {
 		userAgentType = getUserAgentTypeName(test.UserAgentType.Id)
 	}
+	chromeVersion = test.ApplicationVersion
 	if test.ChromeMonitorVersion != nil {
-		chromeVersion = strings.ToLower(test.ChromeMonitorVersion.ApplicationVersionType.Name)
+		name := test.ChromeMonitorVersion.ApplicationVersionType.Name
+		if name == "Stable" || name == "Preview" {
+			chromeVersion = strings.ToLower(name)
+		}
 	}
 	testMap := map[string]interface{}{
 		"id":                              test.Id,

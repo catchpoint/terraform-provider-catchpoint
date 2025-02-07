@@ -134,25 +134,41 @@ func getChromeVersionIds() map[int][]string {
 	chromeVersions := map[int][]string{
 		1: {"stable"},
 		2: {"preview"},
-		3: {"108", "89", "87", "85", "75", "71", "66", "63", "59", "53"},
+		3: {"120", "108", "89", "87", "85", "79", "75", "71", "66", "63", "59", "53"},
 	}
 	return chromeVersions
 }
 
 func getChromeApplicationVersionIds() map[string]int {
-	chromeApplicationVersions := map[string]int{
+	if catchpointEnvironment == "prod" || catchpointEnvironment == "" {
+		return map[string]int{
+			"53":  1,
+			"59":  3,
+			"63":  4,
+			"66":  5,
+			"75":  7,
+			"71":  8,
+			"85":  12,
+			"87":  13,
+			"89":  14,
+			"108": 28558,
+			"120": 31965,
+		}
+	}
+	return map[string]int{
 		"53":  1,
 		"59":  3,
 		"63":  4,
 		"66":  5,
+		"71":  6,
 		"75":  7,
-		"71":  8,
-		"85":  12,
+		"79":  9,
+		"85":  10,
 		"87":  13,
-		"89":  14,
-		"108": 28558,
+		"89":  12,
+		"108": 15,
+		"120": 44,
 	}
-	return chromeApplicationVersions
 
 }
 
