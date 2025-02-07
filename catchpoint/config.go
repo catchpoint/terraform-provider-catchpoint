@@ -15,6 +15,7 @@ const (
 var catchpointTestURI = "https://io.catchpoint.com/api/v3.3/tests"
 var catchpointProductURI = "https://io.catchpoint.com/api/v3.3/products"
 var catchpointFolderURI = "https://io.catchpoint.com/api/v3.3/folders"
+var catchpointEnvironment string
 
 func setTestUriByEnv(environment string) {
 
@@ -36,4 +37,8 @@ func setTestUriByEnv(environment string) {
 		catchpointProductURI = catchpointProductURIProd
 		catchpointFolderURI = catchpointFolderURIProd
 	}
+}
+
+func setEnvVariable(environment string) {
+	catchpointEnvironment = environment
 }
