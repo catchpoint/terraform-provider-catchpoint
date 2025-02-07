@@ -140,7 +140,7 @@ func getChromeVersionIds() map[int][]string {
 }
 
 func getChromeApplicationVersionIds() map[string]int {
-	if catchpoint_environment == "prod" || catchpoint_environment == "" {
+	if catchpointEnvironment == "prod" || catchpointEnvironment == "" {
 		return map[string]int{
 			"53":  1,
 			"59":  3,
