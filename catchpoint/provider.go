@@ -55,5 +55,6 @@ func providerConfigure(d *schema.ResourceData) (interface{}, error) {
 	}
 	catchpoint_environment := d.Get("catchpoint_environment").(string)
 	setTestUriByEnv(catchpoint_environment)
+	setEnvVariable(catchpoint_environment)
 	return newConfig(api_token, is_log_json, catchpoint_environment), nil
 }
