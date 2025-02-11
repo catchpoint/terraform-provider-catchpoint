@@ -40,7 +40,7 @@ description: |-
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The Id of this resource.
 
 <a id="nestedblock--advanced_settings"></a>
 ### Nested Schema for `advanced_settings`
