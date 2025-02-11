@@ -20,7 +20,7 @@ description: |-
 - `division_id` (Number) The Division where the Product will be created
 
 ### Optional
-- `status` (String) Optional. Test status: active or inactive
+- `status` (String) Optional. Product status: active or inactive
 - `test_data_webhook_id`(Number) Optional. The Test Data Webhook Id for Product
 - `advanced_settings` (Block Set, Max: 1) Optional. Used for overriding the advanced settings (see [below for nested schema](#nestedblock--advanced_settings))
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
@@ -93,7 +93,7 @@ Optional:
 
 Required :
 
-- `contact_group_id`:(Number). The unique ID of the contact group.
+- `contact_group_id`:(Number). The unique Id of the contact group.
 - `contact_group_name`:(String). The name of the contact group.
 
 <a id="nestedblock--alert_settings--alert_rule"></a>
@@ -418,7 +418,7 @@ Required:
 
 - `frequency` (String) Sets the scheduling frequency: '1 minute', '5 minutes', '10 minutes', '15 minutes', '20 minutes', '30 minutes', '60 minutes', '2 hours', '3 hours', '4 hours', '6 hours', '8 hours', '12 hours', '24 hours', '4 minutes', '2 minutes'
 - `node_distribution` (String) Node distribution type: 'random' or 'concurrent'
-- `node_group_ids` (List of Number)Required.node_group_ids is list
+- `node_group_ids` (List of Number).node_group_ids is list
 
 Optional:
 

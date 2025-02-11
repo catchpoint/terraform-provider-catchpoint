@@ -107,7 +107,7 @@ Optional:
 
 Required :
 
-- `contact_group_id`:(Number). The unique ID of the contact group.
+- `contact_group_id`:(Number). The unique Id of the contact group.
 - `contact_group_name`:(String). The name of the contact group.
 
 <a id="nestedblock--alert_settings--alert_rule"></a>

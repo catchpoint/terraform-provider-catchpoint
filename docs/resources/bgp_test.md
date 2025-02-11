@@ -37,7 +37,7 @@ description: |-
 
 ### Read-Only
 
-- `id` (String) The ID of this resource.
+- `id` (String) The Id of this resource.
 
 <a id="nestedblock--alert_settings"></a>
 ### Nested Schema for `alert_settings`

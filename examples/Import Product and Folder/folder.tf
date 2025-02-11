@@ -17,5 +17,5 @@ resource "manage_folder" "folder"{
 }
 
 # =========================================================
-# Command to import product details:
-# terraform import manage_product.product 42632
+# Command to import folder details:
+# terraform import manage_folder.folder 42632

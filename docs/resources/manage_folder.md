@@ -21,7 +21,7 @@ description: |-
 - `product_id`  (Number) The Product where the Folder will be created
 
 ### Optional
-- `parent_id` (Number) the Parent Id  of folder
+- `parent_id` (Number) the Parent Id  of Folder
 - `advanced_settings` (Block Set, Max: 1) Optional. Used for overriding the advanced settings (see [below for nested schema](#nestedblock--advanced_settings))
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
 - `insights` (Block Set, Max: 1) Optional. Used for overriding the insights section (see [below for nested schema](#nestedblock--insights))
@@ -93,7 +93,7 @@ Optional:
 
 Required :
 
-- `contact_group_id`:(Number). The unique ID of the contact group.
+- `contact_group_id`:(Number). The unique Id of the contact group.
 - `contact_group_name`:(String). The name of the contact group.
 
 <a id="nestedblock--alert_settings--alert_rule"></a>
