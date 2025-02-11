@@ -29,7 +29,7 @@ description: |-
 - `advanced_settings` (Block Set, Max: 1) Optional. Used for overriding the advanced settings (see [below for nested schema](#nestedblock--advanced_settings))
 - `alert_settings` (Block Set, Max: 1) Optional. Used for overriding the alert section (see [below for nested schema](#nestedblock--alert_settings))
 - `alerts_paused` (Boolean) Optional. Switch for pausing Test alerts
-- `chrome_version` (String) Optional. Chrome version to use. Supported: 'preview', 'stable', '108', '89', '87', '85', '75', '71', '66', '63', '59', '53'
+- `chrome_version` (String) Optional. Chrome version to use. Supported: 'preview', 'stable', '120','108', '89', '87', '85', '75', '71', '66', '63', '59', '53'
 - `enable_test_data_webhook` (Boolean) Optional. Switch for enabling test data webhook feature
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `gateway_address_or_host` (String) Optional. Host/IP to use for network troubleshooting and monitoring
@@ -87,7 +87,7 @@ Required:
 - `notification_group` (Block Set, Min: 1, Max: 1) Notification group for setting up alert recipients, adding alert webhook ids. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--notification_group))
 
 Optional:
-
+- `alert_setting_type` (String) Optional.Specifies the type of alert setting: 'override', 'inherit & add'
 - `alert_rule` (Block Set) Optional. Sets the alert rule with attributes such as threshold, trigger type, warning, critical trigger and more (see [below for nested schema](#nestedblock--alert_settings--alert_rule))
 
 <a id="nestedblock--alert_settings--notification_group"></a>
@@ -100,9 +100,16 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups`(Block Set) Optional. A set of contact groups to receive alert notifications (see [below for nested schema](#nestedblock--alert_settings--notification_group--contact_groups))
 - `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
+<a id="nestedblock--alert_settings--notification_group--contact_groups"></a>
+### Nested Schema for `alert_settings.notification_group.contact_groups`
+
+Required :
+
+- `contact_group_id`:(Number). The unique ID of the contact group.
+- `contact_group_name`:(String). The name of the contact group.
 
 <a id="nestedblock--alert_settings--alert_rule"></a>
 ### Nested Schema for `alert_settings.alert_rule`
@@ -204,6 +211,7 @@ Optional:
 - `accept_encoding` (Block Set, Max: 1) Optional. Sets the user accept encoding header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--accept_encoding))
 - `accept_language` (Block Set, Max: 1) Optional. Sets the accept language header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--accept_language))
 - `cache_control` (Block Set, Max: 1) Optional. Sets the cache control header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--cache_control))
+- `connection` (Block Set, Max: 1) Optional. Sets the connection header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--connection))
 - `cookie` (Block Set, Max: 1) Optional. Sets the cookie header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--cookie))
 - `dns_override` (Block Set, Max: 1) Optional. Sets the dns override header for the given child_host_pattern (see [below for nested schema](#nestedblock--request_settings--http_request_headers--dns_override))
 - `host` (Block Set, Max: 1) Optional. Sets the host header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--host))
@@ -213,6 +221,8 @@ Optional:
 - `request_delay` (Block Set, Max: 1) Optional. Sets the request delay header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--request_delay))
 - `request_override` (Block Set, Max: 1) Optional. Sets the request override header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--request_override))
 - `user_agent` (Block Set, Max: 1) Optional. Sets the user agent header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--user_agent))
+- `sni_override` (Block Set, Max: 1) Optional. Sets the sni_override header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--sni_override))
+- `custom` (Block Set, Max: 1) Optional. Sets the custom header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--custom))
 
 <a id="nestedblock--request_settings--http_request_headers--accept"></a>
 ### Nested Schema for `request_settings.http_request_headers.accept`
@@ -375,6 +385,39 @@ Optional:
 
 - `child_host_pattern` (String)
 
+<a id="nestedblock--request_settings--http_request_headers--sni_override"></a>
+### Nested Schema for `request_settings.http_request_headers.sni_override`
+
+Required:
+
+- `value` (String)
+
+Optional:
+
+- `child_host_pattern` (String)
+
+<a id="nestedblock--request_settings--http_request_headers--connection"></a>
+### Nested Schema for `request_settings.http_request_headers.connection`
+
+Required:
+
+- `value` (String)
+
+Optional:
+
+- `child_host_pattern` (String)
+
+<a id="nestedblock--request_settings--http_request_headers--custom"></a>
+### Nested Schema for `request_settings.http_request_headers.custom`
+
+Required:
+
+- `value` (String)
+- `header_name` (String)
+
+Optional:
+
+- `child_host_pattern` (String)
 
 
 

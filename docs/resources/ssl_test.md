@@ -31,6 +31,11 @@ description: |-
 - `enable_test_data_webhook` (Boolean) Optional. Switch for enabling test data webhook feature
 - `enforce_certificate_key_pinning` (Boolean) Optional. Switch for enabling Certificate Key Pinning feature
 - `enforce_certificate_pinning` (Boolean) Optional. Switch for enabling Certificate Pinning feature
+- `file_data`(String) Optional. File data for certificate
+- `passphrase`(String) Optional. Passphrase for certificate
+- `certificate_name`(String) Optional. Name of certificate
+- `certificate_thumbprint_value`(String) Optional. Certificate Thumbprint Value
+- `public_key_thumbprint_value`(String) Optional. Public Key Thumbprint Value
 - `folder_id` (Number) Optional. The Folder under which the Test will be created
 - `label` (Block Set) Optional. Label with key, values pair (see [below for nested schema](#nestedblock--label))
 - `monitor` (String) The monitor to use for the Ssl Test. Supported: 'ssl'
@@ -64,7 +69,7 @@ Required:
 - `notification_group` (Block Set, Min: 1, Max: 1) Notification group for setting up alert recipients, adding alert webhook ids. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--notification_group))
 
 Optional:
-
+- `alert_setting_type` (String) Optional.Specifies the type of alert setting: 'override', 'inherit & add'
 - `alert_rule` (Block Set) Optional. Sets the alert rule with attributes such as threshold, trigger type, warning, critical trigger and more (see [below for nested schema](#nestedblock--alert_settings--alert_rule))
 
 <a id="nestedblock--alert_settings--notification_group"></a>
@@ -77,9 +82,16 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups`(Block Set) Optional. A set of contact groups to receive alert notifications (see [below for nested schema](#nestedblock--alert_settings--notification_group--contact_groups))
 - `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
+<a id="nestedblock--alert_settings--notification_group--contact_groups"></a>
+### Nested Schema for `alert_settings.notification_group.contact_groups`
+
+Required :
+
+- `contact_group_id`:(Number). The unique ID of the contact group.
+- `contact_group_name`:(String). The name of the contact group.
 
 <a id="nestedblock--alert_settings--alert_rule"></a>
 ### Nested Schema for `alert_settings.alert_rule`
