@@ -72,7 +72,7 @@ Required:
 - `notification_group` (Block Set, Min: 1, Max: 1) Notification group for setting up alert recipients, adding alert webhook ids. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--notification_group))
 
 Optional:
-
+- `alert_setting_type` (String) Optional.Specifies the type of alert setting: 'override', 'inherit & add'
 - `alert_rule` (Block Set) Optional. Sets the alert rule with attributes such as threshold, trigger type, warning, critical trigger and more (see [below for nested schema](#nestedblock--alert_settings--alert_rule))
 
 <a id="nestedblock--alert_settings--notification_group"></a>
@@ -85,22 +85,34 @@ Required:
 Optional:
 
 - `alert_webhook_ids` (List of Number) Optional. Alert webhook ids for the webhook endpoints to associate with this alert setting.
-- `contact_groups` (List of String) Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
+- `contact_groups`(Block Set) Optional. A set of contact groups to receive alert notifications (see [below for nested schema](#nestedblock--alert_settings--notification_group--contact_groups))
 - `recipient_email_ids` (List of String) Optional. List of emails to alert. To ensure either recipient_email_ids or contact_groups is provided
 
+<a id="nestedblock--alert_settings--notification_group--contact_groups"></a>
+### Nested Schema for `alert_settings.notification_group.contact_groups`
+
+Required :
+
+- `contact_group_id`:(Number). The unique ID of the contact group.
+- `contact_group_name`:(String). The name of the contact group.
 
 <a id="nestedblock--alert_settings--alert_rule"></a>
 ### Nested Schema for `alert_settings.alert_rule`
 
 Required:
 
-- `alert_type` (String) Sets the alert type
+- `alert_type` (String) Sets the alert type: 'test failure', 'ping','timing', 'availability','dns'
 - `node_threshold_type` (String) Sets the node threshold type for alert: 'runs', 'average across node' or 'node'
 - `notification_group` (Block Set, Min: 1, Max: 5) List of Notification groups for configuring alert notifications, including recipients' email addresses and alert settings. To ensure either recipient_email_ids or contact_groups is provided (see [below for nested schema](#nestedblock--alert_settings--alert_rule--notification_group))
 
 Optional:
 
-- `alert_sub_type` (String) Optional. Sets the sub alert type: 'ping rtt','ping packet loss','test time', '% downtime', 'test'
+- `alert_sub_type` (String) Optional. Sets the sub alert type: 'ping rtt','ping packet loss','test time', '% downtime', 'test' 'dns answer'
+- `dns_resolver_name` (String) Optional. The dns resolved name
+- `dns_ttl` (String)Optional. The dns ttl value 
+- `dns_record_type` (String) Optional. Sets the dns record type: 'a','aaaa','aoraaaa','ns','cname','other'
+- `all_match_records` (Boolean)Optional. Switch for enabling all match records
+- `level` (Type Set) Optional level (see [below for nested schema](#nestedblock--alert_settings--alert_rule--level))
 - `consecutive_number_of_runs` (Number) Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node
 - `critical_reminder` (String) Optional. Sets alert critical reminder interval: 'none', '1 minute', '5 minutes', '10 minutes', '15 minutes', '30 minutes', '1 hour', 'daily'
 - `critical_trigger` (Number) Optional. Critical trigger value for 'specific value' and 'trailing value' trigger types.
@@ -136,6 +148,13 @@ Optional:
 - `notify_on_warning` (Boolean) Optional. Set to true to include warning alerts in notifications. Default is false.
 - `recipient_email_ids` (List of String) Optional. List of email addresses to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided
 
+<a id="nestedblock--alert_settings--alert_rule--level"></a>
+### Nested Schema for `alert_settings.alert_rule.level`
+
+Required:
+
+- `filter_type` (String) Set the level 'index','address','last','other'
+- `filter_value` (string) A value must be provided when a level is selected
 
 
 
