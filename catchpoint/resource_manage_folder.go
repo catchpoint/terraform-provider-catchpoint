@@ -3,158 +3,42 @@ package catchpoint
 import (
 	"errors"
 	"log"
-	"strconv"
 	"strings"
 
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/schema"
 	"github.com/hashicorp/terraform-plugin-sdk/v2/helper/validation"
 )
 
-func resourceWebTestType() *schema.Resource {
+func resourceManageFolder() *schema.Resource {
 	return &schema.Resource{
-		Create: resourceTestCreate,
-		Read:   resourceTestRead,
-		Update: resourceTestUpdate,
-		Delete: resourceTestDelete,
+		Create: resourceFolderCreate,
+		Read:   resourceFolderRead,
+		Update: resourceFolderUpdate,
+		Delete: resourceFolderDelete,
 		Importer: &schema.ResourceImporter{
 			StateContext: schema.ImportStatePassthroughContext,
 		},
 
 		Schema: map[string]*schema.Schema{
-			"monitor": {
-				Type:         schema.TypeString,
-				Required:     true,
-				Description:  "The monitor to use for the Web Test. Supported: 'object', 'chrome', 'emulated', 'playback', 'mobile playback', 'mobile'",
-				ValidateFunc: validation.StringInSlice([]string{"object", "chrome", "emulated", "playback", "mobile playback", "mobile"}, false),
-			},
-			"simulate": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Computed:     true,
-				Description:  "Optional. The device to simulate for mobile, mobile playback(playback source) monitors",
-				ValidateFunc: validation.StringInSlice([]string{"android", "iphone", "ipad 2", "kindle fire", "galaxy tab", "iphone 5", "ipad mini", "galaxy note", "nexus 7", "nexus 4", "nokia lumia920", "iphone 6", "blackberry z30", "galaxy s4", "htc onex", "lg optimusg", "droid razr hd", "nexus 6", "iphone 6s", "galaxy s6", "iphone 7", "google pixel", "galaxy s8", "chrome", "ie"}, false),
-			},
-			"chrome_version": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Computed:     true,
-				Description:  "Optional. Chrome version to use. Supported: 'preview', 'stable', '120',108', '89', '87', '85','79', '75', '71', '66', '63', '59', '53'",
-				ValidateFunc: validation.StringInSlice([]string{"preview", "stable", "120", "108", "89", "87", "85", "79", "75", "71", "66", "63", "59", "53"}, false),
-			},
 			"division_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The Division where the Test will be created",
+				Description: "The Division where the Folder will be created",
 			},
 			"product_id": {
 				Type:        schema.TypeInt,
 				Required:    true,
-				Description: "The parent Product under which the Test will be created",
+				Description: "The Product  where the Folder will be created",
 			},
-			"folder_id": {
+			"parent_id": {
 				Type:        schema.TypeInt,
 				Optional:    true,
-				Computed:    true,
-				Description: "Optional. The Folder under which the Test will be created",
+				Description: "the Parent Id  of folder",
 			},
-			"test_name": {
+			"folder_name": {
 				Type:        schema.TypeString,
 				Required:    true,
-				Description: "The name of the Test",
-			},
-			"test_description": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Default:     "",
-				Description: "Optional. The Test description",
-			},
-			"test_url": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "The URL to be tested. Example: https://www.catchpoint.com",
-			},
-			"gateway_address_or_host": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
-				Description: "Optional. Host/IP to use for network troubleshooting and monitoring",
-			},
-			"enable_test_data_webhook": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     true,
-				Description: "Optional. Switch for enabling test data webhook feature",
-			},
-			"alerts_paused": {
-				Type:        schema.TypeBool,
-				Optional:    true,
-				Default:     false,
-				Description: "Optional. Switch for pausing Test alerts",
-			},
-			"start_time": {
-				Type:        schema.TypeString,
-				Optional:    true,
-				Computed:    true,
-				Description: "Optional. Start time for the Test in ISO format like 2024-12-30T04:59:00Z",
-			},
-			"end_time": {
-				Type:        schema.TypeString,
-				Required:    true,
-				Description: "End time for the Test in ISO format like 2024-12-30T04:59:00Z",
-			},
-			"status": {
-				Type:         schema.TypeString,
-				Optional:     true,
-				Computed:     true,
-				Description:  "Optional. Test status: active or inactive",
-				ValidateFunc: validation.StringInSlice([]string{"active", "inactive"}, false),
-			},
-			"label": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Computed:    true,
-				Description: "Optional. Label with key, values pair",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"key": {
-							Type:     schema.TypeString,
-							Required: true,
-						},
-						"values": {
-							Type:     schema.TypeList,
-							Required: true,
-							Elem: &schema.Schema{
-								Type: schema.TypeString,
-							},
-						},
-					},
-				},
-			},
-			"thresholds": {
-				Type:        schema.TypeSet,
-				Optional:    true,
-				Computed:    true,
-				Description: "Optional. Test thresholds for test time and availability percentage",
-				Elem: &schema.Resource{
-					Schema: map[string]*schema.Schema{
-						"test_time_warning": {
-							Type:     schema.TypeFloat,
-							Required: true,
-						},
-						"test_time_critical": {
-							Type:     schema.TypeFloat,
-							Required: true,
-						},
-						"availability_warning": {
-							Type:     schema.TypeFloat,
-							Required: true,
-						},
-						"availability_critical": {
-							Type:     schema.TypeFloat,
-							Required: true,
-						},
-					},
-				},
+				Description: "The name of the folder",
 			},
 			"request_settings": {
 				Type:        schema.TypeSet,
@@ -216,7 +100,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the user agent header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the user agent header folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -234,7 +118,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the accept header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the accept header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -252,7 +136,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the user accept encoding header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the user accept encoding header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -270,7 +154,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the accept language header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the accept language header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -288,7 +172,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the accept charset header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the accept charset header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -306,7 +190,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the cookie header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the cookie header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -324,7 +208,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the cache control header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the cache control header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -342,7 +226,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the connection header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the connection header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -360,7 +244,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the pragma header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the pragma header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -378,7 +262,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the referer header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the referer header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -396,7 +280,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the host header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the host header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -432,7 +316,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the request override header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the request override header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -450,7 +334,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the request block header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the request block header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -468,7 +352,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the request delay header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the request delay header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -486,7 +370,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the dns_resolver_override header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the dns_resolver_override header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -504,7 +388,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the sni_override header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the sni_override header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -527,7 +411,7 @@ func resourceWebTestType() *schema.Resource {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
 										Optional:    true,
-										Description: "Optional. Sets the custom header for test url if child_host_pattern attribute is omitted",
+										Description: "Optional. Sets the custom header for folder url if child_host_pattern attribute is omitted",
 										Elem: &schema.Resource{
 											Schema: map[string]*schema.Schema{
 												"value": {
@@ -589,37 +473,39 @@ func resourceWebTestType() *schema.Resource {
 						"run_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "Optional. The run schedule id to utilize for the test",
+							Description: "Optional. The run schedule id to utilize for the folder",
 						},
 						"maintenance_schedule_id": {
 							Type:        schema.TypeInt,
 							Optional:    true,
-							Description: "Optional. The maintenance schedule id to utilize for the test",
+							Description: "Optional. The maintenance schedule id to utilize for the folder",
 						},
 						"frequency": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
+							Default:      "5 minutes",
 							Description:  "Sets the scheduling frequency: '1 minute', '5 minutes', '10 minutes', '15 minutes', '20 minutes', '30 minutes', '60 minutes', '2 hours', '3 hours', '4 hours', '6 hours', '8 hours', '12 hours', '24 hours', '4 minutes', '2 minutes'",
 							ValidateFunc: validation.StringInSlice([]string{"1 minute", "5 minutes", "10 minutes", "15 minutes", "20 minutes", "30 minutes", "60 minutes", "2 hours", "3 hours", "4 hours", "6 hours", "8 hours", "12 hours", "24 hours", "4 minutes", "2 minutes"}, false),
 						},
 						"node_distribution": {
 							Type:         schema.TypeString,
-							Required:     true,
+							Optional:     true,
+							Default:      "random",
 							Description:  "Node distribution type: 'random' or 'concurrent'",
 							ValidateFunc: validation.StringInSlice([]string{"random", "concurrent"}, false),
 						},
 						"node_ids": {
 							Type:        schema.TypeList,
 							Optional:    true,
-							Description: "Optional. if node_group_ids is used. Node ids in a list",
+							Description: "Node ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
 						},
 						"node_group_ids": {
 							Type:        schema.TypeList,
-							Optional:    true,
-							Description: "Optional if node_ids is used. Node group ids in a list",
+							Required:    true,
+							Description: "Node group ids in a list",
 							Elem: &schema.Schema{
 								Type: schema.TypeInt,
 							},
@@ -1046,127 +932,71 @@ func resourceWebTestType() *schema.Resource {
 	}
 }
 
-func resourceTestCreate(d *schema.ResourceData, m interface{}) error {
+func resourceFolderRead(d *schema.ResourceData, m interface{}) error {
+	folderId := d.Id()
 	api_token := m.(*Config).ApiToken
-	monitor := d.Get("monitor").(string)
-	monitor_id := getMonitorId(monitor)
-	simulate_device := d.Get("simulate").(string)
-	simulate_device_id := getUserAgentTypeId(simulate_device)
-	chrome_version := d.Get("chrome_version").(string)
-	chrome_version_id, chrome_version_name := getChromeVersionId(chrome_version)
-	var application_version_id int
-	var application_version_name string
-	if chrome_version_id == 3 {
-		application_version_id, application_version_name = getChromeApplicationVersionId(chrome_version)
+
+	log.Printf("[DEBUG] Fetching folder: %v", folderId)
+
+	folder, respStatus, err := getFolder(api_token, folderId)
+	if err != nil {
+		return err
 	}
-	if monitor == "chrome" && chrome_version == "" {
-		//default id 1 : stable for chrome monitor if chrome version attribute is not set
-		chrome_version_id = 1
+	if respStatus != "200 ok" {
+		log.Printf("[ERROR] Error while reading folder: %v", folderId)
+		return errors.New(respStatus)
 	}
-	if monitor == "mobile" && simulate_device == "" {
-		//default id 3 : android for mobile monitor if simulate device attribute is not set
-		simulate_device_id = 3
+	if folder == nil {
+		d.SetId("")
+		log.Printf("[DEBUG] Folder not found %v", folderId)
+		return nil
 	}
-	if monitor == "mobile playback" && simulate_device == "" {
-		//default id 3 : android for mobile playback monitor if simulate device attribute is not set
-		simulate_device_id = 3
-	}
-	if monitor == "playback" {
-		//default id 2 : chrome for playback monitor
-		simulate_device_id = 2
-	}
+	log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
+
+	folderNew := flattenFolder(folder)
+	d.Set("division_id", folderNew["division_id"])
+	d.Set("product_id", folderNew["product_id"])
+	d.Set("parent_id", folderNew["parent_id"])
+	d.Set("folder_name", folderNew["folder_name"])
+	d.Set("insights", folderNew["insights"])
+	d.Set("schedule_settings", folderNew["schedule_settings"])
+	d.Set("advanced_settings", folderNew["advanced_settings"])
+	d.Set("request_settings", folderNew["request_settings"])
+	d.Set("alert_settings", folderNew["alert_settings"])
+
+	return nil
+}
+
+func resourceFolderCreate(d *schema.ResourceData, m interface{}) error {
+	api_token := m.(*Config).ApiToken
 	division_id := d.Get("division_id").(int)
 	product_id := d.Get("product_id").(int)
-	folder_id := d.Get("folder_id").(int)
-	test_name := d.Get("test_name").(string)
-	test_url := d.Get("test_url").(string)
-	test_description := d.Get("test_description").(string)
-	gateway_address_or_host := d.Get("gateway_address_or_host").(string)
-	enable_test_data_webhook := d.Get("enable_test_data_webhook").(bool)
-	alerts_paused := d.Get("alerts_paused").(bool)
-	start_time := d.Get("start_time").(string)
-	if start_time == "" {
-		start_time = getTime()
+	parent_id := d.Get("parent_id").(int)
+	folder_name := d.Get("folder_name").(string)
+	var folderConfig = FolderConfig{}
+	folderConfig = FolderConfig{
+		DivisionId: division_id,
+		ProductId:  product_id,
+		FolderName: folder_name,
+		ParentId:   parent_id,
 	}
-	end_time := d.Get("end_time").(string)
-	status := d.Get("status").(string)
-	status_id := getTestStatusTypeId(status)
-	test_type := TestType(Web)
-
-	var testConfig = TestConfig{}
-
-	testConfig = TestConfig{
-		TestType:                 int(test_type),
-		Monitor:                  monitor_id,
-		SimulateDevice:           simulate_device_id,
-		ChromeVersion:            IdName{Id: chrome_version_id, Name: chrome_version_name},
-		ChromeApplicationVersion: IdName{Id: application_version_id, Name: application_version_name},
-		DivisionId:               division_id,
-		ProductId:                product_id,
-		FolderId:                 folder_id,
-		TestName:                 test_name,
-		TestUrl:                  test_url,
-		TestDescription:          test_description,
-		GatewayAddressOrHost:     gateway_address_or_host,
-		EnableTestDataWebhook:    enable_test_data_webhook,
-		AlertsPaused:             alerts_paused,
-		StartTime:                start_time,
-		EndTime:                  end_time,
-		TestStatus:               status_id,
-	}
-
-	label, labelOk := d.GetOk("label")
-	if labelOk {
-		label_lists := label.(*schema.Set).List()
-
-		setLabels(int(test_type), label_lists, &testConfig)
-	}
-
-	thresholds, thresholdOk := d.GetOk("thresholds")
-	if thresholdOk {
-		thresholds_lists := thresholds.(*schema.Set).List()
-		threshold := thresholds_lists[0].(map[string]interface{})
-
-		setThresholds(int(test_type), threshold, &testConfig)
-	}
-
-	request_settings, request_settingsOk := d.GetOk("request_settings")
-	if request_settingsOk {
-		request_settings_list := request_settings.(*schema.Set).List()
-		// Under one web test resource block there will only be 1 list element. Convert that to map to access by keys
-		request_setting := request_settings_list[0].(map[string]interface{})
-
-		err := setRequestSettings(int(test_type), request_setting, &testConfig)
-		if err != nil {
-			return err
-		}
-	}
-
-	insight_settings, insight_settingsOk := d.GetOk("insights")
-	if insight_settingsOk {
-		insight_setting_list := insight_settings.(*schema.Set).List()
-		insight_setting := insight_setting_list[0].(map[string]interface{})
-
-		setInsightSettings(int(test_type), insight_setting, &testConfig)
-	}
-
 	schedule_settings, schedule_settingsOk := d.GetOk("schedule_settings")
 	if schedule_settingsOk {
 		schedule_setting_list := schedule_settings.(*schema.Set).List()
 		schedule_setting := schedule_setting_list[0].(map[string]interface{})
 
-		err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
+		err := configureFolderScheduleSettings(schedule_setting, &folderConfig)
 		if err != nil {
 			return err
 		}
-	}
 
+	}
 	alert_settings, alert_settingsOk := d.GetOk("alert_settings")
 	if alert_settingsOk {
 		alert_setting_list := alert_settings.(*schema.Set).List()
 		alert_setting := alert_setting_list[0].(map[string]interface{})
 
-		err := setAlertSettings(int(test_type), alert_setting, &testConfig)
+		err := configureFolderAlertSettings(alert_setting, &folderConfig)
 		if err != nil {
 			return err
 		}
@@ -1177,214 +1007,75 @@ func resourceTestCreate(d *schema.ResourceData, m interface{}) error {
 		advanced_setting_list := advanced_settings.(*schema.Set).List()
 		advanced_setting := advanced_setting_list[0].(map[string]interface{})
 
-		setAdvancedSettings(int(test_type), advanced_setting, &testConfig)
+		configureFolderAdvancedSettings(advanced_setting, &folderConfig)
+	}
+	request_settings, request_settingsOk := d.GetOk("request_settings")
+	if request_settingsOk {
+		request_settings_list := request_settings.(*schema.Set).List()
+
+		request_setting := request_settings_list[0].(map[string]interface{})
+
+		err := configureFolderRequestSettings(request_setting, &folderConfig)
+		if err != nil {
+			return err
+		}
 	}
 
-	jsonStr := createJson(testConfig)
+	insight_settings, insight_settingsOk := d.GetOk("insights")
+	if insight_settingsOk {
+		insight_setting_list := insight_settings.(*schema.Set).List()
+		insight_setting := insight_setting_list[0].(map[string]interface{})
+
+		configureFolderInsightSettings(insight_setting, &folderConfig)
+	}
+
+	jsonStr := createFolderJson(folderConfig)
 	if m.(*Config).LogJson {
-		log.Printf("[TEST JSON] \n" + jsonStr)
+		log.Printf("[FOLDER JSON] \n" + jsonStr)
 	}
 
-	log.Printf("[DEBUG] Creating test: " + test_name)
-	respBody, respStatus, testId, err := createTest(api_token, jsonStr)
+	log.Printf("[DEBUG] Creating folder: " + folder_name)
+	respBody, respStatus, folderId, err := createFolder(api_token, jsonStr)
 	if err != nil {
 		log.Fatal(err)
 	}
 	if respStatus != "200 ok" {
-		log.Printf("[ERROR] Error while creating test: " + test_name)
+		log.Printf("[ERROR] Error while creating folder: " + folder_name)
 		log.Printf("[ERROR] Error description: " + respBody)
 		return errors.New(respStatus)
 	}
 
 	log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 	log.Print(respBody)
-	d.SetId(testId)
-	return resourceTestRead(d, m)
+	d.SetId(folderId)
+
+	return resourceFolderRead(d, m)
 }
 
-func resourceTestRead(d *schema.ResourceData, m interface{}) error {
-
-	testId := d.Id()
+func resourceFolderUpdate(d *schema.ResourceData, m interface{}) error {
+	folderId := d.Id()
 	api_token := m.(*Config).ApiToken
-
-	log.Printf("[DEBUG] Fetching test: %v", testId)
-
-	test, respStatus, err := getTest(api_token, testId)
-	if err != nil {
-		return err
-	}
-	if respStatus != "200 ok" {
-		log.Printf("[ERROR] Error while reading test: %v", testId)
-		return errors.New(respStatus)
-	}
-	if test == nil {
-		d.SetId("")
-		log.Printf("[DEBUG] Test not found %v", testId)
-		return nil
-	}
-	log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
-
-	testNew := flattenTest(test)
-
-	d.Set("monitor", testNew["monitor"])
-	d.Set("simulate", testNew["simulate"])
-	d.Set("chrome_version", testNew["chrome_version"])
-	d.Set("division_id", testNew["division_id"])
-	d.Set("product_id", testNew["product_id"])
-	d.Set("folder_id", testNew["folder_id"])
-	d.Set("test_name", testNew["test_name"])
-	d.Set("test_description", testNew["test_description"])
-	d.Set("test_url", testNew["test_url"])
-	d.Set("gateway_address_or_host", testNew["gateway_address_or_host"])
-	d.Set("enable_test_data_webhook", testNew["enable_test_data_webhook"])
-	d.Set("alerts_paused", testNew["alerts_paused"])
-	d.Set("start_time", testNew["start_time"])
-	d.Set("end_time", testNew["end_time"])
-	d.Set("status", testNew["status"])
-	d.Set("label", testNew["label"])
-	d.Set("thresholds", testNew["thresholds"])
-	d.Set("request_settings", testNew["request_settings"])
-	d.Set("insights", testNew["insights"])
-	d.Set("schedule_settings", testNew["schedule_settings"])
-	d.Set("alert_settings", testNew["alert_settings"])
-	d.Set("advanced_settings", testNew["advanced_settings"])
-
-	return nil
-}
-
-func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
-	testId := d.Id()
-	api_token := m.(*Config).ApiToken
-	test_type := TestType(Web)
-	var testConfig = TestConfig{}
+	var folderConfig = FolderConfig{}
 	var jsonPatchDocs = []string{}
-
-	if d.HasChange("test_name") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: d.Get("test_name").(string),
+	if d.HasChange("folder_name") {
+		folderConfigUpdate := FolderConfigUpdate{
+			UpdatedFieldValue: d.Get("folder_name").(string),
 		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/name", true))
+		jsonPatchDocs = append(jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, "/name", true))
 	}
-	if d.HasChange("test_url") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: d.Get("test_url").(string),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/url", true))
-	}
-	if d.HasChange("chrome_version") {
-		chrome_version := d.Get("chrome_version").(string)
-		chrome_version_id, _ := getChromeVersionId(chrome_version)
-		// Specific chrome version was provided
-		if chrome_version_id == 3 {
-			application_version_id, _ := getChromeApplicationVersionId(chrome_version)
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedFieldValue: strconv.Itoa(application_version_id),
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/chromeMonitorVersion/applicationVersionId", true))
-
-		} else {
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedFieldValue: strconv.Itoa(chrome_version_id),
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/chromeMonitorVersion/applicationVersionType", true))
-		}
-	}
-	if d.HasChange("monitor") {
-		monitor := d.Get("monitor").(string)
-		monitor_id := getMonitorId(monitor)
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: strconv.Itoa(monitor_id),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/monitor", true))
-	}
-	if d.HasChange("test_description") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: d.Get("test_description").(string),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/description", true))
-	}
-	if d.HasChange("gateway_address_or_host") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: d.Get("gateway_address_or_host").(string),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/gatewayAddressOrHost", true))
-	}
-	if d.HasChange("enable_test_data_webhook") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: strconv.FormatBool(d.Get("enable_test_data_webhook").(bool)),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/enableTestDataWebhook", true))
-	}
-	if d.HasChange("alerts_paused") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: strconv.FormatBool(d.Get("alerts_paused").(bool)),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/alertsPaused", true))
-	}
-	if d.HasChange("start_time") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: d.Get("start_time").(string),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/startTime", true))
-	}
-	if d.HasChange("end_time") {
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: d.Get("end_time").(string),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/endTime", true))
-	}
-	if d.HasChange("status") {
-		updated_status_id := getTestStatusTypeId(d.Get("status").(string))
-		testConfigUpdate := TestConfigUpdate{
-			UpdatedFieldValue: strconv.Itoa(updated_status_id),
-		}
-		jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, "/status", true))
-	}
-
-	if d.HasChange("thresholds") {
-		thresholds, thresholdOk := d.GetOk("thresholds")
-		if thresholdOk {
-			thresholds_lists := thresholds.(*schema.Set).List()
-			threshold := thresholds_lists[0].(map[string]interface{})
-
-			setThresholds(int(test_type), threshold, &testConfig)
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedTestThresholds: setTestThresholds(&testConfig),
-				SectionToUpdate:       "/thresholdRestModel",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
-		}
-	}
-
-	if d.HasChange("label") {
-		label, labelOk := d.GetOk("label")
-		if labelOk {
-			label_lists := label.(*schema.Set).List()
-
-			setLabels(int(test_type), label_lists, &testConfig)
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedLabels:   setTestLabels(&testConfig),
-				SectionToUpdate: "/labels",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
-		}
-	}
-
 	if d.HasChange("advanced_settings") {
 		advanced_settings, advanced_settingsOk := d.GetOk("advanced_settings")
 		if advanced_settingsOk {
 			advanced_setting_list := advanced_settings.(*schema.Set).List()
 			advanced_setting := advanced_setting_list[0].(map[string]interface{})
 
-			setAdvancedSettings(int(test_type), advanced_setting, &testConfig)
+			configureFolderAdvancedSettings(advanced_setting, &folderConfig)
 
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedAdvancedSettingsSection: setTestAdvancedSettings(&testConfig),
+			folderConfigUpdate := FolderConfigUpdate{
+				UpdatedAdvancedSettingsSection: setFolderAdvancedSettings(&folderConfig),
 				SectionToUpdate:                "/advancedSettings",
 			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			jsonPatchDocs = append(jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
 		}
 	}
 
@@ -1394,34 +1085,32 @@ func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
 			request_settings_list := request_settings.(*schema.Set).List()
 			request_setting := request_settings_list[0].(map[string]interface{})
 
-			err := setRequestSettings(int(test_type), request_setting, &testConfig)
+			err := configureFolderRequestSettings(request_setting, &folderConfig)
 			if err != nil {
 				return err
 			}
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedRequestSettingsSection: setTestRequestSettings(&testConfig),
-				SectionToUpdate:               "/requestSettings",
+			folderConfigUpdate := FolderConfigUpdate{
+				UpdatedRequestSettingsSection: setFolderRequestSettings(&folderConfig),
+				SectionToUpdate:               "/requestSetting",
 			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			jsonPatchDocs = append(jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
 		}
 	}
-
 	if d.HasChange("insights") {
 		insight_settings, insight_settingsOk := d.GetOk("insights")
 		if insight_settingsOk {
 			insight_setting_list := insight_settings.(*schema.Set).List()
 			insight_setting := insight_setting_list[0].(map[string]interface{})
-			updateTestInsightSettings(insight_setting, &jsonPatchDocs)
+			updateFolderInsightSettings(insight_setting, &jsonPatchDocs)
+
 		}
 	}
-
 	if d.HasChange("schedule_settings") {
 		schedule_settings, schedule_settingsOk := d.GetOk("schedule_settings")
 		if schedule_settingsOk {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
-
-			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
+			updateFolderScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 
@@ -1431,61 +1120,44 @@ func resourceTestUpdate(d *schema.ResourceData, m interface{}) error {
 			alert_setting_list := alert_settings.(*schema.Set).List()
 			alert_setting := alert_setting_list[0].(map[string]interface{})
 
-			err := setAlertSettings(int(test_type), alert_setting, &testConfig)
+			err := configureFolderAlertSettings(alert_setting, &folderConfig)
 			if err != nil {
 				return err
 			}
 
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedAlertSettingsSection: setTestAlertSettings(&testConfig),
+			folderConfigUpdate := FolderConfigUpdate{
+				UpdatedAlertSettingsSection: setFolderAlertSettings(&folderConfig),
 				SectionToUpdate:             "/alertGroup",
 			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			jsonPatchDocs = append(jsonPatchDocs, createJsonFolderPatchDocument(folderConfigUpdate, folderConfigUpdate.SectionToUpdate, false))
 		}
 	}
-
 	jsonPatchDoc := "[" + strings.Join(jsonPatchDocs, ",") + "]"
 
 	if jsonPatchDoc != "[]" {
-		log.Printf("[DEBUG] Updating test: %v", testId)
+		log.Printf("[DEBUG] Updating folder: %v", folderId)
 		if m.(*Config).LogJson {
-			log.Printf("[DEBUG] Updating test with JSON PATCH: %v", jsonPatchDoc)
+			log.Printf("[DEBUG] Updating folder with JSON PATCH: %v", jsonPatchDoc)
 		}
-		respBody, respStatus, completed, err := updateTest(api_token, testId, jsonPatchDoc)
+		respBody, respStatus, completed, err := updateFolder(api_token, folderId, jsonPatchDoc)
 		if err != nil {
 			log.Fatal(err)
 		}
 		if !completed {
-			log.Printf("[ERROR] Error while Updating test: %v", testId)
+			log.Printf("[ERROR] Error while Updating folder : %v", folderId)
 			log.Printf("[ERROR] Error description: " + respBody)
 			return errors.New(respBody)
 		}
 		log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
 		log.Print(respBody)
-		return resourceTestRead(d, m)
+		return resourceFolderRead(d, m)
 	} else {
 		return errors.New("no changes. Your infrastructure matches the configuration")
 	}
+
 }
 
-func resourceTestDelete(d *schema.ResourceData, m interface{}) error {
-	testId := d.Id()
-	api_token := m.(*Config).ApiToken
-
-	log.Printf("[DEBUG] Deleting test: %v", testId)
-	respBody, respStatus, completed, err := deleteTest(api_token, testId)
-	if err != nil {
-		log.Fatal(err)
-	}
-	if !completed {
-		log.Printf("[ERROR] Error while deleting test: %v", testId)
-		log.Printf("[ERROR] Error description: " + respBody)
-		return errors.New(respBody)
-	}
-	log.Printf("[DEBUG] Response Code from Catchpoint API: " + respStatus)
-	log.Print(respBody)
-
-	//d.SetId("")
-	return nil
+func resourceFolderDelete(d *schema.ResourceData, m interface{}) error {
+	return errors.New("delete operation is not supported for the folder")
 
 }

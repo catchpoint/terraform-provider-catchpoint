@@ -72,6 +72,31 @@ func resourceSslTestType() *schema.Resource {
 				Default:     false,
 				Description: "Optional. Switch for enabling Certificate Key Pinning feature",
 			},
+			"file_data": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. File data for certificate",
+			},
+			"passphrase": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Passphrase for certificate",
+			},
+			"certificate_name": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Name of certificate",
+			},
+			"certificate_thumbprint_value": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Certificate Thumbprint Value",
+			},
+			"public_key_thumbprint_value": {
+				Type:        schema.TypeString,
+				Optional:    true,
+				Description: "Optional. Public Key Thumbprint Value",
+			},
 			"enable_test_data_webhook": {
 				Type:        schema.TypeBool,
 				Optional:    true,
@@ -211,6 +236,13 @@ func resourceSslTestType() *schema.Resource {
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"alert_setting_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "override",
+							Description:  "Specifies the type of alert setting: 'override','inherit & add'.",
+							ValidateFunc: validation.StringInSlice([]string{"override", "inherit & add"}, false),
+						},
 						"alert_rule": {
 							Type:        schema.TypeSet,
 							Optional:    true,
@@ -282,6 +314,11 @@ func resourceSslTestType() *schema.Resource {
 										Type:        schema.TypeInt,
 										Description: "Optional. Sets the number of consecutive runs only if enable_consecutive field is true and node_threshold_type is node",
 										Optional:    true,
+									},
+									"expression": {
+										Type:        schema.TypeString,
+										Optional:    true,
+										Description: "Optional. Sets trigger expression for content match alert type ",
 									},
 									"warning_reminder": {
 										Type:         schema.TypeString,
@@ -418,11 +455,22 @@ func resourceSslTestType() *schema.Resource {
 										},
 									},
 									"contact_groups": {
-										Type:        schema.TypeList,
+										Type:        schema.TypeSet,
 										Optional:    true,
-										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
+										Description: "Optional. A set of contact groups to receive alert notifications.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"contact_group_id": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: "The unique ID of the contact group.",
+												},
+												"contact_group_name": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: "The name of the contact group.",
+												},
+											},
 										},
 									},
 								},
@@ -488,6 +536,9 @@ func resourceSslTestCreate(d *schema.ResourceData, m interface{}) error {
 	test_description := d.Get("test_description").(string)
 	enforce_certificate_pinning := d.Get("enforce_certificate_pinning").(bool)
 	enforce_certificate_key_pinning := d.Get("enforce_certificate_key_pinning").(bool)
+	file_data := d.Get("file_data").(string)
+	passphrase := d.Get("passphrase").(string)
+	certificate_name := d.Get("certificate_name").(string)
 	enable_test_data_webhook := d.Get("enable_test_data_webhook").(bool)
 	alerts_paused := d.Get("alerts_paused").(bool)
 	start_time := d.Get("start_time").(string)
@@ -512,6 +563,9 @@ func resourceSslTestCreate(d *schema.ResourceData, m interface{}) error {
 		TestDescription:              test_description,
 		EnforceCertificatePinning:    enforce_certificate_pinning,
 		EnforceCertificateKeyPinning: enforce_certificate_key_pinning,
+		FileData:                     file_data,
+		PassPhrase:                   passphrase,
+		CertificateName:              certificate_name,
 		EnableTestDataWebhook:        enable_test_data_webhook,
 		AlertsPaused:                 alerts_paused,
 		StartTime:                    start_time,
@@ -625,13 +679,14 @@ func resourceSslTestRead(d *schema.ResourceData, m interface{}) error {
 	d.Set("test_location", testNew["test_url"])
 	d.Set("enforce_certificate_pinning", testNew["enforce_certificate_pinning"])
 	d.Set("enforce_certificate_key_pinning", testNew["enforce_certificate_key_pinning"])
+	d.Set("certificate_name", testNew["certificate_name"])
+	d.Set("public_key_thumbprint_value", testNew["public_key_thumbprint_value"])
+	d.Set("certificate_thumbprint_value", testNew["certificate_thumbprint_value"])
 	d.Set("label", testNew["label"])
 	d.Set("thresholds", testNew["thresholds"])
 	d.Set("schedule_settings", testNew["schedule_settings"])
 	d.Set("alert_settings", testNew["alert_settings"])
 	d.Set("advanced_settings", testNew["advanced_settings"])
-
-	log.Printf("[DEBUG RESOURCE] %v", d)
 
 	return nil
 }
@@ -757,17 +812,7 @@ func resourceSslTestUpdate(d *schema.ResourceData, m interface{}) error {
 		if schedule_settingsOk {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
-
-			err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
-			if err != nil {
-				return err
-			}
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedScheduleSettingsSection: setTestScheduleSettings(&testConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 

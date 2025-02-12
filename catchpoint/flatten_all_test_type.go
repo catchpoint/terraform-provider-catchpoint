@@ -30,6 +30,7 @@ func flattenThresholds(thresholds Thresholds) []interface{} {
 	}
 	return []interface{}{thresholdsMap}
 }
+
 func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
 	httpHeaderRequests := make([]interface{}, 0, len(requestSetting.HttpHeaderRequests))
 	for _, header := range requestSetting.HttpHeaderRequests {
@@ -39,12 +40,20 @@ func flattenHttpHeaderRequests(requestSetting RequestSetting) []interface{} {
 			"value":              header.RequestValue,
 			"child_host_pattern": header.ChildHostPattern,
 		}
+		if header.HeaderName == "Sni-Override" {
+			key = "sni_override"
+			userAgentHeader["header_name"] = header.HeaderName
+		} else if header.RequestHeaderType.Name == "Custom" {
+			key = "custom"
+			userAgentHeader["header_name"] = header.HeaderName
+		}
 		httpHeaderRequests = append(httpHeaderRequests, map[string]interface{}{
 			key: []interface{}{userAgentHeader},
 		})
 	}
 	return httpHeaderRequests
 }
+
 func flattenRequestSetting(requestSetting RequestSetting) []interface{} {
 	requestSettingMap := map[string]interface{}{
 		"authentication":       flattenAuthenticationStruct(requestSetting.Authentication),
@@ -106,6 +115,9 @@ func flattenScheduleSetting(scheduleSetting ScheduleSetting) []interface{} {
 	nodeGroups := make([]int, len(scheduleSetting.NodeGroups))
 	for i, group := range scheduleSetting.NodeGroups {
 		nodeGroups[i] = group.Id
+		if group.NodeGroupId != 0 {
+			nodeGroups[i] = group.NodeGroupId
+		}
 	}
 
 	if len(nodeGroups) > 0 {
@@ -203,21 +215,18 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct, include
 	}
 
 	var recipients []string
-	var contactGroups []string
 	for _, recipient := range notificationGroup.Recipients {
 		recipientFlattened := flattenRecipient(recipient)
 		var value = recipientFlattened["email"].(string)
 		if isValidEmail(value) {
 			recipients = append(recipients, value)
-		} else {
-			contactGroups = append(contactGroups, value)
 		}
 	}
 
 	notifGroupMap := map[string]interface{}{
 		"recipient_email_ids": recipients,
 		"subject":             notificationGroup.Subject,
-		"contact_groups":      contactGroups,
+		"contact_groups":      flattenContactGroup(notificationGroup.Recipients),
 	}
 
 	if includeNotify {
@@ -230,6 +239,28 @@ func flattenNotificationGroup(notificationGroup NotificationGroupStruct, include
 		notifGroupMap["alert_webhook_ids"] = alertWebhooks
 	}
 	return []interface{}{notifGroupMap}
+}
+
+func flattenContactGroup(recipients []Recipient) []interface{} {
+	var contactGroups []interface{}
+
+	for _, recipient := range recipients {
+		recipientFlattened := flattenRecipient(recipient)
+		recipientType, ok := recipientFlattened["recipientType"].(string)
+		if ok && strings.Contains(recipientType, "ContactGroup") {
+
+			contactGroupMap := map[string]interface{}{}
+			if contactGroupID, ok := recipientFlattened["id"].(int); ok {
+				contactGroupMap["contact_group_id"] = contactGroupID
+			}
+			if contactGroupName, ok := recipientFlattened["name"].(string); ok {
+				contactGroupMap["contact_group_name"] = contactGroupName
+			}
+
+			contactGroups = append(contactGroups, contactGroupMap)
+		}
+	}
+	return contactGroups
 }
 
 func flattenAlertRuleNotificationGroup(notificationGroups []NotificationGroupStruct, includeNotify bool) []interface{} {
@@ -328,6 +359,7 @@ func flattenAlertGroupStruct(alertGroup AlertGroupStruct) []interface{} {
 	alertGroupMap := map[string]interface{}{
 		"notification_group": flattenNotificationGroup(alertGroup.NotificationGroup, false),
 		"alert_rule":         alertGroupItems,
+		"alert_setting_type": getAlertSettingTypeName(alertGroup.AlertSettingType.Id),
 	}
 	return []interface{}{alertGroupMap}
 }
@@ -342,8 +374,12 @@ func flattenTest(test *Test) map[string]interface{} {
 	if test.UserAgentType != nil {
 		userAgentType = getUserAgentTypeName(test.UserAgentType.Id)
 	}
+	chromeVersion = test.ApplicationVersion
 	if test.ChromeMonitorVersion != nil {
-		chromeVersion = strings.ToLower(test.ChromeMonitorVersion.ApplicationVersionType.Name)
+		name := test.ChromeMonitorVersion.ApplicationVersionType.Name
+		if name == "Stable" || name == "Preview" {
+			chromeVersion = strings.ToLower(name)
+		}
 	}
 	testMap := map[string]interface{}{
 		"id":                              test.Id,
@@ -384,5 +420,47 @@ func flattenTest(test *Test) map[string]interface{} {
 			testMap["test_script_type"] = strings.ToLower(test.TestRequestData.TransactionScriptType.Name)
 		}
 	}
+	if test.CertificateName != "" {
+		testMap["certificate_name"] = test.CertificateName
+	}
+	if test.CertificateThumbprintValue != "" {
+		testMap["certificate_thumbprint_value"] = test.CertificateThumbprintValue
+	}
+	if test.PublicKeyThumbprintValue != "" {
+		testMap["public_key_thumbprint_value"] = test.PublicKeyThumbprintValue
+	}
 	return testMap
+}
+
+func flattenProduct(product *Product) map[string]interface{} {
+	productMap := map[string]interface{}{
+		"id":                   product.Id,
+		"division_id":          product.DivisionId,
+		"product_name":         product.Name,
+		"status":               strings.ToLower(product.Status.Name),
+		"alert_group_id":       product.AlertGroupId,
+		"test_data_webhook_id": product.TestDataWebhookId,
+		"request_settings":     flattenRequestSetting(product.RequestSettings),
+		"alert_settings":       flattenAlertGroupStruct(product.AlertGroup),
+		"insights":             flattenInsightDataStruct(product.InsightData),
+		"schedule_settings":    flattenScheduleSetting(product.ScheduleSettings),
+		"advanced_settings":    flattenAdvancedSetting(product.AdvancedSettings),
+	}
+	return productMap
+}
+
+func flattenFolder(folder *Folder) map[string]interface{} {
+	folderMap := map[string]interface{}{
+		"id":                folder.Id,
+		"division_id":       folder.DivisionId,
+		"product_id":        folder.ProductId,
+		"parent_id":         folder.ParentId,
+		"folder_name":       folder.Name,
+		"request_settings":  flattenRequestSetting(folder.RequestSettings),
+		"alert_settings":    flattenAlertGroupStruct(folder.AlertGroup),
+		"insights":          flattenInsightDataStruct(folder.InsightData),
+		"schedule_settings": flattenScheduleSetting(folder.ScheduleSettings),
+		"advanced_settings": flattenAdvancedSetting(folder.AdvancedSettings),
+	}
+	return folderMap
 }

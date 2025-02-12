@@ -199,6 +199,13 @@ func resourceTracerouteTestType() *schema.Resource {
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"alert_setting_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "override",
+							Description:  "Specifies the type of alert setting: 'override','inherit & add'.",
+							ValidateFunc: validation.StringInSlice([]string{"override", "inherit & add"}, false),
+						},
 						"alert_rule": {
 							Type:        schema.TypeSet,
 							Optional:    true,
@@ -411,11 +418,22 @@ func resourceTracerouteTestType() *schema.Resource {
 										},
 									},
 									"contact_groups": {
-										Type:        schema.TypeList,
+										Type:        schema.TypeSet,
 										Optional:    true,
-										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
+										Description: "Optional. A set of contact groups to receive alert notifications.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"contact_group_id": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: "The unique ID of the contact group.",
+												},
+												"contact_group_name": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: "The name of the contact group.",
+												},
+											},
 										},
 									},
 								},
@@ -739,16 +757,7 @@ func resourceTracerouteTestUpdate(d *schema.ResourceData, m interface{}) error {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
 
-			err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
-			if err != nil {
-				return err
-			}
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedScheduleSettingsSection: setTestScheduleSettings(&testConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 

@@ -337,6 +337,24 @@ func resourcePlaywrightTestType() *schema.Resource {
 											},
 										},
 									},
+									"connection": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the connection header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
 									"pragma": {
 										Type:        schema.TypeSet,
 										MaxItems:    1,
@@ -463,6 +481,69 @@ func resourcePlaywrightTestType() *schema.Resource {
 											},
 										},
 									},
+									"dns_resolver_override": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the dns_resolver_override header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+											},
+										},
+									},
+									"sni_override": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the sni_override header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"header_name": {
+													Type:     schema.TypeString,
+													Optional: true,
+													Default:  "Sni-Override",
+												},
+											},
+										},
+									},
+									"custom": {
+										Type:        schema.TypeSet,
+										MaxItems:    1,
+										Optional:    true,
+										Description: "Optional. Sets the custom header for test url if child_host_pattern attribute is omitted",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"value": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+												"child_host_pattern": {
+													Type:     schema.TypeString,
+													Optional: true,
+												},
+												"header_name": {
+													Type:     schema.TypeString,
+													Required: true,
+												},
+											},
+										},
+									},
 								},
 							},
 						},
@@ -558,6 +639,13 @@ func resourcePlaywrightTestType() *schema.Resource {
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"alert_setting_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "override",
+							Description:  "Specifies the type of alert setting: 'override','inherit & add'.",
+							ValidateFunc: validation.StringInSlice([]string{"override", "inherit & add"}, false),
+						},
 						"alert_rule": {
 							Type:        schema.TypeSet,
 							Optional:    true,
@@ -770,11 +858,22 @@ func resourcePlaywrightTestType() *schema.Resource {
 										},
 									},
 									"contact_groups": {
-										Type:        schema.TypeList,
+										Type:        schema.TypeSet,
 										Optional:    true,
-										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
+										Description: "Optional. A set of contact groups to receive alert notifications.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"contact_group_id": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: "The unique ID of the contact group.",
+												},
+												"contact_group_name": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: "The name of the contact group.",
+												},
+											},
 										},
 									},
 								},
@@ -1307,14 +1406,7 @@ func resourcePlaywrightTestUpdate(d *schema.ResourceData, m interface{}) error {
 		if insight_settingsOk {
 			insight_setting_list := insight_settings.(*schema.Set).List()
 			insight_setting := insight_setting_list[0].(map[string]interface{})
-
-			setInsightSettings(int(test_type), insight_setting, &testConfig)
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedInsightSettingsSection: setTestInsightSettings(&testConfig),
-				SectionToUpdate:               "/insightData",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestInsightSettings(insight_setting, &jsonPatchDocs)
 		}
 	}
 
@@ -1323,17 +1415,7 @@ func resourcePlaywrightTestUpdate(d *schema.ResourceData, m interface{}) error {
 		if schedule_settingsOk {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
-
-			err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
-			if err != nil {
-				return err
-			}
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedScheduleSettingsSection: setTestScheduleSettings(&testConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 

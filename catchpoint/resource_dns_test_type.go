@@ -210,6 +210,13 @@ func resourceDnsTestType() *schema.Resource {
 				Description: "Optional. Used for overriding the alert section",
 				Elem: &schema.Resource{
 					Schema: map[string]*schema.Schema{
+						"alert_setting_type": {
+							Type:         schema.TypeString,
+							Optional:     true,
+							Default:      "override",
+							Description:  "Specifies the type of alert setting: 'override','inherit & add'.",
+							ValidateFunc: validation.StringInSlice([]string{"override", "inherit & add"}, false),
+						},
 						"alert_rule": {
 							Type:        schema.TypeSet,
 							Optional:    true,
@@ -321,13 +328,57 @@ func resourceDnsTestType() *schema.Resource {
 										Type:         schema.TypeString,
 										Description:  "Sets the alert type",
 										Required:     true,
-										ValidateFunc: validation.StringInSlice([]string{"test failure", "ping", "timing", "availability"}, false),
+										ValidateFunc: validation.StringInSlice([]string{"test failure", "ping", "timing", "availability", "dns"}, false),
 									},
 									"alert_sub_type": {
 										Type:         schema.TypeString,
 										Optional:     true,
 										Description:  "Optional. Sets the sub alert type: 'ping rtt','ping packet loss','test time', '% downtime', 'test'",
-										ValidateFunc: validation.StringInSlice([]string{"ping rtt", "ping packet loss", "test time", "% downtime", "test"}, false),
+										ValidateFunc: validation.StringInSlice([]string{"ping rtt", "ping packet loss", "test time", "% downtime", "test", "dns answer"}, false),
+									},
+									"dns_resolved_name": {
+										Type:        schema.TypeString,
+										Description: "Optional. The dns resolved name",
+										Optional:    true,
+									},
+									"dns_ttl": {
+										Type:        schema.TypeInt,
+										Description: "Optional. The dns ttl value",
+										Optional:    true,
+									},
+									"dns_record_type": {
+										Type:         schema.TypeString,
+										Optional:     true,
+										Description:  "Optional. Sets the dns record type: 'a','aaaa','aoraaaa','ns','cname','other'",
+										ValidateFunc: validation.StringInSlice([]string{"a", "aaaa", "aoraaaa", "ns", "cname", "other"}, false),
+									},
+									"all_match_records": {
+										Type:        schema.TypeBool,
+										Description: "Optional. Switch for enabling all match records feature",
+										Optional:    true,
+									},
+									"level": {
+										Type:     schema.TypeSet,
+										Optional: true,
+										MaxItems: 1,
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"filter_type": {
+													Type:     schema.TypeString,
+													Required: true,
+													ValidateFunc: validation.StringInSlice([]string{
+														"index",
+														"address",
+														"last"}, false),
+													Description: "The level to be selected from the dropdown.",
+												},
+												"filter_value": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: "A value must be provided when a level is selected.",
+												},
+											},
+										},
 									},
 									"enforce_test_failure": {
 										Type:        schema.TypeBool,
@@ -422,11 +473,22 @@ func resourceDnsTestType() *schema.Resource {
 										},
 									},
 									"contact_groups": {
-										Type:        schema.TypeList,
+										Type:        schema.TypeSet,
 										Optional:    true,
-										Description: "Optional. List of contact groups to receive alert notifications. To ensure either recipient_email_ids or contact_groups is provided",
-										Elem: &schema.Schema{
-											Type: schema.TypeString,
+										Description: "Optional. A set of contact groups to receive alert notifications.",
+										Elem: &schema.Resource{
+											Schema: map[string]*schema.Schema{
+												"contact_group_id": {
+													Type:        schema.TypeInt,
+													Required:    true,
+													Description: "The unique ID of the contact group.",
+												},
+												"contact_group_name": {
+													Type:        schema.TypeString,
+													Required:    true,
+													Description: "The name of the contact group.",
+												},
+											},
 										},
 									},
 								},
@@ -817,17 +879,7 @@ func resourceDnsTestUpdate(d *schema.ResourceData, m interface{}) error {
 		if schedule_settingsOk {
 			schedule_setting_list := schedule_settings.(*schema.Set).List()
 			schedule_setting := schedule_setting_list[0].(map[string]interface{})
-
-			err := setScheduleSettings(int(test_type), schedule_setting, &testConfig)
-			if err != nil {
-				return err
-			}
-
-			testConfigUpdate := TestConfigUpdate{
-				UpdatedScheduleSettingsSection: setTestScheduleSettings(&testConfig),
-				SectionToUpdate:                "/scheduleSettings",
-			}
-			jsonPatchDocs = append(jsonPatchDocs, createJsonPatchDocument(testConfigUpdate, testConfigUpdate.SectionToUpdate, false))
+			updateTestScheduleSettings(schedule_setting, &jsonPatchDocs)
 		}
 	}
 
