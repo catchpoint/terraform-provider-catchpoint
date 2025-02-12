@@ -153,7 +153,7 @@ Optional:
 
 Required:
 
-- `filter_type` (String) Set the level 'index','address','last','other'
+- `filter_type` (String) Set the level 'index','address','last'
 - `filter_value` (string) A value must be provided when a level is selected
 
 

@@ -211,6 +211,7 @@ Optional:
 - `accept_encoding` (Block Set, Max: 1) Optional. Sets the user accept encoding header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--accept_encoding))
 - `accept_language` (Block Set, Max: 1) Optional. Sets the accept language header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--accept_language))
 - `cache_control` (Block Set, Max: 1) Optional. Sets the cache control header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--cache_control))
+- `connection` (Block Set, Max: 1) Optional. Sets the connection header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--connection))
 - `cookie` (Block Set, Max: 1) Optional. Sets the cookie header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--cookie))
 - `dns_override` (Block Set, Max: 1) Optional. Sets the dns override header for the given child_host_pattern (see [below for nested schema](#nestedblock--request_settings--http_request_headers--dns_override))
 - `host` (Block Set, Max: 1) Optional. Sets the host header for test url if child_host_pattern attribute is omitted (see [below for nested schema](#nestedblock--request_settings--http_request_headers--host))
@@ -386,6 +387,17 @@ Optional:
 
 <a id="nestedblock--request_settings--http_request_headers--sni_override"></a>
 ### Nested Schema for `request_settings.http_request_headers.sni_override`
+
+Required:
+
+- `value` (String)
+
+Optional:
+
+- `child_host_pattern` (String)
+
+<a id="nestedblock--request_settings--http_request_headers--connection"></a>
+### Nested Schema for `request_settings.http_request_headers.connection`
 
 Required:
 
