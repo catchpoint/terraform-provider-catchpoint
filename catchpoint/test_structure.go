@@ -29,6 +29,9 @@ type TestConfig struct {
 	AvailabilityThresholdCritical  float64
 	EnforceCertificateKeyPinning   bool
 	EnforceCertificatePinning      bool
+	FileData                       string
+	PassPhrase                     string
+	CertificateName                string
 	EnableTestDataWebhook          bool
 	AlertsPaused                   bool
 	StartTime                      string
@@ -51,11 +54,11 @@ type TestConfig struct {
 	NodeIds                        []int
 	NodeGroupIds                   []NodeGroup
 	NoOfSubsetNodes                int
-	AlertSettingType               int
+	AlertSettingType               IdName
 	AlertRuleConfigs               []AlertRuleConfig
 	AlertWebhookIds                []int
 	AlertRecipientEmails           []string
-	AlertContactGroups             []string
+	AlertContactGroups             []IdName
 	AdvancedSettingType            int
 	AppliedTestFlags               []int
 	MaxStepRuntimeSecOverride      int
@@ -69,10 +72,96 @@ type TestConfig struct {
 	AlertSubject                   string
 }
 
+type ProductConfig struct {
+	DivisionId                     int
+	ProductName                    string
+	ProductStatus                  int
+	TestDataWebhookId              int
+	EdnsSubnet                     string
+	AlertGroupId                   int
+	RequestSettingType             int
+	AuthenticationType             IdName
+	AuthenticationPasswordIds      []int
+	AuthenticationTokenIds         []int
+	AuthenticationCertificateIds   []int
+	TestHttpHeaderRequests         []TestHttpHeaderRequest
+	InsightSettingType             int
+	TracepointIds                  []int
+	IndicatorIds                   []int
+	ScheduleSettingType            int
+	ScheduleRunScheduleId          int
+	ScheduleMaintenanceScheduleId  int
+	TestFrequency                  IdName
+	NodeDistribution               IdName
+	NodeIds                        []int
+	NodeGroupIds                   []NodeGroup
+	NoOfSubsetNodes                int
+	AlertSettingType               IdName
+	AlertRuleConfigs               []AlertRuleConfig
+	AlertWebhookIds                []int
+	AlertRecipientEmails           []string
+	AlertContactGroups             []IdName
+	AdvancedSettingType            int
+	AppliedTestFlags               []int
+	MaxStepRuntimeSecOverride      int
+	AdditionalMonitorType          IdName
+	BandwidthThrottling            IdName
+	WaitForNoActivityOnDocComplete *int
+	ViewportHeight                 int
+	ViewportWidth                  int
+	TracerouteFailureHopCount      int
+	TraceroutePingCount            int
+	VerifytestOnFailure            bool
+	AlertSubject                   string
+}
+
+type FolderConfig struct {
+	DivisionId                     int
+	ProductId                      int
+	ParentId                       int
+	FolderName                     string
+	EdnsSubnet                     string
+	RequestSettingType             int
+	AuthenticationType             IdName
+	AuthenticationPasswordIds      []int
+	AuthenticationTokenIds         []int
+	AuthenticationCertificateIds   []int
+	TestHttpHeaderRequests         []TestHttpHeaderRequest
+	InsightSettingType             int
+	TracepointIds                  []int
+	IndicatorIds                   []int
+	ScheduleSettingType            int
+	ScheduleRunScheduleId          int
+	ScheduleMaintenanceScheduleId  int
+	TestFrequency                  IdName
+	NodeDistribution               IdName
+	NodeIds                        []int
+	NodeGroupIds                   []NodeGroup
+	NoOfSubsetNodes                int
+	AlertSettingType               IdName
+	AlertRuleConfigs               []AlertRuleConfig
+	AlertWebhookIds                []int
+	AlertRecipientEmails           []string
+	AlertContactGroups             []IdName
+	AdvancedSettingType            int
+	AppliedTestFlags               []int
+	MaxStepRuntimeSecOverride      int
+	AdditionalMonitorType          IdName
+	BandwidthThrottling            IdName
+	WaitForNoActivityOnDocComplete *int
+	ViewportHeight                 int
+	ViewportWidth                  int
+	TracerouteFailureHopCount      int
+	TraceroutePingCount            int
+	VerifytestOnFailure            bool
+	AlertSubject                   string
+}
+
 type TestHttpHeaderRequest struct {
 	RequestHeaderType IdName
 	RequestValue      string
 	ChildHostPattern  string
+	HeaderName        string
 }
 
 type TestRequestData struct {
@@ -106,6 +195,12 @@ type AlertRuleConfig struct {
 	AlertSubType                    IdName
 	AlertEnforceTestFailure         bool
 	AlertOmitScatterplot            bool
+	DnsResolvedName                 string
+	DnsTTL                          int
+	DnsRecordType                   IdName
+	AllMatchRecords                 bool
+	FilterType                      IdName
+	FilterValue                     string
 	NotificationGroups              []NotificationGroupStruct
 }
 
@@ -118,11 +213,31 @@ type TestConfigUpdate struct {
 	UpdatedFieldValue              string
 	UpdatedAdvancedSettingsSection AdvancedSetting
 	UpdatedRequestSettingsSection  RequestSetting
-	UpdatedScheduleSettingsSection ScheduleSetting
-	UpdatedInsightSettingsSection  InsightDataStruct
+	UpdatedScheduleSettingsSection interface{}
+	UpdatedInsightSettingsSection  []map[string]int
 	UpdatedAlertSettingsSection    AlertGroupStruct
 	UpdatedLabels                  []Label
 	UpdatedTestThresholds          Thresholds
 	UpdatedTestRequestData         TestRequestDataStruct
+	SectionToUpdate                string
+}
+
+type ProductConfigUpdate struct {
+	UpdatedFieldValue              string
+	UpdatedAdvancedSettingsSection AdvancedSetting
+	UpdatedRequestSettingsSection  RequestSetting
+	UpdatedScheduleSettingsSection interface{}
+	UpdatedInsightSettingsSection  []map[string]int
+	UpdatedAlertSettingsSection    AlertGroupStruct
+	SectionToUpdate                string
+}
+
+type FolderConfigUpdate struct {
+	UpdatedFieldValue              string
+	UpdatedAdvancedSettingsSection AdvancedSetting
+	UpdatedRequestSettingsSection  RequestSetting
+	UpdatedScheduleSettingsSection interface{}
+	UpdatedInsightSettingsSection  []map[string]int
+	UpdatedAlertSettingsSection    AlertGroupStruct
 	SectionToUpdate                string
 }

@@ -1,3 +1,22 @@
+# v1.5.0
+
+ENHANCEMENTS
+
+* Create and update Products and Folders.
+* Configure “Inherit and Add” for alerts.
+* Configure DNS Answer alerts for DNS tests.
+* Configure custom headers.
+* Support for chrome version 120 in web test and transaction test.
+
+BUG FIXES
+
+* Unable to add additional monitor advanced settings while creating and updating a ping test.
+* Contact group is empty when we are importing test details.
+* Certificate field is missing if enforce_certificate_pinning and enforce_certificate_key_pinning are set to true hence unable to create SSL test.
+* Unable to update schedule settings and insights for a tests.
+* Username is displaying as null for playwright test.
+* HTTP headers is displaying as an empty array for all test types.
+
 # v1.4.0
 
 FIX
