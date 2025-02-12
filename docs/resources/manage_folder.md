@@ -410,10 +410,10 @@ Required:
 
 Optional:
 
-- `maintenance_schedule_id` (Number) Optional. The maintenance schedule id to utilize for the product
+- `maintenance_schedule_id` (Number) Optional. The maintenance schedule id to utilize for the folder
 - `no_of_subset_nodes` (Number) Optional. Number of subset nodes
 - `node_ids` (List of Number) Optional.node_ids in list
-- `run_schedule_id` (Number) Optional. The run schedule id to utilize for the product
+- `run_schedule_id` (Number) Optional. The run schedule id to utilize for the folder
 
 
 
