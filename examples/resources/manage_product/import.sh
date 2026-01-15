@@ -1,0 +1,1 @@
+terraform import manage_product.imported_product 123456

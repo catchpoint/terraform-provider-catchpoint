@@ -1,0 +1,1 @@
+terraform import bgp_test.imported_bgptest 123456

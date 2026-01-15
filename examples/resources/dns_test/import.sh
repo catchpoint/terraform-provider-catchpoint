@@ -1,0 +1,1 @@
+terraform import dns_test.imported_dnstest 123456

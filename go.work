@@ -1,3 +1,5 @@
-go 1.18
+go 1.23.10
+
+toolchain go1.23.10
 
 use .

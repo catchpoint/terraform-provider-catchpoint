@@ -1,0 +1,30 @@
+package testmonitor
+
+import (
+	"context"
+
+	"catchpoint-provider/internal/models/resource/testmonitor"
+
+	"github.com/hashicorp/terraform-plugin-framework/path"
+	"github.com/hashicorp/terraform-plugin-framework/resource"
+)
+
+func ValidatePlaywrightTestResource(ctx context.Context, req resource.ValidateConfigRequest, resp *resource.ValidateConfigResponse) {
+	// Get the full configuration
+	var config testmonitor.PlaywrightTestResourceModel
+
+	resp.Diagnostics.Append(req.Config.Get(ctx, &config)...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	// Validate Playwright test requirements
+	if config.Script.IsNull() {
+		resp.Diagnostics.AddAttributeError(
+			path.Root("test_script"),
+			"Missing Required Field",
+			"Playwright tests require a test_script field",
+		)
+	}
+
+}

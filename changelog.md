@@ -1,3 +1,56 @@
+# v2.0.0
+
+## Breaking Changes
+	- Removed "contact_groups" from "alert_settings,notification_group" and "alert_rule,notification_group". The new field is "contact_group_ids" and expects an array of int (like 'node_ids').
+	- Renamed "recipient_email_ids" to "recipient_emails" as the field takes strings, not ids.
+	- The "schedule_settings" for a Product are required by the API so they are also now required by the user's Terraform config.
+	- AlertSubType "handshake_time" changed to "handshake time" for consistency with other types.
+	- AlertSubType "days_to_expiration" changed to "days to expiration" for consistency with other types.
+	- For 'web_test' resources, the monitor 'object' has been renamed to 'http'.
+	- For 'playwright_test' resources, the 'playwright' monitor type was renamed to 'edge' for clarity.
+	- 'monitor' is now required only when the test resource can set more than one 'monitor' type, i.e. for the following monitors:
+	    - BGP ('bgp', 'bgp basic')
+	    - DNS ('dns experience', 'dns direct')
+	    - Ping ('ping icmp', 'ping tcp', 'ping udp')
+	    - Playwright ('edge', 'chrome')
+	    - Traceroute ('traceroute icmp', 'traceroute tcp', 'traceroute udp')
+	    - Transaction ('chrome', 'mobile', 'emulated')
+	    - Web ('chrome', 'emulated', 'http', 'playback', 'mobile playback', 'mobile')
+    - For 'playwright_test', 'puppeteer_test', the 'test_script_type' field was made read-only. There is no reason to set this as there is only one option for each.
+    - The various `x_setting_type` attributes in nested blocks can now be set to enforce inheritance. e.g. `insights { insight_setting_type = "inherit" }` will ensure that the resource will always inherit the insight settings from the folder or product.
+
+## Other Changes
+
+### general
+	- Updated: Enhanced API errors with more details.
+	- Updated: now defaulting to latest API version 4.0.
+	- Updated: Can override the API version by setting `CATCHPOINT_API_VERSION`.
+	- Updated: Examples are now part of main documentation.
+	- Fixed: upstream deletion of an object no longer causes an error but allows the object to be created again.
+	- Fixed: Schedules, AdvancedSettings, RequestSettings, and InsightSettings should all properly calculate the inherit/override setting.
+	- Fixed: nested contact_groups now correctly use an int64[] instead of string[].
+
+### manage_folder
+    - Fixed: 'schedule_settings' may now be overridden from a folder or will inherit if omitted.
+
+### manage_product
+	- Updated: 'manage_product' resource now can be set with _either_ node_group_ids and/or node_ids).
+	- Fixed: 'manage_product' always showing as updating when Insights are not set (not yet fixed: resources showing as updating when alerts are defined).
+    - Fixed: 'manage_product' resource type always requires a schedule and validation has been moved up front.
+	- Fixed: 'manage_product' can now set DNS AlertTypes.
+
+### test resources
+	- Updated: Tests may now be moved between different folder_ids and product_ids.
+	- Updated: the values in the 'thresholds' block are no longer required.
+	- Fixed: 'traceroute_test' schema was allowing unsupported additional settings (additional_monitor, bandwidth_throttling).
+	- Fixed: 'web_test' could not update userAgentTypeID changes ('simulate' field).
+	- Fixed: perpetual diff in testscript inputs.
+	- Fixed: added missing "gateway_address_or_host" setting to SSL schema.
+	- Fixed: 'ssl' test resource now validates the test_location field as part of the schema.
+	- Fixed: Playwright and Puppeteer test types errantly offered 'chrome_version' and 'simulate' fields.
+	- Fixed: 'end_date' is no longer a required field. Note: sometimes the API may require it, but the Terraform Provider does not.
+	- Fixed: node_group_ids were not updating for already created tests.
+
 # v1.5.0
 
 ENHANCEMENTS
