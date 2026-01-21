@@ -1,0 +1,1 @@
+terraform import transaction_test.imported_transactiontest 123456

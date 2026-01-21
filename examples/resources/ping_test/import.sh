@@ -1,0 +1,1 @@
+terraform import ping_test.imported_pingtest 123456
