@@ -27,7 +27,7 @@ func JSONToTerraformTest[T resource.TestResourceModelProvider](ctx context.Conte
 		return
 	}
 
-	diags.Append(handleScriptData(model, test)...)
+	diags.Append(handleScriptData(model, test, config)...)
 	if diags.HasError() {
 		return
 	}
@@ -63,9 +63,25 @@ func JSONToTerraformTest[T resource.TestResourceModelProvider](ctx context.Conte
 }
 
 // handleScriptData populates script data if the model supports it.
-func handleScriptData(model any, test *models.TestJSON) (diags diag.Diagnostics) {
-	if provider, ok := model.(resource.TestScriptResourceProvider); ok && test.TestRequestData != nil {
+
+func handleScriptData[T any](model any, test *models.TestJSON, config T) (diags diag.Diagnostics) {
+	provider, ok := model.(resource.TestScriptResourceProvider)
+	if !ok {
+		return
+	}
+
+	if test.TestRequestData != nil {
 		diags.Append(setTestRequestDataForTest(provider.GetTestScriptResourceModel(), test)...)
+	}
+
+	configProvider, ok := any(config).(resource.TestScriptResourceProvider)
+	if !ok || configProvider.GetTestScriptResourceModel() == nil {
+		return
+	}
+
+	configuredScript := configProvider.GetTestScriptResourceModel().Script
+	if !configuredScript.IsNull() && !configuredScript.IsUnknown() {
+		provider.GetTestScriptResourceModel().Script = configuredScript
 	}
 	return
 }

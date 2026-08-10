@@ -8,6 +8,7 @@ import (
 
 	"catchpoint-provider/internal/client"
 	"catchpoint-provider/internal/expand"
+	expandtestmonitor "catchpoint-provider/internal/expand/testmonitor"
 	"catchpoint-provider/internal/fields"
 	"catchpoint-provider/internal/helpers"
 	"catchpoint-provider/internal/logger"
@@ -56,6 +57,10 @@ func (r *TestResource[T]) generatePatchDocuments(plan, state T, resp *resource.U
 	}
 
 	if patch, ok := r.handleThresholdUpdate(plan, state); ok {
+		jsonPatchDocs = append(jsonPatchDocs, patch)
+	}
+
+	if patch, ok := r.handleTestScriptUpdate(plan, state, resp); ok {
 		jsonPatchDocs = append(jsonPatchDocs, patch)
 	}
 
@@ -162,6 +167,40 @@ func (r *TestResource[T]) handleLabelsUpdate(plan, state T) (out string, hasChan
 		hasChanges = true
 	}
 
+	return
+}
+
+func (r *TestResource[T]) handleTestScriptUpdate(plan, state T, resp *resource.UpdateResponse) (out string, hasChanges bool) {
+	planScriptProvider, planOK := any(plan).(cpresource.TestScriptResourceProvider)
+	stateScriptProvider, stateOK := any(state).(cpresource.TestScriptResourceProvider)
+
+	if !planOK || !stateOK {
+		return
+	}
+
+	planScript := planScriptProvider.GetTestScriptResourceModel()
+	stateScript := stateScriptProvider.GetTestScriptResourceModel()
+	if planScript == nil || stateScript == nil {
+		return
+	}
+
+	if planScript.Script.Equal(stateScript.Script) && planScript.ScriptType.Equal(stateScript.ScriptType) {
+		return
+	}
+
+	testConfig := models.TestConfig{}
+	expandDiags := expandtestmonitor.ExpandTestConfig(plan, &testConfig)
+	resp.Diagnostics.Append(expandDiags...)
+	if resp.Diagnostics.HasError() {
+		return
+	}
+
+	testConfigUpdate := models.TestConfigUpdate{
+		UpdatedTestRequestData: service.TestRequestDataFromTestConfig(&testConfig),
+		SectionToUpdate:        fields.TestRequestDataSection,
+	}
+	out = service.CreateJSONTestPatchDocument(&testConfigUpdate, testConfigUpdate.SectionToUpdate, false)
+	hasChanges = true
 	return
 }
 

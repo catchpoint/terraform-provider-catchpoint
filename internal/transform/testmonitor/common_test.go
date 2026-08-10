@@ -112,3 +112,44 @@ func TestJSONToTerraformTestWithLabels(t *testing.T) {
 	testutil.AssertContains(t, "third label should contain 'us-west-2'", thirdLabelValues, "us-west-2")
 	testutil.AssertContains(t, "third label should contain 'eu-central-1'", thirdLabelValues, "eu-central-1")
 }
+
+func TestJSONToTerraformTestPreservesConfiguredScript(t *testing.T) {
+	apiScript := "line1\n    line2\n"
+	configuredScript := "line1\n\tline2\n"
+
+	testJSON := &models.TestJSON{
+		ID:                    123,
+		DivisionID:            456,
+		ProductID:             789,
+		Name:                  "Test with Script",
+		AlertsPaused:          false,
+		EnableTestDataWebhook: true,
+		StartTime:             "2025-01-01T12:00:00Z",
+		Status: models.GenericIDNameJSON{
+			ID:   0,
+			Name: "active",
+		},
+		Monitor: models.GenericIDNameJSON{
+			ID:   25,
+			Name: "api",
+		},
+		TestRequestData: &models.TestRequestDataJSON{
+			RequestData: &apiScript,
+			TransactionScriptType: &models.GenericIDNameOmitEmptyJSON{
+				ID:   testutil.ToIntPtr(2),
+				Name: testutil.ToStringPtr("javascript"),
+			},
+		},
+	}
+
+	model := testmonitor.APITestResourceModel{}
+	config := testmonitor.APITestResourceModel{}
+	config.TestScriptResourceModel.Script = types.StringValue(configuredScript)
+	config.TestScriptResourceModel.ScriptType = types.StringValue("javascript")
+
+	diags := JSONToTerraformTest(context.TODO(), &model, testJSON, &config)
+
+	testutil.AssertDiagsHasNoErrors(t, diags)
+	testutil.AssertEqual(t, "configured script should win over API formatting", model.TestScriptResourceModel.Script.ValueString(), configuredScript)
+	testutil.AssertEqual(t, "script type should still be set", model.TestScriptResourceModel.ScriptType.ValueString(), "javascript")
+}
