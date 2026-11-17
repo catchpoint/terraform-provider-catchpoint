@@ -383,18 +383,21 @@ func setOptionalFields(testResourceModel *resource.BaseTestResourceModel, test *
 		testResourceModel.FolderID = types.Int64Value(int64(*test.FolderID))
 	}
 
-	if test.Description != nil {
+	if test.Description != nil && *test.Description != cptypes.EmptyString {
 		testResourceModel.Description = types.StringValue(*test.Description)
 	}
 
 	if test.EndTime != nil {
 		testResourceModel.EndTime = types.StringValue(*test.EndTime)
+	} else {
+		// Match the schema default so Read state doesn't diverge from the plan.
+		testResourceModel.EndTime = types.StringValue(cptypes.EmptyString)
 	}
 }
 
 // setLabels sets the labels field if present
 func setLabels(testResourceModel *resource.BaseTestResourceModel, test *models.TestJSON) {
-	if test.Labels != nil {
+	if test.Labels != nil && len(*test.Labels) > 0 {
 		labels := make([]resource.LabelModel, len(*test.Labels))
 		for i, label := range *test.Labels {
 			// Convert []string to []attr.Value
@@ -408,6 +411,8 @@ func setLabels(testResourceModel *resource.BaseTestResourceModel, test *models.T
 			}
 		}
 		testResourceModel.Label = labels
+	} else {
+		testResourceModel.Label = []resource.LabelModel{}
 	}
 }
 

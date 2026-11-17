@@ -298,6 +298,9 @@ func buildCommonTestAttributes(ctx context.Context) map[string]schema.Attribute 
 			Optional:    false,
 			Computed:    true,
 			Description: "The unique identifier for the Test. This is only set by the API and should be 0 for a new test.",
+			PlanModifiers: []planmodifier.Int64{
+				int64planmodifier.UseStateForUnknown(),
+			},
 		},
 	}
 }

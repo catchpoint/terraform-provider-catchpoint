@@ -49,6 +49,7 @@ func JSONToTerraformAlertGroup(alertSetting *models.AlertGroupJSON, config *cpre
 }
 
 func jsonToTerraformAlertGroupItems(alertItems []models.AlertGroupItemJSON) (resource []cpresource.AlertRuleModel, diags diag.Diagnostics) {
+	resource = make([]cpresource.AlertRuleModel, 0, len(alertItems))
 	for _, alertItem := range alertItems {
 		// Convert each alert item to an object
 		itemObj, itemDiags := jsonToTerraformAlertRule(alertItem)
@@ -192,10 +193,7 @@ func jsonToTerraformTrigger(trigger models.TriggerJSON) (triggerModel cpresource
 }
 
 func jsonToTerraformNotificationGroups(notificationGroup []models.NotificationGroupJSON) (resource []cpresource.NotificationGroupModel, diags diag.Diagnostics) {
-	if len(notificationGroup) == 0 {
-		return
-	}
-
+	resource = make([]cpresource.NotificationGroupModel, 0, len(notificationGroup))
 	for _, group := range notificationGroup {
 		notificationGroupObj, groupDiags := jsonToTerraformNotificationGroup(group)
 		diags.Append(groupDiags...)
